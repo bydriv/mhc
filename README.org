@@ -1,0 +1,7 @@
+* MHC: Minimal Haskell Compiler
+
+A minimal implementation of Haskell.
+
+* License
+
+GPLv3.
