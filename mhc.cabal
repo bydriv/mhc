@@ -20,6 +20,7 @@ library
     , Data.RBMap
     , Data.RBSet
     , Language.HsLex
+    , Language.HsYacc
     , MHC.Lexing
 
 executable mhc
@@ -40,6 +41,7 @@ executable mhc
     , Data.RBMap
     , Data.RBSet
     , Language.HsLex
+    , Language.HsYacc
     , MHC.Lexing
 
 executable mhcgenlex
@@ -60,4 +62,5 @@ executable mhcgenlex
     , Data.RBMap
     , Data.RBSet
     , Language.HsLex
+    , Language.HsYacc
     , MHC.Lexing
