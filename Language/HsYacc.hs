@@ -23,11 +23,18 @@ data Symbol t n = T t | N n deriving (Eq, Ord, Read, Show)
 type Production t n = (n, [Symbol t n])
 type Grammar t n = [Production t n]
 
-makeSets :: (Ord t, Ord n) => Grammar t n -> (RBSet.RBSet n, RBMap.RBMap (Symbol t n) (RBSet.RBSet (Symbol t n)), RBMap.RBMap (Symbol t n) (RBSet.RBSet (Symbol t n)))
+type NullableSet t n = RBSet.RBSet n
+type FirstSet t n = RBMap.RBMap (Symbol t n) (RBSet.RBSet t)
+type FollowSet t n = RBMap.RBMap (Symbol t n) (RBSet.RBSet (Symbol t n))
+type Sets t n = (NullableSet t n, FirstSet t n, FollowSet t n)
+
+type Item t n = (n, [Symbol t n], [Symbol t n], t)
+
+makeSets :: (Ord t, Ord n) => Grammar t n -> Sets t n
 makeSets grm =
   let nullable0 = RBSet.empty in
   let first0 =
-        RBMap.fromList $ map (\t -> (T t, RBSet.singleton (T t))) $ concatMap
+        RBMap.fromList $ map (\t -> (T t, RBSet.singleton t)) $ concatMap
           (\(_, right) ->
             Maybe.mapMaybe
               (\symbol ->
@@ -70,7 +77,7 @@ makeSets grm =
                       (\(nullable3, first3, follow3) j ->
                         let follow4 =
                               if i + 1 == j || all (isNullable nullable3) (take (j - i - 1) (drop (i + 1) right)) then
-                                RBMap.insert (right !! i) (RBSet.union (maybe RBSet.empty id (RBMap.lookup (right !! i) follow3)) (maybe RBSet.empty id (RBMap.lookup (right !! j) first3))) follow3
+                                RBMap.insert (right !! i) (RBSet.union (maybe RBSet.empty id (RBMap.lookup (right !! i) follow3)) (maybe RBSet.empty (RBSet.map T) (RBMap.lookup (right !! j) first3))) follow3
                               else
                                 follow3 in
                           (nullable3, first3, follow4))
@@ -87,3 +94,36 @@ makeSets grm =
 
     isNullable _ (T _) = False
     isNullable nullable (N n) = RBSet.member n nullable
+
+firstSet :: (Ord t, Ord n) => [Symbol t n] -> Sets t n -> RBSet.RBSet t
+firstSet [] _ = RBSet.empty
+firstSet (T t : ss) (_, first, _) = maybe RBSet.empty id $ RBMap.lookup (T t) first
+firstSet (N n : ss) sets @ (nullable, first, _) =
+  if RBSet.member n nullable then
+    RBSet.union (maybe RBSet.empty id $ RBMap.lookup (N n) first) (firstSet ss sets)
+  else
+    maybe RBSet.empty id $ RBMap.lookup (N n) first
+
+closure :: (Ord t, Ord n) => RBSet.RBSet (Item t n) -> Sets t n -> Grammar t n -> RBSet.RBSet (Item t n)
+closure items sets @ (_, first, _) grm =
+  let items' =
+        RBSet.union
+          items
+          (RBSet.fromList
+            (concatMap
+              (\(left, middle, right, lookahead) ->
+                case right of
+                  [] ->
+                    []
+                  T _ : _ ->
+                    []
+                  N n : ss ->
+                    concatMap
+                      (\(left', right') ->
+                        map (\t -> (left', [], right', t)) (RBSet.toList (firstSet (ss ++ [T lookahead]) sets)))
+                      (filter (\(left', _) -> left' == n) grm))
+              (RBSet.toList items))) in
+  if items' == items then
+    items'
+  else
+    closure items' sets grm
