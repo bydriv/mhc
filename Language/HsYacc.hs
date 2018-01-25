@@ -127,3 +127,20 @@ closure items sets @ (_, first, _) grm =
     items'
   else
     closure items' sets grm
+
+goto :: (Ord t, Ord n) => RBSet.RBSet (Item t n) -> Symbol t n -> Sets t n -> Grammar t n -> RBSet.RBSet (Item t n)
+goto items symbol sets grm =
+  let items' =
+        foldl
+          (\items'' (left, middle, right, lookahead) ->
+            case right of
+              [] ->
+                items''
+              symbol' : ss ->
+                if symbol' == symbol then
+                  RBSet.insert (left, symbol' : middle, ss, lookahead) items''
+                else
+                  items'')
+          RBSet.empty
+          (RBSet.toList items) in
+    closure items' sets grm
