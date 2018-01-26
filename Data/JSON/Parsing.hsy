@@ -1,0 +1,44 @@
+%module Data.JSON.Parsing %where
+
+%%
+
+def rule value :=
+  false
+| null
+| true
+| object
+| array
+| number
+| string
+
+def rule false :=
+  FALSE
+
+def rule null :=
+  NULL
+
+def rule true :=
+  TRUE
+
+def rule object :=
+  LBRACE members RBRACE
+
+def rule members :=
+| member members
+
+def rule member :=
+  string COLON value
+
+def rule array :=
+  LBRACKET values RBRACKET
+
+def rule values :=
+| value values
+
+def rule number :=
+  NUMBER
+
+def rule string :=
+  STRING
+
+%%
