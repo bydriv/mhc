@@ -1,7 +1,55 @@
+%module Language.HsYacc.Parsing %where
+
+%start start
+
+%{
+type CODE    = Char
+type COLONEQ = ()
+type DEF = ()
+type NONTERMINAL = String
+type PIPE = ()
+type PLBRACE = ()
+type PMODULE = ()
+type PP = ()
+type PRBRACE = ()
+type PSTART = ()
+type PWHERE = ()
+type RULE = ()
+type TERMINAL = String
+
+type Start = (Definitions, Rules, Codes)
+
+type Definitions = [Definition]
+
+data Definition =
+    DefnStart Nonterminal
+  | DefnModule Codes
+  | DefnCodes Codes
+  deriving (Eq, Ord, Read, Show)
+
+type Rules = [Rule']
+type Rule' = (NONTERMINAL, RuleBodies)
+type RuleBodies = [RuleBody]
+type RuleBody = [Symbol]
+type Codes = [Code]
+type Code = CODE
+data Symbol = Terminal Terminal | Nonterminal Nonterminal
+  deriving (Eq, Ord, Read, Show)
+type Terminal = TERMINAL
+type Nonterminal = NONTERMINAL
+%}
+
 %%
+
 def rule start := definitions PP rules PP codes
 
 def rule definitions :=
+| definition definitions
+
+def rule definition :=
+  PSTART nonterminal
+| PMODULE codes PWHERE
+| PLBRACE codes PRBRACE
 
 def rule rules :=
 | rule' rules
@@ -24,4 +72,50 @@ def rule symbol :=
 | nonterminal
 
 def rule codes :=
+| code codes
+
+def rule code := CODE
+
 %%
+
+semanticActions :: Monad m => SemanticActions m
+semanticActions = SemanticActions
+  { start_implies_definitions_PP_rules_PP_codes = \defns () rules () codes ->
+      return (defns, rules, codes)
+  , definitions_implies =
+      return []
+  , definitions_implies_definition_definitions = \defn defns ->
+      return $ defn : defns
+  , definition_implies_PSTART_nonterminal = \() start ->
+      return $ DefnStart start
+  , definition_implies_PMODULE_codes_PWHERE = \() codes () ->
+      return $ DefnModule codes
+  , definition_implies_PLBRACE_codes_PRBRACE = \() codes () ->
+      return $ DefnCodes codes
+  , rules_implies =
+      return []
+  , rules_implies_rule'_rules = \rule rules ->
+      return $ rule : rules
+  , rule'_implies_DEF_RULE_nonterminal_COLONEQ_ruleBodies = \() () hd () body ->
+      return (hd, body)
+  , ruleBodies_implies_ruleBody = \body ->
+      return [body]
+  , ruleBodies_implies_ruleBody_PIPE_ruleBodies = \body () bodies ->
+      return $ body : bodies
+  , ruleBody_implies =
+      return []
+  , ruleBody_implies_symbol_ruleBody = \symbol body ->
+      return $ symbol : body
+  , symbol_implies_terminal = \terminal ->
+      return $ Terminal terminal
+  , symbol_implies_nonterminal = \nonterminal ->
+      return $ Nonterminal nonterminal
+  , terminal_implies_TERMINAL =
+      return
+  , nonterminal_implies_NONTERMINAL =
+      return
+  , codes_implies =
+      return []
+  , codes_implies_code_codes = \code codes ->
+      return (code : codes)
+  , code_implies_CODE = return }

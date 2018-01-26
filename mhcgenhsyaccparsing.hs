@@ -36,7 +36,7 @@ grm =
 
 main :: IO ()
 main =
-  case generateParser "Language.HsYacc.Parsing" "start" grm of
+  case generateParser "Language.HsYacc.Parsing" "start" "" "" grm of
     Nothing ->
       putStrLn "shift/reduce or reduce/reduce conflict."
     Just s ->

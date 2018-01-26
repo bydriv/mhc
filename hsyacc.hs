@@ -23,15 +23,43 @@ import qualified Language.HsYacc.Parsing as Parsing
 
 lexingSemanticActions :: Monad m => Lexing.SemanticActions m (Maybe Parsing.Token)
 lexingSemanticActions = Lexing.SemanticActions
-  { Lexing.saSpace = const $ return Nothing
-  , Lexing.saNewline = const $ return Nothing
-  , Lexing.saColonEq = const $ return $ Just $ Parsing.COLONEQ ()
-  , Lexing.saDef = const $ return $ Just $ Parsing.DEF ()
-  , Lexing.saRule = const $ return $ Just $ Parsing.RULE ()
-  , Lexing.saPipe = const $ return $ Just $ Parsing.PIPE ()
-  , Lexing.saPP = const $ return $ Just $ Parsing.PP ()
-  , Lexing.saTerminal = return . Just . Parsing.TERMINAL
-  , Lexing.saNonterminal = return . Just . Parsing.NONTERMINAL }
+  { Lexing.initialSpace = const $ return Nothing
+  , Lexing.initialNewline = const $ return Nothing
+  , Lexing.initialColonEq = const $ return $ Just $ Parsing.COLONEQ ()
+  , Lexing.initialDef = const $ return $ Just $ Parsing.DEF ()
+  , Lexing.initialRule = const $ return $ Just $ Parsing.RULE ()
+  , Lexing.initialPLBrace = const $ do { Lexing.yybegin Lexing.Code; return $ Just $ Parsing.PLBRACE () }
+  , Lexing.initialPModule = const $ do { Lexing.yybegin Lexing.Code; return $ Just $ Parsing.PMODULE () }
+  , Lexing.initialPP = const $ do { Lexing.yybegin Lexing.Rule; return $ Just $ Parsing.PP () }
+  , Lexing.initialPipe = const $ return $ Just $ Parsing.PIPE ()
+  , Lexing.initialPWhere = const $ return $ Just $ Parsing.PWHERE ()
+  , Lexing.initialPStart = const $ return $ Just $ Parsing.PSTART ()
+  , Lexing.initialPRBrace = const $ return $ Just $ Parsing.PRBRACE ()
+  , Lexing.initialTerminal = return . Just . Parsing.TERMINAL
+  , Lexing.initialNonterminal = return . Just . Parsing.NONTERMINAL
+  , Lexing.initialCode = return . Just . Parsing.CODE . head
+  , Lexing.ruleSpace = const $ return Nothing
+  , Lexing.ruleNewline = const $ return Nothing
+  , Lexing.ruleColonEq = const $ return $ Just $ Parsing.COLONEQ ()
+  , Lexing.ruleDef = const $ return $ Just $ Parsing.DEF ()
+  , Lexing.ruleRule = const $ return $ Just $ Parsing.RULE ()
+  , Lexing.rulePLBrace = const $ do { Lexing.yybegin Lexing.Code; return $ Just $ Parsing.PLBRACE () }
+  , Lexing.rulePModule = const $ do { Lexing.yybegin Lexing.Code; return $ Just $ Parsing.PMODULE () }
+  , Lexing.rulePP = const $ do { Lexing.yybegin Lexing.Code; return $ Just $ Parsing.PP () }
+  , Lexing.rulePipe = const $ return $ Just $ Parsing.PIPE ()
+  , Lexing.rulePWhere = const $ return $ Just $ Parsing.PWHERE ()
+  , Lexing.rulePStart = const $ return $ Just $ Parsing.PSTART ()
+  , Lexing.rulePRBrace = const $ return $ Just $ Parsing.PRBRACE ()
+  , Lexing.ruleTerminal = return . Just . Parsing.TERMINAL
+  , Lexing.ruleNonterminal = return . Just . Parsing.NONTERMINAL
+  , Lexing.ruleCode = return . Just . Parsing.CODE . head
+  , Lexing.codePLBrace = const $ do { Lexing.yybegin Lexing.Code; return $ Just $ Parsing.PLBRACE () }
+  , Lexing.codePModule = const $ do { Lexing.yybegin Lexing.Code; return $ Just $ Parsing.PMODULE () }
+  , Lexing.codePP = const $ return $ Just $ Parsing.PP ()
+  , Lexing.codePWhere = const $ do { Lexing.yybegin Lexing.Initial; return $ Just $ Parsing.PWHERE () }
+  , Lexing.codePStart = const $ return $ Just $ Parsing.PSTART ()
+  , Lexing.codePRBrace = const $ do { Lexing.yybegin Lexing.Initial; return $ Just $ Parsing.PRBRACE () }
+  , Lexing.codeCode = return . Just . Parsing.CODE . head }
 
 main :: IO ()
 main = do
@@ -41,10 +69,13 @@ main = do
   case result of
     Nothing ->
       putStrLn "syntax error."
-    Just (((), ast, ()), _) ->
+    Just ((defns, ast, codes), _) ->
+      let modid = takeModId defns in
+      let start = takeStart defns ast in
+      let header = takeCodes defns in
+      let footer = codes in
       let grm = concatMap (\(left, rights) -> map (\right -> (left, map mapSymbol right)) rights) ast in
-        -- TODO: Module Name, start symbol.
-        case HsYacc.generateParser "TestParsing" "start" grm of
+        case HsYacc.generateParser modid start header footer grm of
           Nothing ->
             putStrLn "shift/reduce or reduce/reduce conflict."
           Just s' ->
@@ -52,3 +83,16 @@ main = do
   where
     mapSymbol (Parsing.Terminal t) = HsYacc.T t
     mapSymbol (Parsing.Nonterminal n) = HsYacc.N n
+
+    takeModId [] = "Parsing"
+    takeModId (Parsing.DefnModule modid : _) = modid
+    takeModId (_ : defns) = takeModId defns
+
+    takeStart [] [] = "start"
+    takeStart [] ((start, _) : _) = start
+    takeStart (Parsing.DefnStart start : _) _ = start
+    takeStart (_ : defns) grm = takeStart defns grm
+
+    takeCodes [] = ""
+    takeCodes (Parsing.DefnCodes codes : defns) = codes ++ takeCodes defns
+    takeCodes (_ : defns) = takeCodes defns

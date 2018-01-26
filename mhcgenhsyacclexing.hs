@@ -16,7 +16,7 @@
 module Main where
 
 import qualified Data.Char      as Char
-import           Language.HsLex
+import           Language.HsLex as HsLex
 
 space :: Regexp
 space = generalCategory Char.Space
@@ -42,8 +42,23 @@ rDef = string "def"
 rPipe :: Regexp
 rPipe = string "|"
 
+rPLBrace :: Regexp
+rPLBrace = string "%{"
+
+rPModule :: Regexp
+rPModule = string "%module"
+
 rPP :: Regexp
 rPP = string "%%"
+
+rPStart :: Regexp
+rPStart = string "%start"
+
+rPWhere :: Regexp
+rPWhere = string "%where"
+
+rPRBrace :: Regexp
+rPRBrace = string "%}"
 
 rRule :: Regexp
 rRule = string "rule"
@@ -56,13 +71,40 @@ rNonterminal = small >>> many (small ||| large ||| digit ||| char '\'')
 
 main :: IO ()
 main = putStrLn $ generateLexer "Language.HsYacc.Lexing"
-  [ ("Initial", space, "saSpace")
-  , ("Initial", newline, "saNewline")
-  , ("Initial", rColonEq, "saColonEq")
-  , ("Initial", rDef, "saDef")
-  , ("Initial", rRule, "saRule")
-  , ("Initial", rPipe, "saPipe")
-  , ("Initial", rPP, "saPP")
-  , ("Initial", rRule, "saRule")
-  , ("Initial", rTerminal, "saTerminal")
-  , ("Initial", rNonterminal, "saNonterminal") ]
+  [ ("Initial", space, "initialSpace")
+  , ("Initial", newline, "initialNewline")
+  , ("Initial", rColonEq, "initialColonEq")
+  , ("Initial", rDef, "initialDef")
+  , ("Initial", rPLBrace, "initialPLBrace")
+  , ("Initial", rPModule, "initialPModule")
+  , ("Initial", rPP, "initialPP")
+  , ("Initial", rPipe, "initialPipe")
+  , ("Initial", rPWhere, "initialPWhere")
+  , ("Initial", rPStart, "initialPStart")
+  , ("Initial", rPRBrace, "initialPRBrace")
+  , ("Initial", rRule, "initialRule")
+  , ("Initial", rTerminal, "initialTerminal")
+  , ("Initial", rNonterminal, "initialNonterminal")
+  , ("Initial", HsLex.any, "initialCode")
+  , ("Rule", space, "ruleSpace")
+  , ("Rule", newline, "ruleNewline")
+  , ("Rule", rColonEq, "ruleColonEq")
+  , ("Rule", rDef, "ruleDef")
+  , ("Rule", rPLBrace, "rulePLBrace")
+  , ("Rule", rPModule, "rulePModule")
+  , ("Rule", rPP, "rulePP")
+  , ("Rule", rPipe, "rulePipe")
+  , ("Rule", rPWhere, "rulePWhere")
+  , ("Rule", rPStart, "rulePStart")
+  , ("Rule", rPRBrace, "rulePRBrace")
+  , ("Rule", rRule, "ruleRule")
+  , ("Rule", rTerminal, "ruleTerminal")
+  , ("Rule", rNonterminal, "ruleNonterminal")
+  , ("Rule", HsLex.any, "ruleCode")
+  , ("Code", rPLBrace, "codePLBrace")
+  , ("Code", rPModule, "codePModule")
+  , ("Code", rPP, "codePP")
+  , ("Code", rPWhere, "codePWhere")
+  , ("Code", rPStart, "codePStart")
+  , ("Code", rPRBrace, "codePRBrace")
+  , ("Code", HsLex.any, "codeCode") ]

@@ -283,8 +283,8 @@ makeTable start grm0 =
         reduces
         (RBSet.toList states)
 
-generateParser :: String -> String -> Grammar String String -> Maybe String
-generateParser modid start0 grm0 = do
+generateParser :: String -> String -> String -> String -> Grammar String String -> Maybe String
+generateParser modid start0 header footer grm0 = do
   let terminals =
         List.nub $ concatMap
           (\(_, right) ->
@@ -331,7 +331,12 @@ generateParser modid start0 grm0 = do
   let gotoTable_list = RBMap.toList gotoTable
 
   return $ CodeGenerating.generate $ do
+    CodeGenerating.write "module "
+    CodeGenerating.write modid
+    CodeGenerating.write " where\n"
     CodeGenerating.write "import qualified Control.Monad as Monad\n"
+    CodeGenerating.write "\n"
+    CodeGenerating.write header
     CodeGenerating.write "\n"
     CodeGenerating.write "data Token =\n"
 
@@ -586,3 +591,5 @@ generateParser modid start0 grm0 = do
     CodeGenerating.write "          case stack of { [(_, StackValue_"
     CodeGenerating.write start0
     CodeGenerating.write " value)] -> return $ Just (value, tokens); _ -> return Nothing }\n"
+    CodeGenerating.write "\n"
+    CodeGenerating.write footer
