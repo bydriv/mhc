@@ -24,7 +24,10 @@ def rule object :=
   LBRACE members RBRACE
 
 def rule members :=
-| member members
+| member members_opt
+
+def rule members_opt :=
+| COMMA members
 
 def rule member :=
   string COLON value
