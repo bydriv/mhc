@@ -4,24 +4,24 @@ def rule start := definitions PP rules PP codes
 def rule definitions :=
 
 def rule rules :=
-  | rule' rules
+| rule' rules
 
 def rule rule' := DEF RULE nonterminal COLONEQ ruleBodies
 
 def rule ruleBodies :=
-    ruleBody
-  | ruleBody PIPE ruleBodies
+  ruleBody
+| ruleBody PIPE ruleBodies
 
 def rule ruleBody :=
-  | symbol ruleBody
+| symbol ruleBody
 
 def rule terminal := TERMINAL
 
 def rule nonterminal := NONTERMINAL
 
 def rule symbol :=
-    terminal
-  | nonterminal
+  terminal
+| nonterminal
 
 def rule codes :=
 %%
