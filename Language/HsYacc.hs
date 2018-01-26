@@ -342,6 +342,8 @@ generateParser modid start0 grm0 = do
         CodeGenerating.write "  | "
 
       CodeGenerating.write t
+      CodeGenerating.write " "
+      CodeGenerating.write t
       CodeGenerating.write "\n"
 
     CodeGenerating.write "  deriving (Eq, Ord, Read, Show)\n"
@@ -354,7 +356,14 @@ generateParser modid start0 grm0 = do
     CodeGenerating.write "\n"
 
     CodeGenerating.write "data StackValue =\n"
-    CodeGenerating.write "    StackValueToken\n"
+    CodeGenerating.write "    StackValue_EOF\n"
+
+    Monad.forM_ terminals $ \t -> do
+      CodeGenerating.write "  | StackValue_"
+      CodeGenerating.write t
+      CodeGenerating.write " "
+      CodeGenerating.write t
+      CodeGenerating.write "\n"
 
     Monad.forM_ nonterminals $ \n -> do
       CodeGenerating.write "  | StackValue_"
@@ -392,8 +401,9 @@ generateParser modid start0 grm0 = do
 
       Monad.forM_ right $ \symbol -> do
         case symbol of
-          T _ ->
-            return ()
+          T t -> do
+            CodeGenerating.write t
+            CodeGenerating.write " -> "
           N "" ->
             CodeGenerating.write " -> "
           N (c : cs) -> do
@@ -424,8 +434,9 @@ generateParser modid start0 grm0 = do
 
       case t of
         UserTerminal t' -> do
-          CodeGenerating.write "Token "
+          CodeGenerating.write "Token ("
           CodeGenerating.write $ maybe undefined id $ RBMap.lookup t' indexTerminal
+          CodeGenerating.write " _)"
         Dollar ->
           CodeGenerating.write "EOF"
         Question ->
@@ -501,7 +512,20 @@ generateParser modid start0 grm0 = do
     CodeGenerating.write "            (token : _) -> Token token in\n"
     CodeGenerating.write "      case dfaActionTransition p symbol of\n"
     CodeGenerating.write "        Shift n ->\n"
-    CodeGenerating.write "          parse' ((n, StackValueToken) : stack) (tail tokens)\n"
+    CodeGenerating.write "          let value =\n"
+    CodeGenerating.write "                case symbol of\n"
+    CodeGenerating.write "                  EOF ->\n"
+    CodeGenerating.write "                    StackValue_EOF\n"
+
+    Monad.forM_ terminals $ \t -> do
+      CodeGenerating.write "                  Token ("
+      CodeGenerating.write t
+      CodeGenerating.write " semanticValue) ->\n"
+      CodeGenerating.write "                    StackValue_"
+      CodeGenerating.write t
+      CodeGenerating.write " semanticValue\n"
+
+    CodeGenerating.write "          in parse' ((n, value) : stack) (tail tokens)\n"
     CodeGenerating.write "        Reduce n m ->\n"
     CodeGenerating.write "          let (pop, stack') = splitAt n stack in\n"
     CodeGenerating.write "          let q =\n"
@@ -534,8 +558,13 @@ generateParser modid start0 grm0 = do
 
       Monad.forM_ (zip right [(0 :: Int)..]) $ \(symbol, j) -> do
         case symbol of
-          T _ ->
-            return ()
+          T t -> do
+            CodeGenerating.write " (case snd (pop !! "
+            CodeGenerating.write $ show $ length right - j - 1
+            CodeGenerating.write ") of { StackValue"
+            CodeGenerating.write "_"
+            CodeGenerating.write t
+            CodeGenerating.write " value -> value; _ -> undefined })"
           N n -> do
             CodeGenerating.write " (case snd (pop !! "
             CodeGenerating.write $ show $ length right - j - 1
