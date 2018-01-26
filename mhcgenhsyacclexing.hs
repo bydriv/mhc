@@ -25,7 +25,7 @@ newline :: Regexp
 newline = string "\r\n" ||| string "\r" ||| string "\n" ||| string "\f"
 
 small :: Regexp
-small = generalCategory Char.LowercaseLetter
+small = generalCategory Char.LowercaseLetter ||| char '_'
 
 large :: Regexp
 large = generalCategory Char.UppercaseLetter ||| generalCategory Char.TitlecaseLetter
