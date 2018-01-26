@@ -422,7 +422,7 @@ generateParser modid start0 grm0 = do
       else
         CodeGenerating.write "\n"
 
-    CodeGenerating.write "dfaActionTransition :: ActionState -> ActionSymbol -> Action\n"
+    CodeGenerating.write "dfaActionTransition :: ActionState -> ActionSymbol -> Maybe Action\n"
     CodeGenerating.write "dfaActionTransition q s =\n"
     CodeGenerating.write "  case (q, s) of\n"
 
@@ -443,7 +443,7 @@ generateParser modid start0 grm0 = do
           undefined
 
       CodeGenerating.write ")"
-      CodeGenerating.write " -> "
+      CodeGenerating.write " -> Just ("
 
       case q of
         Shift n -> do
@@ -459,8 +459,8 @@ generateParser modid start0 grm0 = do
         Accept -> do
           CodeGenerating.write "Accept"
 
-      CodeGenerating.write "\n"
-
+      CodeGenerating.write ")\n"
+    CodeGenerating.write "    (_, _) -> Nothing\n"
     CodeGenerating.write "\n"
 
     CodeGenerating.write "production :: Int -> Int\n"
@@ -472,7 +472,7 @@ generateParser modid start0 grm0 = do
       CodeGenerating.write "\n"
     CodeGenerating.write "\n"
 
-    CodeGenerating.write "dfaGotoTransition :: GotoState -> GotoSymbol -> GotoState\n"
+    CodeGenerating.write "dfaGotoTransition :: GotoState -> GotoSymbol -> Maybe GotoState\n"
     CodeGenerating.write "dfaGotoTransition q s =\n"
     CodeGenerating.write "  case (q, production s) of\n"
 
@@ -489,9 +489,11 @@ generateParser modid start0 grm0 = do
           undefined
 
       CodeGenerating.write ")"
-      CodeGenerating.write " -> "
+      CodeGenerating.write " -> Just "
       CodeGenerating.write $ show q
       CodeGenerating.write "\n"
+    CodeGenerating.write "    (_, _) -> Nothing\n"
+    CodeGenerating.write "\n"
 
     CodeGenerating.write "parse :: Monad m => SemanticActions m -> [Token] -> m (Maybe ("
     case start0 of
@@ -509,9 +511,11 @@ generateParser modid start0 grm0 = do
     CodeGenerating.write "    let symbol =\n"
     CodeGenerating.write "          case tokens of\n"
     CodeGenerating.write "            [] -> EOF\n"
-    CodeGenerating.write "            (token : _) -> Token token in\n"
+    CodeGenerating.write "            (token : _) -> Token token in do\n"
     CodeGenerating.write "      case dfaActionTransition p symbol of\n"
-    CodeGenerating.write "        Shift n ->\n"
+    CodeGenerating.write "        Nothing ->\n"
+    CodeGenerating.write "          return Nothing\n"
+    CodeGenerating.write "        Just (Shift n) ->\n"
     CodeGenerating.write "          let value =\n"
     CodeGenerating.write "                case symbol of\n"
     CodeGenerating.write "                  EOF ->\n"
@@ -526,20 +530,23 @@ generateParser modid start0 grm0 = do
       CodeGenerating.write " semanticValue\n"
 
     CodeGenerating.write "          in parse' ((n, value) : stack) (tail tokens)\n"
-    CodeGenerating.write "        Reduce n m ->\n"
+    CodeGenerating.write "        Just (Reduce n m) ->\n"
     CodeGenerating.write "          let (pop, stack') = splitAt n stack in\n"
-    CodeGenerating.write "          let q =\n"
-    CodeGenerating.write "                case stack' of\n"
-    CodeGenerating.write "                  [] -> dfaGotoTransition 0 m\n"
-    CodeGenerating.write "                  ((q', _) : _) -> dfaGotoTransition q' m in do\n"
-    CodeGenerating.write "            value <-\n"
-    CodeGenerating.write "              case m of\n"
+    CodeGenerating.write "            case\n"
+    CodeGenerating.write "              case stack' of\n"
+    CodeGenerating.write "                [] -> dfaGotoTransition 0 m\n"
+    CodeGenerating.write "                ((q', _) : _) -> dfaGotoTransition q' m of\n"
+    CodeGenerating.write "              Nothing ->\n"
+    CodeGenerating.write "                return Nothing\n"
+    CodeGenerating.write "              Just q -> do\n"
+    CodeGenerating.write "                value <-\n"
+    CodeGenerating.write "                  case m of\n"
 
     Monad.forM_ (zip grm0 [(0 :: Int)..]) $ \((left, right), i) -> do
-      CodeGenerating.write "                "
+      CodeGenerating.write "                    "
       CodeGenerating.write $ show i
       CodeGenerating.write " ->\n"
-      CodeGenerating.write "                  Monad.liftM StackValue_"
+      CodeGenerating.write "                      Monad.liftM StackValue_"
       CodeGenerating.write left
       CodeGenerating.write " $ "
       CodeGenerating.write left
@@ -574,8 +581,8 @@ generateParser modid start0 grm0 = do
             CodeGenerating.write " value -> value; _ -> undefined })"
       CodeGenerating.write "\n"
 
-    CodeGenerating.write "            parse' ((q, value) : stack') tokens\n"
-    CodeGenerating.write "        Accept ->\n"
+    CodeGenerating.write "                parse' ((q, value) : stack') tokens\n"
+    CodeGenerating.write "        Just Accept ->\n"
     CodeGenerating.write "          case stack of { [(_, StackValue_"
     CodeGenerating.write start0
     CodeGenerating.write " value)] -> return $ Just (value, tokens); _ -> return Nothing }\n"

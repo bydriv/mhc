@@ -64,71 +64,72 @@ data SemanticActions m = SemanticActions
   , abstraction_implies_application :: Application -> m Abstraction
   , abstraction_implies_HAT_VAR_DOT_abstraction :: HAT -> VAR -> DOT -> Abstraction -> m Abstraction }
 
-dfaActionTransition :: ActionState -> ActionSymbol -> Action
+dfaActionTransition :: ActionState -> ActionSymbol -> Maybe Action
 dfaActionTransition q s =
   case (q, s) of
-    (0, Token (VAR _)) -> Shift 8
-    (0, Token (LPAREN _)) -> Shift 4
-    (0, Token (HAT _)) -> Shift 16
-    (1, EOF) -> Accept
-    (2, Token (VAR _)) -> Shift 8
-    (2, Token (LPAREN _)) -> Shift 4
-    (2, Token (HAT _)) -> Shift 16
-    (3, EOF) -> Reduce 1 4
-    (3, Token (VAR _)) -> Shift 8
-    (3, Token (LPAREN _)) -> Shift 4
-    (4, Token (VAR _)) -> Shift 9
-    (4, Token (LPAREN _)) -> Shift 5
-    (4, Token (HAT _)) -> Shift 17
-    (5, Token (VAR _)) -> Shift 9
-    (5, Token (LPAREN _)) -> Shift 5
-    (5, Token (HAT _)) -> Shift 17
-    (6, Token (VAR _)) -> Shift 9
-    (6, Token (LPAREN _)) -> Shift 5
-    (6, Token (HAT _)) -> Shift 17
-    (7, Token (VAR _)) -> Shift 9
-    (7, Token (LPAREN _)) -> Shift 5
-    (7, Token (RPAREN _)) -> Reduce 1 4
-    (8, EOF) -> Reduce 1 0
-    (8, Token (VAR _)) -> Reduce 1 0
-    (8, Token (LPAREN _)) -> Reduce 1 0
-    (8, Token (HAT _)) -> Reduce 1 0
-    (9, Token (VAR _)) -> Reduce 1 0
-    (9, Token (LPAREN _)) -> Reduce 1 0
-    (9, Token (RPAREN _)) -> Reduce 1 0
-    (9, Token (HAT _)) -> Reduce 1 0
-    (10, EOF) -> Reduce 3 1
-    (10, Token (VAR _)) -> Reduce 3 1
-    (10, Token (LPAREN _)) -> Reduce 3 1
-    (10, Token (HAT _)) -> Reduce 3 1
-    (11, Token (VAR _)) -> Reduce 3 1
-    (11, Token (LPAREN _)) -> Reduce 3 1
-    (11, Token (RPAREN _)) -> Reduce 3 1
-    (11, Token (HAT _)) -> Reduce 3 1
-    (12, Token (RPAREN _)) -> Shift 10
-    (13, Token (RPAREN _)) -> Shift 11
-    (14, Token (DOT _)) -> Shift 2
-    (15, Token (DOT _)) -> Shift 6
-    (16, Token (VAR _)) -> Shift 14
-    (17, Token (VAR _)) -> Shift 15
-    (18, EOF) -> Reduce 4 5
-    (19, Token (RPAREN _)) -> Reduce 4 5
-    (20, EOF) -> Reduce 1 2
-    (20, Token (VAR _)) -> Reduce 1 2
-    (20, Token (LPAREN _)) -> Reduce 1 2
-    (20, Token (HAT _)) -> Reduce 1 2
-    (21, Token (VAR _)) -> Reduce 1 2
-    (21, Token (LPAREN _)) -> Reduce 1 2
-    (21, Token (RPAREN _)) -> Reduce 1 2
-    (21, Token (HAT _)) -> Reduce 1 2
-    (22, EOF) -> Reduce 2 3
-    (22, Token (VAR _)) -> Reduce 2 3
-    (22, Token (LPAREN _)) -> Reduce 2 3
-    (22, Token (HAT _)) -> Reduce 2 3
-    (23, Token (VAR _)) -> Reduce 2 3
-    (23, Token (LPAREN _)) -> Reduce 2 3
-    (23, Token (RPAREN _)) -> Reduce 2 3
-    (23, Token (HAT _)) -> Reduce 2 3
+    (0, Token (VAR _)) -> Just (Shift 8)
+    (0, Token (LPAREN _)) -> Just (Shift 4)
+    (0, Token (HAT _)) -> Just (Shift 16)
+    (1, EOF) -> Just (Accept)
+    (2, Token (VAR _)) -> Just (Shift 8)
+    (2, Token (LPAREN _)) -> Just (Shift 4)
+    (2, Token (HAT _)) -> Just (Shift 16)
+    (3, EOF) -> Just (Reduce 1 4)
+    (3, Token (VAR _)) -> Just (Shift 8)
+    (3, Token (LPAREN _)) -> Just (Shift 4)
+    (4, Token (VAR _)) -> Just (Shift 9)
+    (4, Token (LPAREN _)) -> Just (Shift 5)
+    (4, Token (HAT _)) -> Just (Shift 17)
+    (5, Token (VAR _)) -> Just (Shift 9)
+    (5, Token (LPAREN _)) -> Just (Shift 5)
+    (5, Token (HAT _)) -> Just (Shift 17)
+    (6, Token (VAR _)) -> Just (Shift 9)
+    (6, Token (LPAREN _)) -> Just (Shift 5)
+    (6, Token (HAT _)) -> Just (Shift 17)
+    (7, Token (VAR _)) -> Just (Shift 9)
+    (7, Token (LPAREN _)) -> Just (Shift 5)
+    (7, Token (RPAREN _)) -> Just (Reduce 1 4)
+    (8, EOF) -> Just (Reduce 1 0)
+    (8, Token (VAR _)) -> Just (Reduce 1 0)
+    (8, Token (LPAREN _)) -> Just (Reduce 1 0)
+    (8, Token (HAT _)) -> Just (Reduce 1 0)
+    (9, Token (VAR _)) -> Just (Reduce 1 0)
+    (9, Token (LPAREN _)) -> Just (Reduce 1 0)
+    (9, Token (RPAREN _)) -> Just (Reduce 1 0)
+    (9, Token (HAT _)) -> Just (Reduce 1 0)
+    (10, EOF) -> Just (Reduce 3 1)
+    (10, Token (VAR _)) -> Just (Reduce 3 1)
+    (10, Token (LPAREN _)) -> Just (Reduce 3 1)
+    (10, Token (HAT _)) -> Just (Reduce 3 1)
+    (11, Token (VAR _)) -> Just (Reduce 3 1)
+    (11, Token (LPAREN _)) -> Just (Reduce 3 1)
+    (11, Token (RPAREN _)) -> Just (Reduce 3 1)
+    (11, Token (HAT _)) -> Just (Reduce 3 1)
+    (12, Token (RPAREN _)) -> Just (Shift 10)
+    (13, Token (RPAREN _)) -> Just (Shift 11)
+    (14, Token (DOT _)) -> Just (Shift 2)
+    (15, Token (DOT _)) -> Just (Shift 6)
+    (16, Token (VAR _)) -> Just (Shift 14)
+    (17, Token (VAR _)) -> Just (Shift 15)
+    (18, EOF) -> Just (Reduce 4 5)
+    (19, Token (RPAREN _)) -> Just (Reduce 4 5)
+    (20, EOF) -> Just (Reduce 1 2)
+    (20, Token (VAR _)) -> Just (Reduce 1 2)
+    (20, Token (LPAREN _)) -> Just (Reduce 1 2)
+    (20, Token (HAT _)) -> Just (Reduce 1 2)
+    (21, Token (VAR _)) -> Just (Reduce 1 2)
+    (21, Token (LPAREN _)) -> Just (Reduce 1 2)
+    (21, Token (RPAREN _)) -> Just (Reduce 1 2)
+    (21, Token (HAT _)) -> Just (Reduce 1 2)
+    (22, EOF) -> Just (Reduce 2 3)
+    (22, Token (VAR _)) -> Just (Reduce 2 3)
+    (22, Token (LPAREN _)) -> Just (Reduce 2 3)
+    (22, Token (HAT _)) -> Just (Reduce 2 3)
+    (23, Token (VAR _)) -> Just (Reduce 2 3)
+    (23, Token (LPAREN _)) -> Just (Reduce 2 3)
+    (23, Token (RPAREN _)) -> Just (Reduce 2 3)
+    (23, Token (HAT _)) -> Just (Reduce 2 3)
+    (_, _) -> Nothing
 
 production :: Int -> Int
 production 0 = 0
@@ -138,26 +139,28 @@ production 3 = 2
 production 4 = 1
 production 5 = 1
 
-dfaGotoTransition :: GotoState -> GotoSymbol -> GotoState
+dfaGotoTransition :: GotoState -> GotoSymbol -> Maybe GotoState
 dfaGotoTransition q s =
   case (q, production s) of
-    (0, 0) -> 20
-    (0, 1) -> 1
-    (0, 2) -> 3
-    (2, 0) -> 20
-    (2, 1) -> 18
-    (2, 2) -> 3
-    (3, 0) -> 22
-    (4, 0) -> 21
-    (4, 1) -> 12
-    (4, 2) -> 7
-    (5, 0) -> 21
-    (5, 1) -> 13
-    (5, 2) -> 7
-    (6, 0) -> 21
-    (6, 1) -> 19
-    (6, 2) -> 7
-    (7, 0) -> 23
+    (0, 0) -> Just 20
+    (0, 1) -> Just 1
+    (0, 2) -> Just 3
+    (2, 0) -> Just 20
+    (2, 1) -> Just 18
+    (2, 2) -> Just 3
+    (3, 0) -> Just 22
+    (4, 0) -> Just 21
+    (4, 1) -> Just 12
+    (4, 2) -> Just 7
+    (5, 0) -> Just 21
+    (5, 1) -> Just 13
+    (5, 2) -> Just 7
+    (6, 0) -> Just 21
+    (6, 1) -> Just 19
+    (6, 2) -> Just 7
+    (7, 0) -> Just 23
+    (_, _) -> Nothing
+
 parse :: Monad m => SemanticActions m -> [Token] -> m (Maybe (Abstraction, [Token]))
 parse actions = parse' [] where
   parse' stack tokens =
@@ -168,9 +171,11 @@ parse actions = parse' [] where
     let symbol =
           case tokens of
             [] -> EOF
-            (token : _) -> Token token in
+            (token : _) -> Token token in do
       case dfaActionTransition p symbol of
-        Shift n ->
+        Nothing ->
+          return Nothing
+        Just (Shift n) ->
           let value =
                 case symbol of
                   EOF ->
@@ -186,27 +191,30 @@ parse actions = parse' [] where
                   Token (DOT semanticValue) ->
                     StackValue_DOT semanticValue
           in parse' ((n, value) : stack) (tail tokens)
-        Reduce n m ->
+        Just (Reduce n m) ->
           let (pop, stack') = splitAt n stack in
-          let q =
-                case stack' of
-                  [] -> dfaGotoTransition 0 m
-                  ((q', _) : _) -> dfaGotoTransition q' m in do
-            value <-
-              case m of
-                0 ->
-                  Monad.liftM StackValue_atom $ atom_implies_VAR actions (case snd (pop !! 0) of { StackValue_VAR value -> value; _ -> undefined })
-                1 ->
-                  Monad.liftM StackValue_atom $ atom_implies_LPAREN_abstraction_RPAREN actions (case snd (pop !! 2) of { StackValue_LPAREN value -> value; _ -> undefined }) (case snd (pop !! 1) of { StackValue_abstraction value -> value; _ -> undefined }) (case snd (pop !! 0) of { StackValue_RPAREN value -> value; _ -> undefined })
-                2 ->
-                  Monad.liftM StackValue_application $ application_implies_atom actions (case snd (pop !! 0) of { StackValue_atom value -> value; _ -> undefined })
-                3 ->
-                  Monad.liftM StackValue_application $ application_implies_application_atom actions (case snd (pop !! 1) of { StackValue_application value -> value; _ -> undefined }) (case snd (pop !! 0) of { StackValue_atom value -> value; _ -> undefined })
-                4 ->
-                  Monad.liftM StackValue_abstraction $ abstraction_implies_application actions (case snd (pop !! 0) of { StackValue_application value -> value; _ -> undefined })
-                5 ->
-                  Monad.liftM StackValue_abstraction $ abstraction_implies_HAT_VAR_DOT_abstraction actions (case snd (pop !! 3) of { StackValue_HAT value -> value; _ -> undefined }) (case snd (pop !! 2) of { StackValue_VAR value -> value; _ -> undefined }) (case snd (pop !! 1) of { StackValue_DOT value -> value; _ -> undefined }) (case snd (pop !! 0) of { StackValue_abstraction value -> value; _ -> undefined })
-            parse' ((q, value) : stack') tokens
-        Accept ->
+            case
+              case stack' of
+                [] -> dfaGotoTransition 0 m
+                ((q', _) : _) -> dfaGotoTransition q' m of
+              Nothing ->
+                return Nothing
+              Just q -> do
+                value <-
+                  case m of
+                    0 ->
+                      Monad.liftM StackValue_atom $ atom_implies_VAR actions (case snd (pop !! 0) of { StackValue_VAR value -> value; _ -> undefined })
+                    1 ->
+                      Monad.liftM StackValue_atom $ atom_implies_LPAREN_abstraction_RPAREN actions (case snd (pop !! 2) of { StackValue_LPAREN value -> value; _ -> undefined }) (case snd (pop !! 1) of { StackValue_abstraction value -> value; _ -> undefined }) (case snd (pop !! 0) of { StackValue_RPAREN value -> value; _ -> undefined })
+                    2 ->
+                      Monad.liftM StackValue_application $ application_implies_atom actions (case snd (pop !! 0) of { StackValue_atom value -> value; _ -> undefined })
+                    3 ->
+                      Monad.liftM StackValue_application $ application_implies_application_atom actions (case snd (pop !! 1) of { StackValue_application value -> value; _ -> undefined }) (case snd (pop !! 0) of { StackValue_atom value -> value; _ -> undefined })
+                    4 ->
+                      Monad.liftM StackValue_abstraction $ abstraction_implies_application actions (case snd (pop !! 0) of { StackValue_application value -> value; _ -> undefined })
+                    5 ->
+                      Monad.liftM StackValue_abstraction $ abstraction_implies_HAT_VAR_DOT_abstraction actions (case snd (pop !! 3) of { StackValue_HAT value -> value; _ -> undefined }) (case snd (pop !! 2) of { StackValue_VAR value -> value; _ -> undefined }) (case snd (pop !! 1) of { StackValue_DOT value -> value; _ -> undefined }) (case snd (pop !! 0) of { StackValue_abstraction value -> value; _ -> undefined })
+                parse' ((q, value) : stack') tokens
+        Just Accept ->
           case stack of { [(_, StackValue_abstraction value)] -> return $ Just (value, tokens); _ -> return Nothing }
 
