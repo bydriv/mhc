@@ -33,7 +33,10 @@ def rule array :=
   LBRACKET values RBRACKET
 
 def rule values :=
-| value values
+| value valuesOpt
+
+def rule valuesOpt :=
+| COMMA values
 
 def rule number :=
   NUMBER
