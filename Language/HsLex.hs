@@ -620,7 +620,7 @@ generateLexer modid rules = CodeGenerating.generate $
     CodeGenerating.write "match initialState finalStates transition = match' 0 Nothing initialState\n"
     CodeGenerating.write "  where\n"
     CodeGenerating.write "    match' :: Int -> Maybe Int -> Int -> String -> Maybe Int\n"
-    CodeGenerating.write "    match' i r q s = \n"
+    CodeGenerating.write "    match' i r q s =\n"
     CodeGenerating.write "      let r' =\n"
     CodeGenerating.write "            if q `elem` finalStates then\n"
     CodeGenerating.write "              Just i\n"
