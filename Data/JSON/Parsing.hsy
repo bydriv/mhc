@@ -1,5 +1,45 @@
 %module Data.JSON.Parsing %where
 
+%{
+import qualified Data.RBMap as RBMap
+
+type FALSE = ()
+type NULL = ()
+type TRUE = ()
+type LBRACE = ()
+type RBRACE = ()
+type COMMA = ()
+type COLON = ()
+type LBRACKET = ()
+type RBRACKET = ()
+type NUMBER = Double
+type STRING = String
+
+data JSON =
+    JSONFalse
+  | JSONNull
+  | JSONTrue
+  | JSONObject (RBMap.RBMap STRING JSON)
+  | JSONArray [JSON]
+  | JSONNumber NUMBER
+  | JSONString STRING
+  deriving (Eq, Ord, Read, Show)
+
+type Value = JSON
+type False = JSON
+type Null = JSON
+type True = JSON
+type Object = JSON
+type Members = RBMap.RBMap STRING JSON
+type Members_opt = Maybe Members
+type Member = (STRING, JSON)
+type Array = JSON
+type Values = [JSON]
+type Values_opt = Maybe Values
+type Number = JSON
+type String' = JSON
+%}
+
 %%
 
 def rule value :=
@@ -9,7 +49,7 @@ def rule value :=
 | object
 | array
 | number
-| string
+| string'
 
 def rule false :=
   FALSE
@@ -30,7 +70,7 @@ def rule members_opt :=
 | COMMA members
 
 def rule member :=
-  string COLON value
+  STRING COLON value
 
 def rule array :=
   LBRACKET values RBRACKET
@@ -44,7 +84,37 @@ def rule values_opt :=
 def rule number :=
   NUMBER
 
-def rule string :=
+def rule string' :=
   STRING
 
 %%
+
+semanticActions :: Monad m => SemanticActions m
+semanticActions = SemanticActions
+  { value_implies_false = return
+  , value_implies_null = return
+  , value_implies_true = return
+  , value_implies_object = return
+  , value_implies_array = return
+  , value_implies_number = return
+  , value_implies_string' = return
+  , false_implies_FALSE = const $ return JSONFalse
+  , null_implies_NULL = const $ return JSONNull
+  , true_implies_TRUE = const $ return JSONTrue
+  , object_implies_LBRACE_members_RBRACE = \() members () ->
+      return $ JSONObject members
+  , members_implies = return RBMap.empty
+  , members_implies_member_members_opt = \(prop, value) members_opt ->
+      return $ maybe (RBMap.singleton prop value) (RBMap.insert prop value) members_opt
+  , members_opt_implies = return Nothing
+  , members_opt_implies_COMMA_members = const (return . Just)
+  , member_implies_STRING_COLON_value = \prop () value ->
+      return (prop, value)
+  , array_implies_LBRACKET_values_RBRACKET = \() values () ->
+    return $ JSONArray values
+  , values_implies_value_values_opt = \value values_opt ->
+      return $ maybe [value] (value:) values_opt
+  , values_opt_implies = return Nothing
+  , values_opt_implies_COMMA_values = const (return . Just)
+  , number_implies_NUMBER = return . JSONNumber
+  , string'_implies_STRING = return . JSONString }
