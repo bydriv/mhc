@@ -227,15 +227,15 @@ makeTable start grm0 =
           (\(items, lookahead, left, right) ->
             let p = maybe undefined id $ RBMap.lookup items statesIndex in
             let q = maybe undefined fst $ List.find (\(i, (left', right')) -> left' == left && right' == right) $ zip [0..] grm in
-              [((p, lookahead), Reduce (q - 1))])
+              ((p, lookahead), Reduce (q - 1)))
           (RBSet.toList reduces) in
-  let actionTable2 = RBMap.fromList $ concat actionTable2list in
+  let actionTable2 = RBMap.fromList $ actionTable2list in
     if
         -- shift/reduce conflict check.
         RBSet.null (RBSet.inter (RBSet.fromList (RBMap.keys actionTable1)) (RBSet.fromList (RBMap.keys actionTable2)))
       &&
-        -- TODO: reduce/reduce conflict check.
-        True
+        -- reduce/reduce conflict check.
+        length (List.nub (map fst (List.nub actionTable2list))) == length (List.nub actionTable2list)
     then
       Just (RBMap.unionl (RBMap.unionl actionTable0 actionTable1) actionTable2, gotoTable)
     else

@@ -1,0 +1,22 @@
+%%
+def rule def' :=
+  param_spec return_spec COMMA
+
+def rule param_spec :=
+  type
+| name_list COLON type
+
+def rule return_spec :=
+  type
+| name COLON type
+
+def rule type :=
+  ID
+
+def rule name :=
+  ID
+
+def rule name_list :=
+  name
+| name COMMA name_list
+%%
