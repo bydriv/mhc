@@ -187,7 +187,8 @@ makeTable start grm0 =
   let sets = makeSets grm in
   let states0 = RBSet.fromList [closure (RBSet.fromList [(Start, [], [N (UserNonterminal start), T Dollar], Question)]) sets grm] in
   let edges0 = RBSet.empty in
-  let (states, edges) = makeStatesAndEdges states0 edges0 sets grm in
+  let (states1, edges1) = makeStatesAndEdges states0 edges0 sets grm in
+  let (states, edges) = makeLALR1 states1 edges1 in
   let reduces0 = RBSet.empty in
   let reduces = makeReduces reduces0 states in
   let statesIndex = RBMap.fromList $ zip (RBSet.toList states) [0..] in
@@ -267,6 +268,30 @@ makeTable start grm0 =
           (states', edges')
         else
           makeStatesAndEdges states' edges' sets grm
+
+    makeLALR1 states0 edges0 =
+      let states = RBSet.fromList $ makeLALR1States $ RBSet.toList states0 in
+      let edges = RBSet.fromList $ map (\(items, symbol, items') -> (maybe undefined id (List.find (lalrEqItems items) (RBSet.toList states)), symbol, maybe undefined id (List.find (lalrEqItems items') (RBSet.toList states)))) (RBSet.toList edges0) in
+        (states, edges)
+      where
+        makeLALR1States [] = []
+        makeLALR1States (items : states1) =
+          let states = makeLALR1States states1 in
+            case List.find (lalrEqItems items) states of
+              Nothing ->
+                items : states
+              Just items' ->
+                RBSet.union items items' : filter (/= items') states
+
+        lalrEqItems items0 items0' =
+          let items = RBSet.fromList $ List.nubBy lalrEqItem $ RBSet.toList items0 in
+          let items' = RBSet.fromList $ List.nubBy lalrEqItem $ RBSet.toList items0' in
+            length (RBSet.toList items) == length (RBSet.toList items')
+          &&
+            all (uncurry lalrEqItem) (zip (RBSet.toList items) (RBSet.toList items'))
+
+        lalrEqItem (left, middle, right, _) (left', middle', right', _) =
+          left == left' && middle == middle' && right == right'
 
     makeReduces reduces states =
       foldl

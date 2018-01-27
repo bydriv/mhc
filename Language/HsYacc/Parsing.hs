@@ -113,131 +113,125 @@ dfaActionTransition :: ActionState -> ActionSymbol -> Maybe Action
 dfaActionTransition q s =
   case (q, s) of
     (0, Token (PP _)) -> Just (Reduce 0 1)
-    (0, Token (PSTART _)) -> Just (Shift 19)
-    (0, Token (PMODULE _)) -> Just (Shift 13)
-    (0, Token (PLBRACE _)) -> Just (Shift 15)
+    (0, Token (PSTART _)) -> Just (Shift 15)
+    (0, Token (PMODULE _)) -> Just (Shift 12)
+    (0, Token (PLBRACE _)) -> Just (Shift 13)
     (1, EOF) -> Just (Accept)
     (2, Token (PP _)) -> Just (Reduce 0 6)
-    (2, Token (DEF _)) -> Just (Shift 32)
+    (2, Token (DEF _)) -> Just (Shift 26)
     (3, EOF) -> Just (Reduce 0 17)
-    (3, Token (CODE _)) -> Just (Shift 41)
+    (3, Token (CODE _)) -> Just (Shift 35)
     (4, Token (PP _)) -> Just (Shift 2)
     (5, Token (PP _)) -> Just (Shift 3)
     (6, EOF) -> Just (Reduce 5 0)
     (7, Token (PP _)) -> Just (Reduce 0 1)
-    (7, Token (PSTART _)) -> Just (Shift 19)
-    (7, Token (PMODULE _)) -> Just (Shift 13)
-    (7, Token (PLBRACE _)) -> Just (Shift 15)
+    (7, Token (PSTART _)) -> Just (Shift 15)
+    (7, Token (PMODULE _)) -> Just (Shift 12)
+    (7, Token (PLBRACE _)) -> Just (Shift 13)
     (8, Token (PP _)) -> Just (Reduce 2 2)
     (9, Token (PP _)) -> Just (Reduce 0 6)
-    (9, Token (DEF _)) -> Just (Shift 32)
+    (9, Token (DEF _)) -> Just (Shift 26)
     (10, Token (PP _)) -> Just (Reduce 2 7)
     (11, EOF) -> Just (Reduce 0 17)
-    (11, Token (CODE _)) -> Just (Shift 41)
+    (11, Token (PWHERE _)) -> Just (Reduce 0 17)
+    (11, Token (PRBRACE _)) -> Just (Reduce 0 17)
+    (11, Token (CODE _)) -> Just (Shift 35)
     (12, Token (PWHERE _)) -> Just (Reduce 0 17)
-    (12, Token (CODE _)) -> Just (Shift 42)
-    (13, Token (PWHERE _)) -> Just (Reduce 0 17)
-    (13, Token (CODE _)) -> Just (Shift 42)
-    (14, Token (PRBRACE _)) -> Just (Reduce 0 17)
-    (14, Token (CODE _)) -> Just (Shift 43)
-    (15, Token (PRBRACE _)) -> Just (Reduce 0 17)
-    (15, Token (CODE _)) -> Just (Shift 43)
-    (16, EOF) -> Just (Reduce 2 18)
-    (17, Token (PWHERE _)) -> Just (Reduce 2 18)
-    (18, Token (PRBRACE _)) -> Just (Reduce 2 18)
-    (19, Token (NONTERMINAL _)) -> Just (Shift 29)
-    (20, Token (PP _)) -> Just (Reduce 3 4)
-    (20, Token (PSTART _)) -> Just (Reduce 3 4)
-    (20, Token (PMODULE _)) -> Just (Reduce 3 4)
-    (20, Token (PLBRACE _)) -> Just (Reduce 3 4)
-    (20, Token (NONTERMINAL _)) -> Just (Reduce 3 4)
-    (20, Token (CODE _)) -> Just (Reduce 3 4)
-    (21, Token (PP _)) -> Just (Reduce 3 5)
-    (21, Token (PSTART _)) -> Just (Reduce 3 5)
-    (21, Token (PMODULE _)) -> Just (Reduce 3 5)
-    (21, Token (PLBRACE _)) -> Just (Reduce 3 5)
-    (21, Token (NONTERMINAL _)) -> Just (Reduce 3 5)
-    (21, Token (CODE _)) -> Just (Reduce 3 5)
-    (22, Token (PWHERE _)) -> Just (Shift 20)
-    (23, Token (PRBRACE _)) -> Just (Shift 21)
-    (24, Token (PP _)) -> Just (Reduce 2 3)
-    (24, Token (PSTART _)) -> Just (Reduce 2 3)
-    (24, Token (PMODULE _)) -> Just (Reduce 2 3)
-    (24, Token (PLBRACE _)) -> Just (Reduce 2 3)
-    (24, Token (NONTERMINAL _)) -> Just (Reduce 2 3)
-    (24, Token (CODE _)) -> Just (Reduce 2 3)
-    (25, Token (PP _)) -> Just (Reduce 0 11)
-    (25, Token (DEF _)) -> Just (Reduce 0 11)
-    (25, Token (RULE _)) -> Just (Reduce 0 11)
-    (25, Token (PIPE _)) -> Just (Reduce 0 11)
-    (25, Token (TERMINAL _)) -> Just (Shift 40)
-    (25, Token (NONTERMINAL _)) -> Just (Shift 30)
-    (26, Token (PP _)) -> Just (Reduce 0 11)
-    (26, Token (DEF _)) -> Just (Reduce 0 11)
-    (26, Token (RULE _)) -> Just (Reduce 0 11)
-    (26, Token (PIPE _)) -> Just (Reduce 0 11)
-    (26, Token (TERMINAL _)) -> Just (Shift 40)
-    (26, Token (NONTERMINAL _)) -> Just (Shift 30)
-    (27, Token (PP _)) -> Just (Reduce 0 11)
-    (27, Token (DEF _)) -> Just (Reduce 0 11)
-    (27, Token (RULE _)) -> Just (Reduce 0 11)
-    (27, Token (PIPE _)) -> Just (Reduce 0 11)
-    (27, Token (TERMINAL _)) -> Just (Shift 40)
-    (27, Token (NONTERMINAL _)) -> Just (Shift 30)
-    (28, Token (NONTERMINAL _)) -> Just (Shift 31)
-    (29, Token (PP _)) -> Just (Reduce 1 14)
-    (29, Token (PSTART _)) -> Just (Reduce 1 14)
-    (29, Token (PMODULE _)) -> Just (Reduce 1 14)
-    (29, Token (PLBRACE _)) -> Just (Reduce 1 14)
-    (29, Token (NONTERMINAL _)) -> Just (Reduce 1 14)
-    (29, Token (CODE _)) -> Just (Reduce 1 14)
-    (30, Token (PP _)) -> Just (Reduce 1 14)
-    (30, Token (DEF _)) -> Just (Reduce 1 14)
-    (30, Token (RULE _)) -> Just (Reduce 1 14)
-    (30, Token (PIPE _)) -> Just (Reduce 1 14)
-    (30, Token (TERMINAL _)) -> Just (Reduce 1 14)
-    (30, Token (NONTERMINAL _)) -> Just (Reduce 1 14)
-    (31, Token (COLONEQ _)) -> Just (Reduce 1 14)
-    (32, Token (RULE _)) -> Just (Shift 28)
-    (33, Token (COLONEQ _)) -> Just (Shift 25)
-    (34, Token (PP _)) -> Just (Reduce 5 8)
-    (34, Token (DEF _)) -> Just (Reduce 5 8)
-    (34, Token (RULE _)) -> Just (Reduce 5 8)
-    (35, Token (PP _)) -> Just (Reduce 3 10)
-    (35, Token (DEF _)) -> Just (Reduce 3 10)
-    (35, Token (RULE _)) -> Just (Reduce 3 10)
-    (36, Token (PP _)) -> Just (Reduce 1 9)
-    (36, Token (DEF _)) -> Just (Reduce 1 9)
-    (36, Token (RULE _)) -> Just (Reduce 1 9)
-    (36, Token (PIPE _)) -> Just (Shift 26)
-    (37, Token (PP _)) -> Just (Reduce 2 12)
-    (37, Token (DEF _)) -> Just (Reduce 2 12)
-    (37, Token (RULE _)) -> Just (Reduce 2 12)
-    (37, Token (PIPE _)) -> Just (Reduce 2 12)
-    (38, Token (PP _)) -> Just (Reduce 1 16)
-    (38, Token (DEF _)) -> Just (Reduce 1 16)
-    (38, Token (RULE _)) -> Just (Reduce 1 16)
-    (38, Token (PIPE _)) -> Just (Reduce 1 16)
-    (38, Token (TERMINAL _)) -> Just (Reduce 1 16)
-    (38, Token (NONTERMINAL _)) -> Just (Reduce 1 16)
-    (39, Token (PP _)) -> Just (Reduce 1 15)
-    (39, Token (DEF _)) -> Just (Reduce 1 15)
-    (39, Token (RULE _)) -> Just (Reduce 1 15)
-    (39, Token (PIPE _)) -> Just (Reduce 1 15)
-    (39, Token (TERMINAL _)) -> Just (Reduce 1 15)
-    (39, Token (NONTERMINAL _)) -> Just (Reduce 1 15)
-    (40, Token (PP _)) -> Just (Reduce 1 13)
-    (40, Token (DEF _)) -> Just (Reduce 1 13)
-    (40, Token (RULE _)) -> Just (Reduce 1 13)
-    (40, Token (PIPE _)) -> Just (Reduce 1 13)
-    (40, Token (TERMINAL _)) -> Just (Reduce 1 13)
-    (40, Token (NONTERMINAL _)) -> Just (Reduce 1 13)
-    (41, EOF) -> Just (Reduce 1 19)
-    (41, Token (CODE _)) -> Just (Reduce 1 19)
-    (42, Token (PWHERE _)) -> Just (Reduce 1 19)
-    (42, Token (CODE _)) -> Just (Reduce 1 19)
-    (43, Token (PRBRACE _)) -> Just (Reduce 1 19)
-    (43, Token (CODE _)) -> Just (Reduce 1 19)
+    (12, Token (CODE _)) -> Just (Shift 35)
+    (13, Token (PRBRACE _)) -> Just (Reduce 0 17)
+    (13, Token (CODE _)) -> Just (Shift 35)
+    (14, EOF) -> Just (Reduce 2 18)
+    (14, Token (PWHERE _)) -> Just (Reduce 2 18)
+    (14, Token (PRBRACE _)) -> Just (Reduce 2 18)
+    (15, Token (NONTERMINAL _)) -> Just (Shift 25)
+    (16, Token (PP _)) -> Just (Reduce 3 4)
+    (16, Token (PSTART _)) -> Just (Reduce 3 4)
+    (16, Token (PMODULE _)) -> Just (Reduce 3 4)
+    (16, Token (PLBRACE _)) -> Just (Reduce 3 4)
+    (16, Token (NONTERMINAL _)) -> Just (Reduce 3 4)
+    (16, Token (CODE _)) -> Just (Reduce 3 4)
+    (17, Token (PP _)) -> Just (Reduce 3 5)
+    (17, Token (PSTART _)) -> Just (Reduce 3 5)
+    (17, Token (PMODULE _)) -> Just (Reduce 3 5)
+    (17, Token (PLBRACE _)) -> Just (Reduce 3 5)
+    (17, Token (NONTERMINAL _)) -> Just (Reduce 3 5)
+    (17, Token (CODE _)) -> Just (Reduce 3 5)
+    (18, Token (PWHERE _)) -> Just (Shift 16)
+    (19, Token (PRBRACE _)) -> Just (Shift 17)
+    (20, Token (PP _)) -> Just (Reduce 2 3)
+    (20, Token (PSTART _)) -> Just (Reduce 2 3)
+    (20, Token (PMODULE _)) -> Just (Reduce 2 3)
+    (20, Token (PLBRACE _)) -> Just (Reduce 2 3)
+    (20, Token (NONTERMINAL _)) -> Just (Reduce 2 3)
+    (20, Token (CODE _)) -> Just (Reduce 2 3)
+    (21, Token (PP _)) -> Just (Reduce 0 11)
+    (21, Token (DEF _)) -> Just (Reduce 0 11)
+    (21, Token (RULE _)) -> Just (Reduce 0 11)
+    (21, Token (PIPE _)) -> Just (Reduce 0 11)
+    (21, Token (TERMINAL _)) -> Just (Shift 34)
+    (21, Token (NONTERMINAL _)) -> Just (Shift 25)
+    (22, Token (PP _)) -> Just (Reduce 0 11)
+    (22, Token (DEF _)) -> Just (Reduce 0 11)
+    (22, Token (RULE _)) -> Just (Reduce 0 11)
+    (22, Token (PIPE _)) -> Just (Reduce 0 11)
+    (22, Token (TERMINAL _)) -> Just (Shift 34)
+    (22, Token (NONTERMINAL _)) -> Just (Shift 25)
+    (23, Token (PP _)) -> Just (Reduce 0 11)
+    (23, Token (DEF _)) -> Just (Reduce 0 11)
+    (23, Token (RULE _)) -> Just (Reduce 0 11)
+    (23, Token (PIPE _)) -> Just (Reduce 0 11)
+    (23, Token (TERMINAL _)) -> Just (Shift 34)
+    (23, Token (NONTERMINAL _)) -> Just (Shift 25)
+    (24, Token (NONTERMINAL _)) -> Just (Shift 25)
+    (25, Token (PP _)) -> Just (Reduce 1 14)
+    (25, Token (PSTART _)) -> Just (Reduce 1 14)
+    (25, Token (PMODULE _)) -> Just (Reduce 1 14)
+    (25, Token (PLBRACE _)) -> Just (Reduce 1 14)
+    (25, Token (DEF _)) -> Just (Reduce 1 14)
+    (25, Token (RULE _)) -> Just (Reduce 1 14)
+    (25, Token (COLONEQ _)) -> Just (Reduce 1 14)
+    (25, Token (PIPE _)) -> Just (Reduce 1 14)
+    (25, Token (TERMINAL _)) -> Just (Reduce 1 14)
+    (25, Token (NONTERMINAL _)) -> Just (Reduce 1 14)
+    (25, Token (CODE _)) -> Just (Reduce 1 14)
+    (26, Token (RULE _)) -> Just (Shift 24)
+    (27, Token (COLONEQ _)) -> Just (Shift 21)
+    (28, Token (PP _)) -> Just (Reduce 5 8)
+    (28, Token (DEF _)) -> Just (Reduce 5 8)
+    (28, Token (RULE _)) -> Just (Reduce 5 8)
+    (29, Token (PP _)) -> Just (Reduce 3 10)
+    (29, Token (DEF _)) -> Just (Reduce 3 10)
+    (29, Token (RULE _)) -> Just (Reduce 3 10)
+    (30, Token (PP _)) -> Just (Reduce 1 9)
+    (30, Token (DEF _)) -> Just (Reduce 1 9)
+    (30, Token (RULE _)) -> Just (Reduce 1 9)
+    (30, Token (PIPE _)) -> Just (Shift 22)
+    (31, Token (PP _)) -> Just (Reduce 2 12)
+    (31, Token (DEF _)) -> Just (Reduce 2 12)
+    (31, Token (RULE _)) -> Just (Reduce 2 12)
+    (31, Token (PIPE _)) -> Just (Reduce 2 12)
+    (32, Token (PP _)) -> Just (Reduce 1 16)
+    (32, Token (DEF _)) -> Just (Reduce 1 16)
+    (32, Token (RULE _)) -> Just (Reduce 1 16)
+    (32, Token (PIPE _)) -> Just (Reduce 1 16)
+    (32, Token (TERMINAL _)) -> Just (Reduce 1 16)
+    (32, Token (NONTERMINAL _)) -> Just (Reduce 1 16)
+    (33, Token (PP _)) -> Just (Reduce 1 15)
+    (33, Token (DEF _)) -> Just (Reduce 1 15)
+    (33, Token (RULE _)) -> Just (Reduce 1 15)
+    (33, Token (PIPE _)) -> Just (Reduce 1 15)
+    (33, Token (TERMINAL _)) -> Just (Reduce 1 15)
+    (33, Token (NONTERMINAL _)) -> Just (Reduce 1 15)
+    (34, Token (PP _)) -> Just (Reduce 1 13)
+    (34, Token (DEF _)) -> Just (Reduce 1 13)
+    (34, Token (RULE _)) -> Just (Reduce 1 13)
+    (34, Token (PIPE _)) -> Just (Reduce 1 13)
+    (34, Token (TERMINAL _)) -> Just (Reduce 1 13)
+    (34, Token (NONTERMINAL _)) -> Just (Reduce 1 13)
+    (35, EOF) -> Just (Reduce 1 19)
+    (35, Token (PWHERE _)) -> Just (Reduce 1 19)
+    (35, Token (PRBRACE _)) -> Just (Reduce 1 19)
+    (35, Token (CODE _)) -> Just (Reduce 1 19)
     (_, _) -> Nothing
 
 production :: Int -> Int
@@ -276,32 +270,28 @@ dfaGotoTransition q s =
     (7, 4) -> Just 7
     (9, 2) -> Just 10
     (9, 6) -> Just 9
-    (11, 3) -> Just 16
+    (11, 3) -> Just 14
     (11, 11) -> Just 11
-    (12, 3) -> Just 17
-    (12, 11) -> Just 12
-    (13, 3) -> Just 22
-    (13, 11) -> Just 12
-    (14, 3) -> Just 18
-    (14, 11) -> Just 14
-    (15, 3) -> Just 23
-    (15, 11) -> Just 14
-    (19, 5) -> Just 24
-    (25, 5) -> Just 38
-    (25, 7) -> Just 34
-    (25, 8) -> Just 36
-    (25, 9) -> Just 27
-    (25, 10) -> Just 39
-    (26, 5) -> Just 38
-    (26, 7) -> Just 35
-    (26, 8) -> Just 36
-    (26, 9) -> Just 27
-    (26, 10) -> Just 39
-    (27, 5) -> Just 38
-    (27, 8) -> Just 37
-    (27, 9) -> Just 27
-    (27, 10) -> Just 39
-    (28, 5) -> Just 33
+    (12, 3) -> Just 18
+    (12, 11) -> Just 11
+    (13, 3) -> Just 19
+    (13, 11) -> Just 11
+    (15, 5) -> Just 20
+    (21, 5) -> Just 32
+    (21, 7) -> Just 28
+    (21, 8) -> Just 30
+    (21, 9) -> Just 23
+    (21, 10) -> Just 33
+    (22, 5) -> Just 32
+    (22, 7) -> Just 29
+    (22, 8) -> Just 30
+    (22, 9) -> Just 23
+    (22, 10) -> Just 33
+    (23, 5) -> Just 32
+    (23, 8) -> Just 31
+    (23, 9) -> Just 23
+    (23, 10) -> Just 33
+    (24, 5) -> Just 27
     (_, _) -> Nothing
 
 parse :: Monad m => SemanticActions m -> [Token] -> m (Maybe (Start, [Token]))
