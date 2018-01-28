@@ -3,8 +3,10 @@
 %start start
 
 %{
+import qualified Data.Char      as Char
 import qualified Language.HsLex as HsLex
 
+type ANY = ()
 type HAT = ()
 type HYPHEN = ()
 type LBRACKET = ()
@@ -28,6 +30,7 @@ type LPAREN = ()
 type RPAREN = ()
 type STRING = String
 type CHAR = Char
+type GENERAL_CATEGORY = Char.GeneralCategory
 
 type Start = (Definitions, Cases, Codes)
 
@@ -75,7 +78,10 @@ def rule cases :=
 def rule case := CASE LPAREN lexingState COMMA exp RPAREN DARROW semanticAction
 
 def rule atexp :=
-  STRING
+  ANY
+| CHAR
+| STRING
+| GENERAL_CATEGORY
 | LPAREN exp RPAREN
 | LBRACKET charsets RBRACKET
 | LBRACKET HAT charsets RBRACKET
@@ -150,8 +156,14 @@ semanticActions = SemanticActions
       return $ case' : cases
   , case_implies_CASE_LPAREN_lexingState_COMMA_exp_RPAREN_DARROW_semanticAction = \() () lexingState () regexp () () sa ->
       return (lexingState, regexp, sa)
+  , atexp_implies_ANY =
+      const $ return $ HsLex.any
+  , atexp_implies_CHAR =
+      return . HsLex.char
   , atexp_implies_STRING =
       return . HsLex.string
+  , atexp_implies_GENERAL_CATEGORY =
+      return . HsLex.generalCategory
   , atexp_implies_LPAREN_exp_RPAREN = \() regexp () ->
       return regexp
   , atexp_implies_LBRACKET_charsets_RBRACKET = \() charsets () ->

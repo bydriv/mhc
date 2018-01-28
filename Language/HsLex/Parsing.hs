@@ -2,8 +2,10 @@ module  Language.HsLex.Parsing  where
 import qualified Control.Monad as Monad
 
 
+import qualified Data.Char      as Char
 import qualified Language.HsLex as HsLex
 
+type ANY = ()
 type HAT = ()
 type HYPHEN = ()
 type LBRACKET = ()
@@ -27,6 +29,7 @@ type LPAREN = ()
 type RPAREN = ()
 type STRING = String
 type CHAR = Char
+type GENERAL_CATEGORY = Char.GeneralCategory
 
 type Start = (Definitions, Cases, Codes)
 
@@ -57,11 +60,13 @@ type Codes = [Code]
 type Code = CODE
 
 data Token =
-    CASE CASE
+    ANY ANY
+  | CASE CASE
   | CHAR CHAR
   | CODE CODE
   | COMMA COMMA
   | DARROW DARROW
+  | GENERAL_CATEGORY GENERAL_CATEGORY
   | HAT HAT
   | HYPHEN HYPHEN
   | LBRACKET LBRACKET
@@ -100,12 +105,14 @@ data StackValue =
   | StackValue_COMMA COMMA
   | StackValue_RPAREN RPAREN
   | StackValue_DARROW DARROW
+  | StackValue_ANY ANY
+  | StackValue_CHAR CHAR
   | StackValue_STRING STRING
+  | StackValue_GENERAL_CATEGORY GENERAL_CATEGORY
   | StackValue_LBRACKET LBRACKET
   | StackValue_RBRACKET RBRACKET
   | StackValue_HAT HAT
   | StackValue_PIPE PIPE
-  | StackValue_CHAR CHAR
   | StackValue_HYPHEN HYPHEN
   | StackValue_STAR STAR
   | StackValue_PLUS PLUS
@@ -140,7 +147,10 @@ data SemanticActions m = SemanticActions
   , cases_implies :: m Cases
   , cases_implies_case_cases :: Case -> Cases -> m Cases
   , case_implies_CASE_LPAREN_lexingState_COMMA_exp_RPAREN_DARROW_semanticAction :: CASE -> LPAREN -> LexingState -> COMMA -> Exp -> RPAREN -> DARROW -> SemanticAction -> m Case
+  , atexp_implies_ANY :: ANY -> m Atexp
+  , atexp_implies_CHAR :: CHAR -> m Atexp
   , atexp_implies_STRING :: STRING -> m Atexp
+  , atexp_implies_GENERAL_CATEGORY :: GENERAL_CATEGORY -> m Atexp
   , atexp_implies_LPAREN_exp_RPAREN :: LPAREN -> Exp -> RPAREN -> m Atexp
   , atexp_implies_LBRACKET_charsets_RBRACKET :: LBRACKET -> Charsets -> RBRACKET -> m Atexp
   , atexp_implies_LBRACKET_HAT_charsets_RBRACKET :: LBRACKET -> HAT -> Charsets -> RBRACKET -> m Atexp
@@ -174,8 +184,8 @@ dfaActionTransition q s =
     (1, EOF) -> Just (Accept)
     (2, Token (PP _)) -> Just (Reduce 0 5)
     (2, Token (CASE _)) -> Just (Shift 19)
-    (3, EOF) -> Just (Reduce 0 29)
-    (3, Token (CODE _)) -> Just (Shift 58)
+    (3, EOF) -> Just (Reduce 0 32)
+    (3, Token (CODE _)) -> Just (Shift 61)
     (4, Token (PP _)) -> Just (Shift 2)
     (5, Token (PP _)) -> Just (Shift 3)
     (6, EOF) -> Just (Reduce 5 0)
@@ -186,17 +196,17 @@ dfaActionTransition q s =
     (9, Token (PP _)) -> Just (Reduce 0 5)
     (9, Token (CASE _)) -> Just (Shift 19)
     (10, Token (PP _)) -> Just (Reduce 2 6)
-    (11, EOF) -> Just (Reduce 0 29)
-    (11, Token (PWHERE _)) -> Just (Reduce 0 29)
-    (11, Token (PRBRACE _)) -> Just (Reduce 0 29)
-    (11, Token (CODE _)) -> Just (Shift 58)
-    (12, Token (PWHERE _)) -> Just (Reduce 0 29)
-    (12, Token (CODE _)) -> Just (Shift 58)
-    (13, Token (PRBRACE _)) -> Just (Reduce 0 29)
-    (13, Token (CODE _)) -> Just (Shift 58)
-    (14, EOF) -> Just (Reduce 2 30)
-    (14, Token (PWHERE _)) -> Just (Reduce 2 30)
-    (14, Token (PRBRACE _)) -> Just (Reduce 2 30)
+    (11, EOF) -> Just (Reduce 0 32)
+    (11, Token (PWHERE _)) -> Just (Reduce 0 32)
+    (11, Token (PRBRACE _)) -> Just (Reduce 0 32)
+    (11, Token (CODE _)) -> Just (Shift 61)
+    (12, Token (PWHERE _)) -> Just (Reduce 0 32)
+    (12, Token (CODE _)) -> Just (Shift 61)
+    (13, Token (PRBRACE _)) -> Just (Reduce 0 32)
+    (13, Token (CODE _)) -> Just (Shift 61)
+    (14, EOF) -> Just (Reduce 2 33)
+    (14, Token (PWHERE _)) -> Just (Reduce 2 33)
+    (14, Token (PRBRACE _)) -> Just (Reduce 2 33)
     (15, Token (PP _)) -> Just (Reduce 3 3)
     (15, Token (PMODULE _)) -> Just (Reduce 3 3)
     (15, Token (PLBRACE _)) -> Just (Reduce 3 3)
@@ -210,8 +220,11 @@ dfaActionTransition q s =
     (19, Token (LPAREN _)) -> Just (Shift 20)
     (20, Token (LEXING_STATE _)) -> Just (Shift 27)
     (21, Token (LPAREN _)) -> Just (Shift 28)
-    (21, Token (STRING _)) -> Just (Shift 34)
-    (21, Token (LBRACKET _)) -> Just (Shift 35)
+    (21, Token (ANY _)) -> Just (Shift 34)
+    (21, Token (CHAR _)) -> Just (Shift 35)
+    (21, Token (STRING _)) -> Just (Shift 36)
+    (21, Token (GENERAL_CATEGORY _)) -> Just (Shift 37)
+    (21, Token (LBRACKET _)) -> Just (Shift 38)
     (22, Token (DARROW _)) -> Just (Shift 23)
     (23, Token (SEMANTIC_ACTION _)) -> Just (Shift 30)
     (24, Token (COMMA _)) -> Just (Shift 21)
@@ -219,146 +232,210 @@ dfaActionTransition q s =
     (26, Token (PP _)) -> Just (Reduce 8 7)
     (26, Token (CASE _)) -> Just (Reduce 8 7)
     (26, Token (LPAREN _)) -> Just (Reduce 8 7)
-    (27, Token (COMMA _)) -> Just (Reduce 1 27)
+    (27, Token (COMMA _)) -> Just (Reduce 1 30)
     (28, Token (LPAREN _)) -> Just (Shift 28)
-    (28, Token (STRING _)) -> Just (Shift 34)
-    (28, Token (LBRACKET _)) -> Just (Shift 35)
-    (29, Token (RPAREN _)) -> Just (Reduce 1 26)
-    (30, Token (PP _)) -> Just (Reduce 1 28)
-    (30, Token (CASE _)) -> Just (Reduce 1 28)
-    (30, Token (LPAREN _)) -> Just (Reduce 1 28)
+    (28, Token (ANY _)) -> Just (Shift 34)
+    (28, Token (CHAR _)) -> Just (Shift 35)
+    (28, Token (STRING _)) -> Just (Shift 36)
+    (28, Token (GENERAL_CATEGORY _)) -> Just (Shift 37)
+    (28, Token (LBRACKET _)) -> Just (Shift 38)
+    (29, Token (RPAREN _)) -> Just (Reduce 1 29)
+    (30, Token (PP _)) -> Just (Reduce 1 31)
+    (30, Token (CASE _)) -> Just (Reduce 1 31)
+    (30, Token (LPAREN _)) -> Just (Reduce 1 31)
     (31, Token (LPAREN _)) -> Just (Shift 28)
-    (31, Token (RPAREN _)) -> Just (Reduce 1 22)
-    (31, Token (STRING _)) -> Just (Shift 34)
-    (31, Token (LBRACKET _)) -> Just (Shift 35)
-    (31, Token (PIPE _)) -> Just (Reduce 1 22)
-    (31, Token (STAR _)) -> Just (Shift 51)
-    (31, Token (PLUS _)) -> Just (Shift 52)
-    (31, Token (QUES _)) -> Just (Shift 53)
+    (31, Token (RPAREN _)) -> Just (Reduce 1 25)
+    (31, Token (ANY _)) -> Just (Shift 34)
+    (31, Token (CHAR _)) -> Just (Shift 35)
+    (31, Token (STRING _)) -> Just (Shift 36)
+    (31, Token (GENERAL_CATEGORY _)) -> Just (Shift 37)
+    (31, Token (LBRACKET _)) -> Just (Shift 38)
+    (31, Token (PIPE _)) -> Just (Reduce 1 25)
+    (31, Token (STAR _)) -> Just (Shift 54)
+    (31, Token (PLUS _)) -> Just (Shift 55)
+    (31, Token (QUES _)) -> Just (Shift 56)
     (32, Token (LPAREN _)) -> Just (Shift 28)
-    (32, Token (STRING _)) -> Just (Shift 34)
-    (32, Token (LBRACKET _)) -> Just (Shift 35)
-    (33, Token (LPAREN _)) -> Just (Reduce 3 9)
-    (33, Token (RPAREN _)) -> Just (Reduce 3 9)
-    (33, Token (STRING _)) -> Just (Reduce 3 9)
-    (33, Token (LBRACKET _)) -> Just (Reduce 3 9)
-    (33, Token (HAT _)) -> Just (Reduce 3 9)
-    (33, Token (PIPE _)) -> Just (Reduce 3 9)
-    (33, Token (CHAR _)) -> Just (Reduce 3 9)
-    (33, Token (HYPHEN _)) -> Just (Reduce 3 9)
-    (33, Token (STAR _)) -> Just (Reduce 3 9)
-    (33, Token (PLUS _)) -> Just (Reduce 3 9)
-    (33, Token (QUES _)) -> Just (Reduce 3 9)
+    (32, Token (ANY _)) -> Just (Shift 34)
+    (32, Token (CHAR _)) -> Just (Shift 35)
+    (32, Token (STRING _)) -> Just (Shift 36)
+    (32, Token (GENERAL_CATEGORY _)) -> Just (Shift 37)
+    (32, Token (LBRACKET _)) -> Just (Shift 38)
+    (33, Token (LPAREN _)) -> Just (Reduce 3 12)
+    (33, Token (RPAREN _)) -> Just (Reduce 3 12)
+    (33, Token (ANY _)) -> Just (Reduce 3 12)
+    (33, Token (CHAR _)) -> Just (Reduce 3 12)
+    (33, Token (STRING _)) -> Just (Reduce 3 12)
+    (33, Token (GENERAL_CATEGORY _)) -> Just (Reduce 3 12)
+    (33, Token (LBRACKET _)) -> Just (Reduce 3 12)
+    (33, Token (HAT _)) -> Just (Reduce 3 12)
+    (33, Token (PIPE _)) -> Just (Reduce 3 12)
+    (33, Token (HYPHEN _)) -> Just (Reduce 3 12)
+    (33, Token (STAR _)) -> Just (Reduce 3 12)
+    (33, Token (PLUS _)) -> Just (Reduce 3 12)
+    (33, Token (QUES _)) -> Just (Reduce 3 12)
     (34, Token (LPAREN _)) -> Just (Reduce 1 8)
     (34, Token (RPAREN _)) -> Just (Reduce 1 8)
+    (34, Token (ANY _)) -> Just (Reduce 1 8)
+    (34, Token (CHAR _)) -> Just (Reduce 1 8)
     (34, Token (STRING _)) -> Just (Reduce 1 8)
+    (34, Token (GENERAL_CATEGORY _)) -> Just (Reduce 1 8)
     (34, Token (LBRACKET _)) -> Just (Reduce 1 8)
     (34, Token (HAT _)) -> Just (Reduce 1 8)
     (34, Token (PIPE _)) -> Just (Reduce 1 8)
-    (34, Token (CHAR _)) -> Just (Reduce 1 8)
     (34, Token (HYPHEN _)) -> Just (Reduce 1 8)
     (34, Token (STAR _)) -> Just (Reduce 1 8)
     (34, Token (PLUS _)) -> Just (Reduce 1 8)
     (34, Token (QUES _)) -> Just (Reduce 1 8)
-    (35, Token (HAT _)) -> Just (Shift 38)
-    (35, Token (CHAR _)) -> Just (Shift 45)
-    (36, Token (LPAREN _)) -> Just (Reduce 3 10)
-    (36, Token (RPAREN _)) -> Just (Reduce 3 10)
-    (36, Token (STRING _)) -> Just (Reduce 3 10)
-    (36, Token (LBRACKET _)) -> Just (Reduce 3 10)
-    (36, Token (HAT _)) -> Just (Reduce 3 10)
-    (36, Token (PIPE _)) -> Just (Reduce 3 10)
-    (36, Token (CHAR _)) -> Just (Reduce 3 10)
-    (36, Token (HYPHEN _)) -> Just (Reduce 3 10)
-    (36, Token (STAR _)) -> Just (Reduce 3 10)
-    (36, Token (PLUS _)) -> Just (Reduce 3 10)
-    (36, Token (QUES _)) -> Just (Reduce 3 10)
-    (37, Token (LPAREN _)) -> Just (Reduce 4 11)
-    (37, Token (RPAREN _)) -> Just (Reduce 4 11)
-    (37, Token (STRING _)) -> Just (Reduce 4 11)
-    (37, Token (LBRACKET _)) -> Just (Reduce 4 11)
-    (37, Token (HAT _)) -> Just (Reduce 4 11)
-    (37, Token (PIPE _)) -> Just (Reduce 4 11)
-    (37, Token (CHAR _)) -> Just (Reduce 4 11)
-    (37, Token (HYPHEN _)) -> Just (Reduce 4 11)
-    (37, Token (STAR _)) -> Just (Reduce 4 11)
-    (37, Token (PLUS _)) -> Just (Reduce 4 11)
-    (37, Token (QUES _)) -> Just (Reduce 4 11)
-    (38, Token (CHAR _)) -> Just (Shift 45)
-    (39, Token (RPAREN _)) -> Just (Shift 33)
-    (40, Token (RBRACKET _)) -> Just (Shift 36)
-    (41, Token (RBRACKET _)) -> Just (Shift 37)
-    (42, Token (CHAR _)) -> Just (Shift 45)
-    (43, Token (RBRACKET _)) -> Just (Reduce 3 13)
-    (44, Token (RBRACKET _)) -> Just (Reduce 1 12)
-    (44, Token (PIPE _)) -> Just (Shift 42)
-    (45, Token (RBRACKET _)) -> Just (Reduce 1 16)
-    (45, Token (PIPE _)) -> Just (Reduce 1 16)
-    (45, Token (CHAR _)) -> Just (Shift 49)
-    (45, Token (HYPHEN _)) -> Just (Shift 47)
-    (46, Token (RBRACKET _)) -> Just (Reduce 3 15)
-    (46, Token (PIPE _)) -> Just (Reduce 3 15)
-    (47, Token (CHAR _)) -> Just (Shift 46)
-    (48, Token (RBRACKET _)) -> Just (Reduce 1 14)
-    (48, Token (PIPE _)) -> Just (Reduce 1 14)
-    (49, Token (RBRACKET _)) -> Just (Reduce 1 16)
-    (49, Token (PIPE _)) -> Just (Reduce 1 16)
-    (49, Token (CHAR _)) -> Just (Shift 49)
-    (50, Token (RBRACKET _)) -> Just (Reduce 2 17)
-    (50, Token (PIPE _)) -> Just (Reduce 2 17)
-    (51, Token (LPAREN _)) -> Just (Reduce 2 19)
-    (51, Token (RPAREN _)) -> Just (Reduce 2 19)
-    (51, Token (STRING _)) -> Just (Reduce 2 19)
-    (51, Token (LBRACKET _)) -> Just (Reduce 2 19)
-    (51, Token (HAT _)) -> Just (Reduce 2 19)
-    (51, Token (PIPE _)) -> Just (Reduce 2 19)
-    (51, Token (CHAR _)) -> Just (Reduce 2 19)
-    (51, Token (HYPHEN _)) -> Just (Reduce 2 19)
-    (51, Token (STAR _)) -> Just (Reduce 2 19)
-    (51, Token (PLUS _)) -> Just (Reduce 2 19)
-    (51, Token (QUES _)) -> Just (Reduce 2 19)
-    (52, Token (LPAREN _)) -> Just (Reduce 2 20)
-    (52, Token (RPAREN _)) -> Just (Reduce 2 20)
-    (52, Token (STRING _)) -> Just (Reduce 2 20)
-    (52, Token (LBRACKET _)) -> Just (Reduce 2 20)
-    (52, Token (HAT _)) -> Just (Reduce 2 20)
-    (52, Token (PIPE _)) -> Just (Reduce 2 20)
-    (52, Token (CHAR _)) -> Just (Reduce 2 20)
-    (52, Token (HYPHEN _)) -> Just (Reduce 2 20)
-    (52, Token (STAR _)) -> Just (Reduce 2 20)
-    (52, Token (PLUS _)) -> Just (Reduce 2 20)
-    (52, Token (QUES _)) -> Just (Reduce 2 20)
-    (53, Token (LPAREN _)) -> Just (Reduce 2 21)
-    (53, Token (RPAREN _)) -> Just (Reduce 2 21)
-    (53, Token (STRING _)) -> Just (Reduce 2 21)
-    (53, Token (LBRACKET _)) -> Just (Reduce 2 21)
-    (53, Token (HAT _)) -> Just (Reduce 2 21)
-    (53, Token (PIPE _)) -> Just (Reduce 2 21)
-    (53, Token (CHAR _)) -> Just (Reduce 2 21)
-    (53, Token (HYPHEN _)) -> Just (Reduce 2 21)
-    (53, Token (STAR _)) -> Just (Reduce 2 21)
-    (53, Token (PLUS _)) -> Just (Reduce 2 21)
-    (53, Token (QUES _)) -> Just (Reduce 2 21)
-    (54, Token (LPAREN _)) -> Just (Reduce 1 18)
-    (54, Token (RPAREN _)) -> Just (Reduce 1 18)
-    (54, Token (STRING _)) -> Just (Reduce 1 18)
-    (54, Token (LBRACKET _)) -> Just (Reduce 1 18)
-    (54, Token (HAT _)) -> Just (Reduce 1 18)
-    (54, Token (PIPE _)) -> Just (Reduce 1 18)
-    (54, Token (CHAR _)) -> Just (Reduce 1 18)
-    (54, Token (HYPHEN _)) -> Just (Reduce 1 18)
-    (54, Token (STAR _)) -> Just (Reduce 1 18)
-    (54, Token (PLUS _)) -> Just (Reduce 1 18)
-    (54, Token (QUES _)) -> Just (Reduce 1 18)
+    (35, Token (LPAREN _)) -> Just (Reduce 1 9)
+    (35, Token (RPAREN _)) -> Just (Reduce 1 9)
+    (35, Token (ANY _)) -> Just (Reduce 1 9)
+    (35, Token (CHAR _)) -> Just (Reduce 1 9)
+    (35, Token (STRING _)) -> Just (Reduce 1 9)
+    (35, Token (GENERAL_CATEGORY _)) -> Just (Reduce 1 9)
+    (35, Token (LBRACKET _)) -> Just (Reduce 1 9)
+    (35, Token (HAT _)) -> Just (Reduce 1 9)
+    (35, Token (PIPE _)) -> Just (Reduce 1 9)
+    (35, Token (HYPHEN _)) -> Just (Reduce 1 9)
+    (35, Token (STAR _)) -> Just (Reduce 1 9)
+    (35, Token (PLUS _)) -> Just (Reduce 1 9)
+    (35, Token (QUES _)) -> Just (Reduce 1 9)
+    (36, Token (LPAREN _)) -> Just (Reduce 1 10)
+    (36, Token (RPAREN _)) -> Just (Reduce 1 10)
+    (36, Token (ANY _)) -> Just (Reduce 1 10)
+    (36, Token (CHAR _)) -> Just (Reduce 1 10)
+    (36, Token (STRING _)) -> Just (Reduce 1 10)
+    (36, Token (GENERAL_CATEGORY _)) -> Just (Reduce 1 10)
+    (36, Token (LBRACKET _)) -> Just (Reduce 1 10)
+    (36, Token (HAT _)) -> Just (Reduce 1 10)
+    (36, Token (PIPE _)) -> Just (Reduce 1 10)
+    (36, Token (HYPHEN _)) -> Just (Reduce 1 10)
+    (36, Token (STAR _)) -> Just (Reduce 1 10)
+    (36, Token (PLUS _)) -> Just (Reduce 1 10)
+    (36, Token (QUES _)) -> Just (Reduce 1 10)
+    (37, Token (LPAREN _)) -> Just (Reduce 1 11)
+    (37, Token (RPAREN _)) -> Just (Reduce 1 11)
+    (37, Token (ANY _)) -> Just (Reduce 1 11)
+    (37, Token (CHAR _)) -> Just (Reduce 1 11)
+    (37, Token (STRING _)) -> Just (Reduce 1 11)
+    (37, Token (GENERAL_CATEGORY _)) -> Just (Reduce 1 11)
+    (37, Token (LBRACKET _)) -> Just (Reduce 1 11)
+    (37, Token (HAT _)) -> Just (Reduce 1 11)
+    (37, Token (PIPE _)) -> Just (Reduce 1 11)
+    (37, Token (HYPHEN _)) -> Just (Reduce 1 11)
+    (37, Token (STAR _)) -> Just (Reduce 1 11)
+    (37, Token (PLUS _)) -> Just (Reduce 1 11)
+    (37, Token (QUES _)) -> Just (Reduce 1 11)
+    (38, Token (CHAR _)) -> Just (Shift 48)
+    (38, Token (HAT _)) -> Just (Shift 41)
+    (39, Token (LPAREN _)) -> Just (Reduce 3 13)
+    (39, Token (RPAREN _)) -> Just (Reduce 3 13)
+    (39, Token (ANY _)) -> Just (Reduce 3 13)
+    (39, Token (CHAR _)) -> Just (Reduce 3 13)
+    (39, Token (STRING _)) -> Just (Reduce 3 13)
+    (39, Token (GENERAL_CATEGORY _)) -> Just (Reduce 3 13)
+    (39, Token (LBRACKET _)) -> Just (Reduce 3 13)
+    (39, Token (HAT _)) -> Just (Reduce 3 13)
+    (39, Token (PIPE _)) -> Just (Reduce 3 13)
+    (39, Token (HYPHEN _)) -> Just (Reduce 3 13)
+    (39, Token (STAR _)) -> Just (Reduce 3 13)
+    (39, Token (PLUS _)) -> Just (Reduce 3 13)
+    (39, Token (QUES _)) -> Just (Reduce 3 13)
+    (40, Token (LPAREN _)) -> Just (Reduce 4 14)
+    (40, Token (RPAREN _)) -> Just (Reduce 4 14)
+    (40, Token (ANY _)) -> Just (Reduce 4 14)
+    (40, Token (CHAR _)) -> Just (Reduce 4 14)
+    (40, Token (STRING _)) -> Just (Reduce 4 14)
+    (40, Token (GENERAL_CATEGORY _)) -> Just (Reduce 4 14)
+    (40, Token (LBRACKET _)) -> Just (Reduce 4 14)
+    (40, Token (HAT _)) -> Just (Reduce 4 14)
+    (40, Token (PIPE _)) -> Just (Reduce 4 14)
+    (40, Token (HYPHEN _)) -> Just (Reduce 4 14)
+    (40, Token (STAR _)) -> Just (Reduce 4 14)
+    (40, Token (PLUS _)) -> Just (Reduce 4 14)
+    (40, Token (QUES _)) -> Just (Reduce 4 14)
+    (41, Token (CHAR _)) -> Just (Shift 48)
+    (42, Token (RPAREN _)) -> Just (Shift 33)
+    (43, Token (RBRACKET _)) -> Just (Shift 39)
+    (44, Token (RBRACKET _)) -> Just (Shift 40)
+    (45, Token (CHAR _)) -> Just (Shift 48)
+    (46, Token (RBRACKET _)) -> Just (Reduce 3 16)
+    (47, Token (RBRACKET _)) -> Just (Reduce 1 15)
+    (47, Token (PIPE _)) -> Just (Shift 45)
+    (48, Token (CHAR _)) -> Just (Shift 52)
+    (48, Token (RBRACKET _)) -> Just (Reduce 1 19)
+    (48, Token (PIPE _)) -> Just (Reduce 1 19)
+    (48, Token (HYPHEN _)) -> Just (Shift 50)
+    (49, Token (RBRACKET _)) -> Just (Reduce 3 18)
+    (49, Token (PIPE _)) -> Just (Reduce 3 18)
+    (50, Token (CHAR _)) -> Just (Shift 49)
+    (51, Token (RBRACKET _)) -> Just (Reduce 1 17)
+    (51, Token (PIPE _)) -> Just (Reduce 1 17)
+    (52, Token (CHAR _)) -> Just (Shift 52)
+    (52, Token (RBRACKET _)) -> Just (Reduce 1 19)
+    (52, Token (PIPE _)) -> Just (Reduce 1 19)
+    (53, Token (RBRACKET _)) -> Just (Reduce 2 20)
+    (53, Token (PIPE _)) -> Just (Reduce 2 20)
+    (54, Token (LPAREN _)) -> Just (Reduce 2 22)
+    (54, Token (RPAREN _)) -> Just (Reduce 2 22)
+    (54, Token (ANY _)) -> Just (Reduce 2 22)
+    (54, Token (CHAR _)) -> Just (Reduce 2 22)
+    (54, Token (STRING _)) -> Just (Reduce 2 22)
+    (54, Token (GENERAL_CATEGORY _)) -> Just (Reduce 2 22)
+    (54, Token (LBRACKET _)) -> Just (Reduce 2 22)
+    (54, Token (HAT _)) -> Just (Reduce 2 22)
+    (54, Token (PIPE _)) -> Just (Reduce 2 22)
+    (54, Token (HYPHEN _)) -> Just (Reduce 2 22)
+    (54, Token (STAR _)) -> Just (Reduce 2 22)
+    (54, Token (PLUS _)) -> Just (Reduce 2 22)
+    (54, Token (QUES _)) -> Just (Reduce 2 22)
+    (55, Token (LPAREN _)) -> Just (Reduce 2 23)
     (55, Token (RPAREN _)) -> Just (Reduce 2 23)
+    (55, Token (ANY _)) -> Just (Reduce 2 23)
+    (55, Token (CHAR _)) -> Just (Reduce 2 23)
+    (55, Token (STRING _)) -> Just (Reduce 2 23)
+    (55, Token (GENERAL_CATEGORY _)) -> Just (Reduce 2 23)
+    (55, Token (LBRACKET _)) -> Just (Reduce 2 23)
+    (55, Token (HAT _)) -> Just (Reduce 2 23)
     (55, Token (PIPE _)) -> Just (Reduce 2 23)
-    (56, Token (RPAREN _)) -> Just (Reduce 1 24)
-    (56, Token (PIPE _)) -> Just (Shift 32)
-    (57, Token (RPAREN _)) -> Just (Reduce 3 25)
-    (58, EOF) -> Just (Reduce 1 31)
-    (58, Token (PWHERE _)) -> Just (Reduce 1 31)
-    (58, Token (PRBRACE _)) -> Just (Reduce 1 31)
-    (58, Token (CODE _)) -> Just (Reduce 1 31)
+    (55, Token (HYPHEN _)) -> Just (Reduce 2 23)
+    (55, Token (STAR _)) -> Just (Reduce 2 23)
+    (55, Token (PLUS _)) -> Just (Reduce 2 23)
+    (55, Token (QUES _)) -> Just (Reduce 2 23)
+    (56, Token (LPAREN _)) -> Just (Reduce 2 24)
+    (56, Token (RPAREN _)) -> Just (Reduce 2 24)
+    (56, Token (ANY _)) -> Just (Reduce 2 24)
+    (56, Token (CHAR _)) -> Just (Reduce 2 24)
+    (56, Token (STRING _)) -> Just (Reduce 2 24)
+    (56, Token (GENERAL_CATEGORY _)) -> Just (Reduce 2 24)
+    (56, Token (LBRACKET _)) -> Just (Reduce 2 24)
+    (56, Token (HAT _)) -> Just (Reduce 2 24)
+    (56, Token (PIPE _)) -> Just (Reduce 2 24)
+    (56, Token (HYPHEN _)) -> Just (Reduce 2 24)
+    (56, Token (STAR _)) -> Just (Reduce 2 24)
+    (56, Token (PLUS _)) -> Just (Reduce 2 24)
+    (56, Token (QUES _)) -> Just (Reduce 2 24)
+    (57, Token (LPAREN _)) -> Just (Reduce 1 21)
+    (57, Token (RPAREN _)) -> Just (Reduce 1 21)
+    (57, Token (ANY _)) -> Just (Reduce 1 21)
+    (57, Token (CHAR _)) -> Just (Reduce 1 21)
+    (57, Token (STRING _)) -> Just (Reduce 1 21)
+    (57, Token (GENERAL_CATEGORY _)) -> Just (Reduce 1 21)
+    (57, Token (LBRACKET _)) -> Just (Reduce 1 21)
+    (57, Token (HAT _)) -> Just (Reduce 1 21)
+    (57, Token (PIPE _)) -> Just (Reduce 1 21)
+    (57, Token (HYPHEN _)) -> Just (Reduce 1 21)
+    (57, Token (STAR _)) -> Just (Reduce 1 21)
+    (57, Token (PLUS _)) -> Just (Reduce 1 21)
+    (57, Token (QUES _)) -> Just (Reduce 1 21)
+    (58, Token (RPAREN _)) -> Just (Reduce 2 26)
+    (58, Token (PIPE _)) -> Just (Reduce 2 26)
+    (59, Token (RPAREN _)) -> Just (Reduce 1 27)
+    (59, Token (PIPE _)) -> Just (Shift 32)
+    (60, Token (RPAREN _)) -> Just (Reduce 3 28)
+    (61, EOF) -> Just (Reduce 1 34)
+    (61, Token (PWHERE _)) -> Just (Reduce 1 34)
+    (61, Token (PRBRACE _)) -> Just (Reduce 1 34)
+    (61, Token (CODE _)) -> Just (Reduce 1 34)
     (_, _) -> Nothing
 
 production :: Int -> Int
@@ -374,26 +451,29 @@ production 8 = 9
 production 9 = 9
 production 10 = 9
 production 11 = 9
-production 12 = 10
-production 13 = 10
-production 14 = 11
-production 15 = 11
-production 16 = 12
-production 17 = 12
-production 18 = 13
-production 19 = 13
-production 20 = 13
+production 12 = 9
+production 13 = 9
+production 14 = 9
+production 15 = 10
+production 16 = 10
+production 17 = 11
+production 18 = 11
+production 19 = 12
+production 20 = 12
 production 21 = 13
-production 22 = 14
-production 23 = 14
-production 24 = 15
-production 25 = 15
-production 26 = 7
-production 27 = 6
-production 28 = 8
-production 29 = 3
-production 30 = 3
-production 31 = 16
+production 22 = 13
+production 23 = 13
+production 24 = 13
+production 25 = 14
+production 26 = 14
+production 27 = 15
+production 28 = 15
+production 29 = 7
+production 30 = 6
+production 31 = 8
+production 32 = 3
+production 33 = 3
+production 34 = 16
 
 dfaGotoTransition :: GotoState -> GotoSymbol -> Maybe GotoState
 dfaGotoTransition q s =
@@ -417,34 +497,34 @@ dfaGotoTransition q s =
     (13, 16) -> Just 11
     (20, 6) -> Just 24
     (21, 7) -> Just 25
-    (21, 9) -> Just 54
+    (21, 9) -> Just 57
     (21, 13) -> Just 31
-    (21, 14) -> Just 56
+    (21, 14) -> Just 59
     (21, 15) -> Just 29
     (23, 8) -> Just 26
-    (28, 7) -> Just 39
-    (28, 9) -> Just 54
+    (28, 7) -> Just 42
+    (28, 9) -> Just 57
     (28, 13) -> Just 31
-    (28, 14) -> Just 56
+    (28, 14) -> Just 59
     (28, 15) -> Just 29
-    (31, 9) -> Just 54
+    (31, 9) -> Just 57
     (31, 13) -> Just 31
-    (31, 14) -> Just 55
-    (32, 9) -> Just 54
+    (31, 14) -> Just 58
+    (32, 9) -> Just 57
     (32, 13) -> Just 31
-    (32, 14) -> Just 56
-    (32, 15) -> Just 57
-    (35, 10) -> Just 40
-    (35, 11) -> Just 44
-    (35, 12) -> Just 48
-    (38, 10) -> Just 41
-    (38, 11) -> Just 44
-    (38, 12) -> Just 48
-    (42, 10) -> Just 43
-    (42, 11) -> Just 44
-    (42, 12) -> Just 48
-    (45, 12) -> Just 50
-    (49, 12) -> Just 50
+    (32, 14) -> Just 59
+    (32, 15) -> Just 60
+    (38, 10) -> Just 43
+    (38, 11) -> Just 47
+    (38, 12) -> Just 51
+    (41, 10) -> Just 44
+    (41, 11) -> Just 47
+    (41, 12) -> Just 51
+    (45, 10) -> Just 46
+    (45, 11) -> Just 47
+    (45, 12) -> Just 51
+    (48, 12) -> Just 53
+    (52, 12) -> Just 53
     (_, _) -> Nothing
 
 parse :: Monad m => SemanticActions m -> [Token] -> m (Maybe (Start, [Token]))
@@ -486,8 +566,14 @@ parse actions = parse' [] where
                     StackValue_RPAREN semanticValue
                   Token (DARROW semanticValue) ->
                     StackValue_DARROW semanticValue
+                  Token (ANY semanticValue) ->
+                    StackValue_ANY semanticValue
+                  Token (CHAR semanticValue) ->
+                    StackValue_CHAR semanticValue
                   Token (STRING semanticValue) ->
                     StackValue_STRING semanticValue
+                  Token (GENERAL_CATEGORY semanticValue) ->
+                    StackValue_GENERAL_CATEGORY semanticValue
                   Token (LBRACKET semanticValue) ->
                     StackValue_LBRACKET semanticValue
                   Token (RBRACKET semanticValue) ->
@@ -496,8 +582,6 @@ parse actions = parse' [] where
                     StackValue_HAT semanticValue
                   Token (PIPE semanticValue) ->
                     StackValue_PIPE semanticValue
-                  Token (CHAR semanticValue) ->
-                    StackValue_CHAR semanticValue
                   Token (HYPHEN semanticValue) ->
                     StackValue_HYPHEN semanticValue
                   Token (STAR semanticValue) ->
@@ -541,52 +625,58 @@ parse actions = parse' [] where
                     7 ->
                       Monad.liftM StackValue_case $ case_implies_CASE_LPAREN_lexingState_COMMA_exp_RPAREN_DARROW_semanticAction actions (case snd (pop !! 7) of { StackValue_CASE value -> value; _ -> undefined }) (case snd (pop !! 6) of { StackValue_LPAREN value -> value; _ -> undefined }) (case snd (pop !! 5) of { StackValue_lexingState value -> value; _ -> undefined }) (case snd (pop !! 4) of { StackValue_COMMA value -> value; _ -> undefined }) (case snd (pop !! 3) of { StackValue_exp value -> value; _ -> undefined }) (case snd (pop !! 2) of { StackValue_RPAREN value -> value; _ -> undefined }) (case snd (pop !! 1) of { StackValue_DARROW value -> value; _ -> undefined }) (case snd (pop !! 0) of { StackValue_semanticAction value -> value; _ -> undefined })
                     8 ->
-                      Monad.liftM StackValue_atexp $ atexp_implies_STRING actions (case snd (pop !! 0) of { StackValue_STRING value -> value; _ -> undefined })
+                      Monad.liftM StackValue_atexp $ atexp_implies_ANY actions (case snd (pop !! 0) of { StackValue_ANY value -> value; _ -> undefined })
                     9 ->
-                      Monad.liftM StackValue_atexp $ atexp_implies_LPAREN_exp_RPAREN actions (case snd (pop !! 2) of { StackValue_LPAREN value -> value; _ -> undefined }) (case snd (pop !! 1) of { StackValue_exp value -> value; _ -> undefined }) (case snd (pop !! 0) of { StackValue_RPAREN value -> value; _ -> undefined })
+                      Monad.liftM StackValue_atexp $ atexp_implies_CHAR actions (case snd (pop !! 0) of { StackValue_CHAR value -> value; _ -> undefined })
                     10 ->
-                      Monad.liftM StackValue_atexp $ atexp_implies_LBRACKET_charsets_RBRACKET actions (case snd (pop !! 2) of { StackValue_LBRACKET value -> value; _ -> undefined }) (case snd (pop !! 1) of { StackValue_charsets value -> value; _ -> undefined }) (case snd (pop !! 0) of { StackValue_RBRACKET value -> value; _ -> undefined })
+                      Monad.liftM StackValue_atexp $ atexp_implies_STRING actions (case snd (pop !! 0) of { StackValue_STRING value -> value; _ -> undefined })
                     11 ->
-                      Monad.liftM StackValue_atexp $ atexp_implies_LBRACKET_HAT_charsets_RBRACKET actions (case snd (pop !! 3) of { StackValue_LBRACKET value -> value; _ -> undefined }) (case snd (pop !! 2) of { StackValue_HAT value -> value; _ -> undefined }) (case snd (pop !! 1) of { StackValue_charsets value -> value; _ -> undefined }) (case snd (pop !! 0) of { StackValue_RBRACKET value -> value; _ -> undefined })
+                      Monad.liftM StackValue_atexp $ atexp_implies_GENERAL_CATEGORY actions (case snd (pop !! 0) of { StackValue_GENERAL_CATEGORY value -> value; _ -> undefined })
                     12 ->
-                      Monad.liftM StackValue_charsets $ charsets_implies_charset actions (case snd (pop !! 0) of { StackValue_charset value -> value; _ -> undefined })
+                      Monad.liftM StackValue_atexp $ atexp_implies_LPAREN_exp_RPAREN actions (case snd (pop !! 2) of { StackValue_LPAREN value -> value; _ -> undefined }) (case snd (pop !! 1) of { StackValue_exp value -> value; _ -> undefined }) (case snd (pop !! 0) of { StackValue_RPAREN value -> value; _ -> undefined })
                     13 ->
-                      Monad.liftM StackValue_charsets $ charsets_implies_charset_PIPE_charsets actions (case snd (pop !! 2) of { StackValue_charset value -> value; _ -> undefined }) (case snd (pop !! 1) of { StackValue_PIPE value -> value; _ -> undefined }) (case snd (pop !! 0) of { StackValue_charsets value -> value; _ -> undefined })
+                      Monad.liftM StackValue_atexp $ atexp_implies_LBRACKET_charsets_RBRACKET actions (case snd (pop !! 2) of { StackValue_LBRACKET value -> value; _ -> undefined }) (case snd (pop !! 1) of { StackValue_charsets value -> value; _ -> undefined }) (case snd (pop !! 0) of { StackValue_RBRACKET value -> value; _ -> undefined })
                     14 ->
-                      Monad.liftM StackValue_charset $ charset_implies_chars actions (case snd (pop !! 0) of { StackValue_chars value -> value; _ -> undefined })
+                      Monad.liftM StackValue_atexp $ atexp_implies_LBRACKET_HAT_charsets_RBRACKET actions (case snd (pop !! 3) of { StackValue_LBRACKET value -> value; _ -> undefined }) (case snd (pop !! 2) of { StackValue_HAT value -> value; _ -> undefined }) (case snd (pop !! 1) of { StackValue_charsets value -> value; _ -> undefined }) (case snd (pop !! 0) of { StackValue_RBRACKET value -> value; _ -> undefined })
                     15 ->
-                      Monad.liftM StackValue_charset $ charset_implies_CHAR_HYPHEN_CHAR actions (case snd (pop !! 2) of { StackValue_CHAR value -> value; _ -> undefined }) (case snd (pop !! 1) of { StackValue_HYPHEN value -> value; _ -> undefined }) (case snd (pop !! 0) of { StackValue_CHAR value -> value; _ -> undefined })
+                      Monad.liftM StackValue_charsets $ charsets_implies_charset actions (case snd (pop !! 0) of { StackValue_charset value -> value; _ -> undefined })
                     16 ->
-                      Monad.liftM StackValue_chars $ chars_implies_CHAR actions (case snd (pop !! 0) of { StackValue_CHAR value -> value; _ -> undefined })
+                      Monad.liftM StackValue_charsets $ charsets_implies_charset_PIPE_charsets actions (case snd (pop !! 2) of { StackValue_charset value -> value; _ -> undefined }) (case snd (pop !! 1) of { StackValue_PIPE value -> value; _ -> undefined }) (case snd (pop !! 0) of { StackValue_charsets value -> value; _ -> undefined })
                     17 ->
-                      Monad.liftM StackValue_chars $ chars_implies_CHAR_chars actions (case snd (pop !! 1) of { StackValue_CHAR value -> value; _ -> undefined }) (case snd (pop !! 0) of { StackValue_chars value -> value; _ -> undefined })
+                      Monad.liftM StackValue_charset $ charset_implies_chars actions (case snd (pop !! 0) of { StackValue_chars value -> value; _ -> undefined })
                     18 ->
-                      Monad.liftM StackValue_suffixexp $ suffixexp_implies_atexp actions (case snd (pop !! 0) of { StackValue_atexp value -> value; _ -> undefined })
+                      Monad.liftM StackValue_charset $ charset_implies_CHAR_HYPHEN_CHAR actions (case snd (pop !! 2) of { StackValue_CHAR value -> value; _ -> undefined }) (case snd (pop !! 1) of { StackValue_HYPHEN value -> value; _ -> undefined }) (case snd (pop !! 0) of { StackValue_CHAR value -> value; _ -> undefined })
                     19 ->
-                      Monad.liftM StackValue_suffixexp $ suffixexp_implies_suffixexp_STAR actions (case snd (pop !! 1) of { StackValue_suffixexp value -> value; _ -> undefined }) (case snd (pop !! 0) of { StackValue_STAR value -> value; _ -> undefined })
+                      Monad.liftM StackValue_chars $ chars_implies_CHAR actions (case snd (pop !! 0) of { StackValue_CHAR value -> value; _ -> undefined })
                     20 ->
-                      Monad.liftM StackValue_suffixexp $ suffixexp_implies_suffixexp_PLUS actions (case snd (pop !! 1) of { StackValue_suffixexp value -> value; _ -> undefined }) (case snd (pop !! 0) of { StackValue_PLUS value -> value; _ -> undefined })
+                      Monad.liftM StackValue_chars $ chars_implies_CHAR_chars actions (case snd (pop !! 1) of { StackValue_CHAR value -> value; _ -> undefined }) (case snd (pop !! 0) of { StackValue_chars value -> value; _ -> undefined })
                     21 ->
-                      Monad.liftM StackValue_suffixexp $ suffixexp_implies_suffixexp_QUES actions (case snd (pop !! 1) of { StackValue_suffixexp value -> value; _ -> undefined }) (case snd (pop !! 0) of { StackValue_QUES value -> value; _ -> undefined })
+                      Monad.liftM StackValue_suffixexp $ suffixexp_implies_atexp actions (case snd (pop !! 0) of { StackValue_atexp value -> value; _ -> undefined })
                     22 ->
-                      Monad.liftM StackValue_catexp $ catexp_implies_suffixexp actions (case snd (pop !! 0) of { StackValue_suffixexp value -> value; _ -> undefined })
+                      Monad.liftM StackValue_suffixexp $ suffixexp_implies_suffixexp_STAR actions (case snd (pop !! 1) of { StackValue_suffixexp value -> value; _ -> undefined }) (case snd (pop !! 0) of { StackValue_STAR value -> value; _ -> undefined })
                     23 ->
-                      Monad.liftM StackValue_catexp $ catexp_implies_suffixexp_catexp actions (case snd (pop !! 1) of { StackValue_suffixexp value -> value; _ -> undefined }) (case snd (pop !! 0) of { StackValue_catexp value -> value; _ -> undefined })
+                      Monad.liftM StackValue_suffixexp $ suffixexp_implies_suffixexp_PLUS actions (case snd (pop !! 1) of { StackValue_suffixexp value -> value; _ -> undefined }) (case snd (pop !! 0) of { StackValue_PLUS value -> value; _ -> undefined })
                     24 ->
-                      Monad.liftM StackValue_orexp $ orexp_implies_catexp actions (case snd (pop !! 0) of { StackValue_catexp value -> value; _ -> undefined })
+                      Monad.liftM StackValue_suffixexp $ suffixexp_implies_suffixexp_QUES actions (case snd (pop !! 1) of { StackValue_suffixexp value -> value; _ -> undefined }) (case snd (pop !! 0) of { StackValue_QUES value -> value; _ -> undefined })
                     25 ->
-                      Monad.liftM StackValue_orexp $ orexp_implies_catexp_PIPE_orexp actions (case snd (pop !! 2) of { StackValue_catexp value -> value; _ -> undefined }) (case snd (pop !! 1) of { StackValue_PIPE value -> value; _ -> undefined }) (case snd (pop !! 0) of { StackValue_orexp value -> value; _ -> undefined })
+                      Monad.liftM StackValue_catexp $ catexp_implies_suffixexp actions (case snd (pop !! 0) of { StackValue_suffixexp value -> value; _ -> undefined })
                     26 ->
-                      Monad.liftM StackValue_exp $ exp_implies_orexp actions (case snd (pop !! 0) of { StackValue_orexp value -> value; _ -> undefined })
+                      Monad.liftM StackValue_catexp $ catexp_implies_suffixexp_catexp actions (case snd (pop !! 1) of { StackValue_suffixexp value -> value; _ -> undefined }) (case snd (pop !! 0) of { StackValue_catexp value -> value; _ -> undefined })
                     27 ->
-                      Monad.liftM StackValue_lexingState $ lexingState_implies_LEXING_STATE actions (case snd (pop !! 0) of { StackValue_LEXING_STATE value -> value; _ -> undefined })
+                      Monad.liftM StackValue_orexp $ orexp_implies_catexp actions (case snd (pop !! 0) of { StackValue_catexp value -> value; _ -> undefined })
                     28 ->
-                      Monad.liftM StackValue_semanticAction $ semanticAction_implies_SEMANTIC_ACTION actions (case snd (pop !! 0) of { StackValue_SEMANTIC_ACTION value -> value; _ -> undefined })
+                      Monad.liftM StackValue_orexp $ orexp_implies_catexp_PIPE_orexp actions (case snd (pop !! 2) of { StackValue_catexp value -> value; _ -> undefined }) (case snd (pop !! 1) of { StackValue_PIPE value -> value; _ -> undefined }) (case snd (pop !! 0) of { StackValue_orexp value -> value; _ -> undefined })
                     29 ->
-                      Monad.liftM StackValue_codes $ codes_implies actions
+                      Monad.liftM StackValue_exp $ exp_implies_orexp actions (case snd (pop !! 0) of { StackValue_orexp value -> value; _ -> undefined })
                     30 ->
-                      Monad.liftM StackValue_codes $ codes_implies_code_codes actions (case snd (pop !! 1) of { StackValue_code value -> value; _ -> undefined }) (case snd (pop !! 0) of { StackValue_codes value -> value; _ -> undefined })
+                      Monad.liftM StackValue_lexingState $ lexingState_implies_LEXING_STATE actions (case snd (pop !! 0) of { StackValue_LEXING_STATE value -> value; _ -> undefined })
                     31 ->
+                      Monad.liftM StackValue_semanticAction $ semanticAction_implies_SEMANTIC_ACTION actions (case snd (pop !! 0) of { StackValue_SEMANTIC_ACTION value -> value; _ -> undefined })
+                    32 ->
+                      Monad.liftM StackValue_codes $ codes_implies actions
+                    33 ->
+                      Monad.liftM StackValue_codes $ codes_implies_code_codes actions (case snd (pop !! 1) of { StackValue_code value -> value; _ -> undefined }) (case snd (pop !! 0) of { StackValue_codes value -> value; _ -> undefined })
+                    34 ->
                       Monad.liftM StackValue_code $ code_implies_CODE actions (case snd (pop !! 0) of { StackValue_CODE value -> value; _ -> undefined })
                 parse' ((q, value) : stack') tokens
         Just Accept ->
@@ -625,8 +715,14 @@ semanticActions = SemanticActions
       return $ case' : cases
   , case_implies_CASE_LPAREN_lexingState_COMMA_exp_RPAREN_DARROW_semanticAction = \() () lexingState () regexp () () sa ->
       return (lexingState, regexp, sa)
+  , atexp_implies_ANY =
+      const $ return $ HsLex.any
+  , atexp_implies_CHAR =
+      return . HsLex.char
   , atexp_implies_STRING =
       return . HsLex.string
+  , atexp_implies_GENERAL_CATEGORY =
+      return . HsLex.generalCategory
   , atexp_implies_LPAREN_exp_RPAREN = \() regexp () ->
       return regexp
   , atexp_implies_LBRACKET_charsets_RBRACKET = \() charsets () ->
