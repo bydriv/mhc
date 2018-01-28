@@ -19,5 +19,5 @@ newline :: Regexp
 newline = string "\r\n" ||| string "\r" ||| string "\n" ||| string "\f"
 
 main :: IO ()
-main = putStrLn $ generateLexer "MHC.Lexing"
+main = putStrLn $ generateLexer "MHC.Lexing" "" ""
   [ ("Initial", newline, "space") ]

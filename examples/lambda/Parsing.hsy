@@ -1,0 +1,67 @@
+%module Parsing %where
+
+%start abs
+
+%{
+type LAMBDA = ()
+type DOT = ()
+type LPAREN = ()
+type RPAREN = ()
+type ID = String
+
+type Id = ID
+type Ids = [Id]
+type Var = Exp
+type App = Exp
+type Abs = Exp
+
+data Exp =
+    Var ID
+  | App Exp Exp
+  | Abs ID Exp
+  deriving (Eq, Ord, Read, Show)
+%}
+
+%%
+
+def rule id :=
+  ID
+
+def rule ids :=
+  id
+| id ids
+
+def rule var :=
+  id
+| LPAREN abs RPAREN
+
+def rule app :=
+  var
+| app var
+
+def rule abs :=
+  app
+| LAMBDA ids DOT app
+
+%%
+
+semanticActions :: Monad m => SemanticActions m
+semanticActions = SemanticActions
+  { id_implies_ID =
+      return
+  , ids_implies_id = \id' ->
+      return [id']
+  , ids_implies_id_ids = \id' ids ->
+      return $ id' : ids
+  , var_implies_id = \id' ->
+      return $ Var id'
+  , var_implies_LPAREN_abs_RPAREN = \() exp () ->
+      return exp
+  , app_implies_var =
+      return
+  , app_implies_app_var = \exp1 exp2 ->
+      return $ App exp1 exp2
+  , abs_implies_app =
+      return
+  , abs_implies_LAMBDA_ids_DOT_app = \() ids () exp ->
+      return $ foldr Abs exp ids }

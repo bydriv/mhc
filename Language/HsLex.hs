@@ -28,6 +28,7 @@ module Language.HsLex
   , char
   , string
   , oneOf
+  , noneOf
   , generateLexer ) where
 
 import           Prelude
@@ -158,6 +159,24 @@ oneOf = Ranges . minimizeRanges . map (\c -> (c, c)) . List.nub . List.sort
           minimizeRanges ((c1, c4) : rs)
         else
           r1 : minimizeRanges (r2 : rs)
+
+noneOf :: [Char] -> Regexp
+noneOf = Ranges . f . List.nub . List.sort
+  where
+    f [] = [(minBound, maxBound)]
+    f (c : cs) = filterChar c $ f cs
+
+    filterChar _ [] = []
+    filterChar c ((c1, c2) : cs) =
+      if c1 <= c && c <= c2 then
+        if minBound < c && c < maxBound then
+          (c1, pred c) : (succ c, c2) : filterChar c cs
+        else if minBound == c then
+          (succ c, c2) : filterChar c cs
+        else
+          (c1, pred c) : filterChar c cs
+      else
+        (c1, c2) : filterChar c cs
 
 groupByGeneralCategory :: Range -> [(Char.GeneralCategory, Range)]
 groupByGeneralCategory =
@@ -546,13 +565,14 @@ generateDFA prefix dfa = do
   CodeGenerating.write "\n"
   generateDFATransition prefix $ dfaTransition dfa
 
-generateLexer :: String -> [(String, Regexp, String)] -> String
-generateLexer modid rules = CodeGenerating.generate $
+generateLexer :: String -> String -> String -> [(String, Regexp, String)] -> String
+generateLexer modid header footer rules = CodeGenerating.generate $
   let states = List.nub $ "Initial" : map (\(state, _, _) -> state) rules in
   let actions = List.nub $ map (\(_, _, action) -> action) rules in do
     CodeGenerating.write "module "
     CodeGenerating.write modid
-    CodeGenerating.write " (Lexing, LexingState(..), SemanticActions(..), runLexing, lex, yybegin) where\n"
+    --CodeGenerating.write " (Lexing, LexingState(..), SemanticActions(..), runLexing, lex, yybegin) where\n"
+    CodeGenerating.write " where\n"
     CodeGenerating.write "\n"
     CodeGenerating.write "import           Prelude\n"
     CodeGenerating.write "  hiding (lex)\n"
@@ -560,6 +580,8 @@ generateLexer modid rules = CodeGenerating.generate $
     CodeGenerating.write "import qualified Control.Monad       as Monad\n"
     CodeGenerating.write "import qualified Control.Monad.Trans as MonadTrans\n"
     CodeGenerating.write "import qualified Data.Char           as Char\n"
+    CodeGenerating.write "\n"
+    CodeGenerating.write header
     CodeGenerating.write "\n"
     CodeGenerating.write "newtype Lexing m a = Lexing { unLexing :: LexingState -> m (a, LexingState) }\n"
     CodeGenerating.write "\n"
@@ -676,3 +698,5 @@ generateLexer modid rules = CodeGenerating.generate $
       CodeGenerating.write "              return ([], s)\n"
       CodeGenerating.write "    else"
     CodeGenerating.write "\n      return ([], s)\n"
+    CodeGenerating.write "\n"
+    CodeGenerating.write footer

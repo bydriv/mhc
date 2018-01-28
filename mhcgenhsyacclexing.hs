@@ -70,7 +70,7 @@ rNonterminal :: Regexp
 rNonterminal = small >>> many (small ||| large ||| digit ||| char '\'')
 
 main :: IO ()
-main = putStrLn $ generateLexer "Language.HsYacc.Lexing"
+main = putStrLn $ generateLexer "Language.HsYacc.Lexing" "" ""
   [ ("Initial", space, "initialSpace")
   , ("Initial", newline, "initialNewline")
   , ("Initial", rColonEq, "initialColonEq")

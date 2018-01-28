@@ -1,0 +1,25 @@
+%module Lexing %where
+
+%{
+import qualified Parsing
+%}
+
+%%
+
+case (Initial, "λ") => saLambda
+case (Initial, ".") => saDot
+case (Initial, "(") => saLParen
+case (Initial, ")") => saRParen
+case (Initial, ['a'-'z'|'A'-'Z'|'_']['a'-'z'|'A'-'Z'|'0'-'9'|'_']*) => saId
+case (Initial, [' ' '\t' '\n' '\v' '\f' '\r']) => saSpace
+
+%%
+
+semanticActions :: Monad m => SemanticActions m (Maybe Parsing.Token)
+semanticActions = SemanticActions
+  { saLambda = const $ return $ Just $ Parsing.LAMBDA ()
+  , saDot = const $ return $ Just $ Parsing.DOT ()
+  , saLParen = const $ return $ Just $ Parsing.LPAREN ()
+  , saRParen = const $ return $ Just $ Parsing.RPAREN ()
+  , saId = return . Just . Parsing.ID
+  , saSpace = const $ return Nothing }

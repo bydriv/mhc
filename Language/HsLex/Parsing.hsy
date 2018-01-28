@@ -1,0 +1,200 @@
+%module Language.HsLex.Parsing %where
+
+%start start
+
+%{
+import qualified Language.HsLex as HsLex
+
+type HAT = ()
+type HYPHEN = ()
+type LBRACKET = ()
+type RBRACKET = ()
+type CODE = Char
+type COMMA = ()
+type DARROW = ()
+type CASE = ()
+type SEMANTIC_ACTION = String
+type LEXING_STATE = String
+type PLBRACE = ()
+type PMODULE = ()
+type PP = ()
+type PRBRACE = ()
+type PWHERE = ()
+type PIPE = ()
+type STAR = ()
+type PLUS = ()
+type QUES = ()
+type LPAREN = ()
+type RPAREN = ()
+type STRING = String
+type CHAR = Char
+
+type Start = (Definitions, Cases, Codes)
+
+type Definitions = [Definition]
+
+data Definition =
+    DefnModule Codes
+  | DefnCodes Codes
+  deriving (Eq, Ord, Read, Show)
+
+type Cases = [Case]
+type Case = (LexingState, Regexp, SemanticAction)
+
+type Atexp = Regexp
+type Suffixexp = Regexp
+type Catexp = Regexp
+type Orexp = Regexp
+type Exp = Regexp
+type Regexp = HsLex.Regexp
+type Charsets = [Charset]
+data Charset = Range Char Char | Chars Chars
+type Chars = [CHAR]
+
+type LexingState = LEXING_STATE
+type SemanticAction = SEMANTIC_ACTION
+
+type Codes = [Code]
+type Code = CODE
+%}
+
+%%
+
+def rule start := definitions PP cases PP codes
+
+def rule definitions :=
+| definition definitions
+
+def rule definition :=
+  PMODULE codes PWHERE
+| PLBRACE codes PRBRACE
+
+def rule cases :=
+| case cases
+
+def rule case := CASE LPAREN lexingState COMMA exp RPAREN DARROW semanticAction
+
+def rule atexp :=
+  STRING
+| LPAREN exp RPAREN
+| LBRACKET charsets RBRACKET
+| LBRACKET HAT charsets RBRACKET
+
+def rule charsets :=
+  charset
+| charset PIPE charsets
+
+def rule charset :=
+  chars
+| CHAR HYPHEN CHAR
+
+def rule chars :=
+  CHAR
+| CHAR chars
+
+def rule suffixexp :=
+  atexp
+| suffixexp STAR
+| suffixexp PLUS
+| suffixexp QUES
+
+def rule catexp :=
+  suffixexp
+| suffixexp catexp
+
+def rule orexp :=
+  catexp
+| catexp PIPE orexp
+
+def rule exp :=
+  orexp
+
+def rule lexingState := LEXING_STATE
+def rule semanticAction := SEMANTIC_ACTION
+
+def rule codes :=
+| code codes
+
+def rule code := CODE
+
+%%
+
+charsetsToRegexp :: Charsets -> Regexp
+charsetsToRegexp = foldr (HsLex.|||) HsLex.empty . map charsetToRegexp
+  where
+    charsetToRegexp (Chars chars) = HsLex.oneOf chars
+    charsetToRegexp (Range c1 c2) = HsLex.to c1 c2
+
+charsetsToNotRegexp :: Charsets -> Regexp
+charsetsToNotRegexp = HsLex.noneOf . allChars
+  where
+    allChars = concat . map allChars'
+    allChars' (Chars chars) = chars
+    allChars' (Range c1 c2) = [c1 .. c2]
+
+semanticActions :: Monad m => SemanticActions m
+semanticActions = SemanticActions
+  { start_implies_definitions_PP_cases_PP_codes = \defns () cases () codes ->
+      return (defns, cases, codes)
+  , definitions_implies =
+      return []
+  , definitions_implies_definition_definitions = \defn defns ->
+      return $ defn : defns
+  , definition_implies_PMODULE_codes_PWHERE = \() codes () ->
+      return $ DefnModule codes
+  , definition_implies_PLBRACE_codes_PRBRACE = \() codes () ->
+      return $ DefnCodes codes
+  , cases_implies =
+      return []
+  , cases_implies_case_cases = \case' cases ->
+      return $ case' : cases
+  , case_implies_CASE_LPAREN_lexingState_COMMA_exp_RPAREN_DARROW_semanticAction = \() () lexingState () regexp () () sa ->
+      return (lexingState, regexp, sa)
+  , atexp_implies_STRING =
+      return . HsLex.string
+  , atexp_implies_LPAREN_exp_RPAREN = \() regexp () ->
+      return regexp
+  , atexp_implies_LBRACKET_charsets_RBRACKET = \() charsets () ->
+      return $ charsetsToRegexp charsets
+  , atexp_implies_LBRACKET_HAT_charsets_RBRACKET = \() () charsets () ->
+      return $ charsetsToNotRegexp charsets
+  , charsets_implies_charset = \charset ->
+      return [charset]
+  , charsets_implies_charset_PIPE_charsets = \charset () charsets ->
+      return $ charset : charsets
+  , charset_implies_chars = \chars ->
+      return $ Chars chars
+  , charset_implies_CHAR_HYPHEN_CHAR = \c1 () c2 ->
+      return $ Range c1 c2
+  , chars_implies_CHAR = \char ->
+      return [char]
+  , chars_implies_CHAR_chars = \char chars ->
+      return $ char : chars
+  , suffixexp_implies_atexp =
+      return
+  , suffixexp_implies_suffixexp_STAR = \regexp () ->
+      return $ HsLex.many regexp
+  , suffixexp_implies_suffixexp_PLUS = \regexp () ->
+      return $ HsLex.some regexp
+  , suffixexp_implies_suffixexp_QUES = \regexp () ->
+      return $ HsLex.optional regexp
+  , catexp_implies_suffixexp =
+      return
+  , catexp_implies_suffixexp_catexp = \regexp1 regexp2 ->
+      return (regexp1 HsLex.>>> regexp2)
+  , orexp_implies_catexp =
+      return
+  , orexp_implies_catexp_PIPE_orexp = \regexp1 () regexp2 ->
+      return (regexp1 HsLex.||| regexp2)
+  , exp_implies_orexp =
+      return
+  , lexingState_implies_LEXING_STATE =
+      return
+  , semanticAction_implies_SEMANTIC_ACTION =
+      return
+  , codes_implies =
+      return []
+  , codes_implies_code_codes = \code codes ->
+      return $ code : codes
+  , code_implies_CODE =
+      return }
