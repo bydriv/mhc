@@ -1,4 +1,4 @@
-module Language.HsYacc.Lexing (Lexing, LexingState(..), SemanticActions(..), runLexing, lex, yybegin) where
+module  Language.HsYacc.Lexing  where
 
 import           Prelude
   hiding (lex)
@@ -6,6 +6,7 @@ import qualified Control.Applicative as Applicative
 import qualified Control.Monad       as Monad
 import qualified Control.Monad.Trans as MonadTrans
 import qualified Data.Char           as Char
+
 
 newtype Lexing m a = Lexing { unLexing :: LexingState -> m (a, LexingState) }
 
@@ -1420,4 +1421,6 @@ lex actions = lex' where
               return ([], s)
     else
       return ([], s)
+
+
 

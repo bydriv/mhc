@@ -1,0 +1,43 @@
+%module Language.HsYacc.Lexing %where
+
+%%
+case (Initial, Zs) => initialSpace
+case (Initial, "\r\n" | '\r' | '\n' | '\f') => initialNewline
+case (Initial, ":=") => initialColonEq
+case (Initial, "def") => initialDef
+case (Initial, "%{") => initialPLBrace
+case (Initial, "%module") => initialPModule
+case (Initial, "%%") => initialPP
+case (Initial, "|") => initialPipe
+case (Initial, "%where") => initialPWhere
+case (Initial, "%start") => initialPStart
+case (Initial, "%}") => initialPRBrace
+case (Initial, "rule") => initialRule
+case (Initial, (Lu | Lt)((Ll | '_') | Lu | Lt | Nd | '\'')*) => initialTerminal
+case (Initial, (Ll | '_')((Ll | '_') | Lu | Lt | Nd | '\'')*) => initialNonterminal
+case (Initial, .) => initialCode
+
+case (Rule, Zs) => ruleSpace
+case (Rule, "\r\n" | '\r' | '\n' | '\f') => ruleNewline
+case (Rule, ":=") => ruleColonEq
+case (Rule, "def") => ruleDef
+case (Rule, "%{") => rulePLBrace
+case (Rule, "%module") => rulePModule
+case (Rule, "%%") => rulePP
+case (Rule, "|") => rulePipe
+case (Rule, "%where") => rulePWhere
+case (Rule, "%start") => rulePStart
+case (Rule, "%}") => rulePRBrace
+case (Rule, "rule") => ruleRule
+case (Rule, (Lu | Lt)((Ll | '_') | Lu | Lt | Nd | '\'')*) => ruleTerminal
+case (Rule, (Ll | '_')((Ll | '_') | Lu | Lt | Nd | '\'')*) => ruleNonterminal
+case (Rule, .) => ruleCode
+
+case (Code, "%{") => codePLBrace
+case (Code, "%module") => codePModule
+case (Code, "%%") => codePP
+case (Code, "%where") => codePWhere
+case (Code, "%start") => codePStart
+case (Code, "%}") => codePRBrace
+case (Code, .) => codeCode
+%%
