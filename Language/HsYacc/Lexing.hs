@@ -8,6 +8,8 @@ import qualified Control.Monad.Trans as MonadTrans
 import qualified Data.Char           as Char
 
 
+import qualified Language.HsYacc.Parsing as Parsing
+
 newtype Lexing m a = Lexing { unLexing :: LexingState -> m (a, LexingState) }
 
 data LexingState =
@@ -1423,4 +1425,44 @@ lex actions = lex' where
       return ([], s)
 
 
+
+semanticActions :: Monad m => SemanticActions m (Maybe Parsing.Token)
+semanticActions = SemanticActions
+  { initialSpace = const $ return Nothing
+  , initialNewline = const $ return Nothing
+  , initialColonEq = const $ return $ Just $ Parsing.COLONEQ ()
+  , initialDef = const $ return $ Just $ Parsing.DEF ()
+  , initialRule = const $ return $ Just $ Parsing.RULE ()
+  , initialPLBrace = const $ do { yybegin Code; return $ Just $ Parsing.PLBRACE () }
+  , initialPModule = const $ do { yybegin Code; return $ Just $ Parsing.PMODULE () }
+  , initialPP = const $ do { yybegin Rule; return $ Just $ Parsing.PP () }
+  , initialPipe = const $ return $ Just $ Parsing.PIPE ()
+  , initialPWhere = const $ return $ Just $ Parsing.PWHERE ()
+  , initialPStart = const $ return $ Just $ Parsing.PSTART ()
+  , initialPRBrace = const $ return $ Just $ Parsing.PRBRACE ()
+  , initialTerminal = return . Just . Parsing.TERMINAL
+  , initialNonterminal = return . Just . Parsing.NONTERMINAL
+  , initialCode = return . Just . Parsing.CODE . head
+  , ruleSpace = const $ return Nothing
+  , ruleNewline = const $ return Nothing
+  , ruleColonEq = const $ return $ Just $ Parsing.COLONEQ ()
+  , ruleDef = const $ return $ Just $ Parsing.DEF ()
+  , ruleRule = const $ return $ Just $ Parsing.RULE ()
+  , rulePLBrace = const $ do { yybegin Code; return $ Just $ Parsing.PLBRACE () }
+  , rulePModule = const $ do { yybegin Code; return $ Just $ Parsing.PMODULE () }
+  , rulePP = const $ do { yybegin Code; return $ Just $ Parsing.PP () }
+  , rulePipe = const $ return $ Just $ Parsing.PIPE ()
+  , rulePWhere = const $ return $ Just $ Parsing.PWHERE ()
+  , rulePStart = const $ return $ Just $ Parsing.PSTART ()
+  , rulePRBrace = const $ return $ Just $ Parsing.PRBRACE ()
+  , ruleTerminal = return . Just . Parsing.TERMINAL
+  , ruleNonterminal = return . Just . Parsing.NONTERMINAL
+  , ruleCode = return . Just . Parsing.CODE . head
+  , codePLBrace = const $ do { yybegin Code; return $ Just $ Parsing.PLBRACE () }
+  , codePModule = const $ do { yybegin Code; return $ Just $ Parsing.PMODULE () }
+  , codePP = const $ return $ Just $ Parsing.PP ()
+  , codePWhere = const $ do { yybegin Initial; return $ Just $ Parsing.PWHERE () }
+  , codePStart = const $ return $ Just $ Parsing.PSTART ()
+  , codePRBrace = const $ do { yybegin Initial; return $ Just $ Parsing.PRBRACE () }
+  , codeCode = return . Just . Parsing.CODE . head }
 

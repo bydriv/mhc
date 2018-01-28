@@ -21,50 +21,10 @@ import qualified Language.HsYacc         as HsYacc
 import qualified Language.HsYacc.Lexing  as Lexing
 import qualified Language.HsYacc.Parsing as Parsing
 
-lexingSemanticActions :: Monad m => Lexing.SemanticActions m (Maybe Parsing.Token)
-lexingSemanticActions = Lexing.SemanticActions
-  { Lexing.initialSpace = const $ return Nothing
-  , Lexing.initialNewline = const $ return Nothing
-  , Lexing.initialColonEq = const $ return $ Just $ Parsing.COLONEQ ()
-  , Lexing.initialDef = const $ return $ Just $ Parsing.DEF ()
-  , Lexing.initialRule = const $ return $ Just $ Parsing.RULE ()
-  , Lexing.initialPLBrace = const $ do { Lexing.yybegin Lexing.Code; return $ Just $ Parsing.PLBRACE () }
-  , Lexing.initialPModule = const $ do { Lexing.yybegin Lexing.Code; return $ Just $ Parsing.PMODULE () }
-  , Lexing.initialPP = const $ do { Lexing.yybegin Lexing.Rule; return $ Just $ Parsing.PP () }
-  , Lexing.initialPipe = const $ return $ Just $ Parsing.PIPE ()
-  , Lexing.initialPWhere = const $ return $ Just $ Parsing.PWHERE ()
-  , Lexing.initialPStart = const $ return $ Just $ Parsing.PSTART ()
-  , Lexing.initialPRBrace = const $ return $ Just $ Parsing.PRBRACE ()
-  , Lexing.initialTerminal = return . Just . Parsing.TERMINAL
-  , Lexing.initialNonterminal = return . Just . Parsing.NONTERMINAL
-  , Lexing.initialCode = return . Just . Parsing.CODE . head
-  , Lexing.ruleSpace = const $ return Nothing
-  , Lexing.ruleNewline = const $ return Nothing
-  , Lexing.ruleColonEq = const $ return $ Just $ Parsing.COLONEQ ()
-  , Lexing.ruleDef = const $ return $ Just $ Parsing.DEF ()
-  , Lexing.ruleRule = const $ return $ Just $ Parsing.RULE ()
-  , Lexing.rulePLBrace = const $ do { Lexing.yybegin Lexing.Code; return $ Just $ Parsing.PLBRACE () }
-  , Lexing.rulePModule = const $ do { Lexing.yybegin Lexing.Code; return $ Just $ Parsing.PMODULE () }
-  , Lexing.rulePP = const $ do { Lexing.yybegin Lexing.Code; return $ Just $ Parsing.PP () }
-  , Lexing.rulePipe = const $ return $ Just $ Parsing.PIPE ()
-  , Lexing.rulePWhere = const $ return $ Just $ Parsing.PWHERE ()
-  , Lexing.rulePStart = const $ return $ Just $ Parsing.PSTART ()
-  , Lexing.rulePRBrace = const $ return $ Just $ Parsing.PRBRACE ()
-  , Lexing.ruleTerminal = return . Just . Parsing.TERMINAL
-  , Lexing.ruleNonterminal = return . Just . Parsing.NONTERMINAL
-  , Lexing.ruleCode = return . Just . Parsing.CODE . head
-  , Lexing.codePLBrace = const $ do { Lexing.yybegin Lexing.Code; return $ Just $ Parsing.PLBRACE () }
-  , Lexing.codePModule = const $ do { Lexing.yybegin Lexing.Code; return $ Just $ Parsing.PMODULE () }
-  , Lexing.codePP = const $ return $ Just $ Parsing.PP ()
-  , Lexing.codePWhere = const $ do { Lexing.yybegin Lexing.Initial; return $ Just $ Parsing.PWHERE () }
-  , Lexing.codePStart = const $ return $ Just $ Parsing.PSTART ()
-  , Lexing.codePRBrace = const $ do { Lexing.yybegin Lexing.Initial; return $ Just $ Parsing.PRBRACE () }
-  , Lexing.codeCode = return . Just . Parsing.CODE . head }
-
 main :: IO ()
 main = do
   s <- getContents
-  let (tokens, _) = Identity.runIdentity $ Lexing.runLexing $ Lexing.lex lexingSemanticActions s
+  let (tokens, _) = Identity.runIdentity $ Lexing.runLexing $ Lexing.lex Lexing.semanticActions s
   let result = Identity.runIdentity $ Parsing.parse Parsing.semanticActions $ Maybe.catMaybes tokens
   case result of
     Nothing ->
