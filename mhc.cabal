@@ -7,7 +7,7 @@ library
   hs-source-dirs: .
   default-language: Haskell2010
   build-depends: base
-  ghc-options: -Wall -Werror -O3 -Wno-unused-matches
+  ghc-options: -Wall -Werror -O3 -Wno-unused-matches -Wno-incomplete-patterns
   default-extensions: Safe, Strict, StrictData
   exposed-modules:
       Control.Monad.CodeGenerating
@@ -20,15 +20,18 @@ library
     , Data.RBMap
     , Data.RBSet
     , Language.HsLex
+    , Language.HsLex.Lexing
+    , Language.HsLex.Parsing
     , Language.HsYacc
-    , MHC.Lexing
+    , Language.HsYacc.Lexing
+    , Language.HsYacc.Parsing
 
 executable mhc
   hs-source-dirs: .
   main-is: mhc.hs
   default-language: Haskell2010
   build-depends: base, mhc
-  ghc-options: -Wall -Werror -O3 -Wno-unused-matches
+  ghc-options: -Wall -Werror -O3 -Wno-unused-matches -Wno-incomplete-patterns
   default-extensions: Safe, Strict, StrictData
   other-modules:
       Control.Monad.CodeGenerating
@@ -40,9 +43,6 @@ executable mhc
     , Data.DList
     , Data.RBMap
     , Data.RBSet
-    , Language.HsLex
-    , Language.HsYacc
-    , MHC.Lexing
 
 executable hslex
   hs-source-dirs: .
@@ -62,10 +62,8 @@ executable hslex
     , Data.RBMap
     , Data.RBSet
     , Language.HsLex
-    , Language.HsYacc
     , Language.HsLex.Lexing
     , Language.HsLex.Parsing
-    , MHC.Lexing
 
 executable hsyacc
   hs-source-dirs: .
@@ -84,92 +82,6 @@ executable hsyacc
     , Data.DList
     , Data.RBMap
     , Data.RBSet
-    , Language.HsLex
     , Language.HsYacc
     , Language.HsYacc.Lexing
     , Language.HsYacc.Parsing
-    , MHC.Lexing
-
-executable mhcgenlex
-  hs-source-dirs: .
-  main-is: mhcgenlex.hs
-  default-language: Haskell2010
-  build-depends: base, mhc
-  ghc-options: -Wall -Werror -O3 -Wno-unused-matches
-  default-extensions: Safe, Strict, StrictData
-  other-modules:
-      Control.Monad.CodeGenerating
-    , Control.Monad.Identity
-    , Control.Monad.Trans
-    , Control.Monad.Trans.CodeGenerating
-    , Control.Monad.Trans.State
-    , Control.Monad.State
-    , Data.DList
-    , Data.RBMap
-    , Data.RBSet
-    , Language.HsLex
-    , Language.HsYacc
-    , MHC.Lexing
-
-executable mhcgenhslexlexing
-  hs-source-dirs: .
-  main-is: mhcgenhslexlexing.hs
-  default-language: Haskell2010
-  build-depends: base, mhc
-  ghc-options: -Wall -Werror -O3 -Wno-unused-matches
-  default-extensions: Safe, Strict, StrictData
-  other-modules:
-      Control.Monad.CodeGenerating
-    , Control.Monad.Identity
-    , Control.Monad.Trans
-    , Control.Monad.Trans.CodeGenerating
-    , Control.Monad.Trans.State
-    , Control.Monad.State
-    , Data.DList
-    , Data.RBMap
-    , Data.RBSet
-    , Language.HsLex
-    , Language.HsYacc
-    , MHC.Lexing
-
-executable mhcgenhsyacclexing
-  hs-source-dirs: .
-  main-is: mhcgenhsyacclexing.hs
-  default-language: Haskell2010
-  build-depends: base, mhc
-  ghc-options: -Wall -Werror -O3 -Wno-unused-matches
-  default-extensions: Safe, Strict, StrictData
-  other-modules:
-      Control.Monad.CodeGenerating
-    , Control.Monad.Identity
-    , Control.Monad.Trans
-    , Control.Monad.Trans.CodeGenerating
-    , Control.Monad.Trans.State
-    , Control.Monad.State
-    , Data.DList
-    , Data.RBMap
-    , Data.RBSet
-    , Language.HsLex
-    , Language.HsYacc
-    , MHC.Lexing
-
-executable mhcgenhsyaccparsing
-  hs-source-dirs: .
-  main-is: mhcgenhsyaccparsing.hs
-  default-language: Haskell2010
-  build-depends: base, mhc
-  ghc-options: -Wall -Werror -O3 -Wno-unused-matches
-  default-extensions: Safe, Strict, StrictData
-  other-modules:
-      Control.Monad.CodeGenerating
-    , Control.Monad.Identity
-    , Control.Monad.Trans
-    , Control.Monad.Trans.CodeGenerating
-    , Control.Monad.Trans.State
-    , Control.Monad.State
-    , Data.DList
-    , Data.RBMap
-    , Data.RBSet
-    , Language.HsLex
-    , Language.HsYacc
-    , MHC.Lexing
