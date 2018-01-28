@@ -8,6 +8,8 @@ import qualified Control.Monad.Trans as MonadTrans
 import qualified Data.Char           as Char
 
 
+import qualified Language.HsLex.Parsing as Parsing
+
 newtype Lexing m a = Lexing { unLexing :: LexingState -> m (a, LexingState) }
 
 data LexingState =
@@ -6164,4 +6166,153 @@ lex actions = lex' where
       return ([], s)
 
 
+
+semanticActions :: Monad m => SemanticActions m (Maybe Parsing.Token)
+semanticActions = SemanticActions
+  { initialSpace = const $ return Nothing
+  , initialNewline = const $ return Nothing
+  , initialAny = const $ return $ Just $ Parsing.ANY ()
+  , initialLu = const $ return $ Just $ Parsing.GENERAL_CATEGORY Char.UppercaseLetter
+  , initialLl = const $ return $ Just $ Parsing.GENERAL_CATEGORY Char.LowercaseLetter
+  , initialLt = const $ return $ Just $ Parsing.GENERAL_CATEGORY Char.TitlecaseLetter
+  , initialLm = const $ return $ Just $ Parsing.GENERAL_CATEGORY Char.ModifierLetter
+  , initialLo = const $ return $ Just $ Parsing.GENERAL_CATEGORY Char.OtherLetter
+  , initialMn = const $ return $ Just $ Parsing.GENERAL_CATEGORY Char.NonSpacingMark
+  , initialMc = const $ return $ Just $ Parsing.GENERAL_CATEGORY Char.SpacingCombiningMark
+  , initialMe = const $ return $ Just $ Parsing.GENERAL_CATEGORY Char.EnclosingMark
+  , initialNd = const $ return $ Just $ Parsing.GENERAL_CATEGORY Char.DecimalNumber
+  , initialNl = const $ return $ Just $ Parsing.GENERAL_CATEGORY Char.LetterNumber
+  , initialNo = const $ return $ Just $ Parsing.GENERAL_CATEGORY Char.OtherNumber
+  , initialPc = const $ return $ Just $ Parsing.GENERAL_CATEGORY Char.ConnectorPunctuation
+  , initialPd = const $ return $ Just $ Parsing.GENERAL_CATEGORY Char.DashPunctuation
+  , initialPs = const $ return $ Just $ Parsing.GENERAL_CATEGORY Char.OpenPunctuation
+  , initialPe = const $ return $ Just $ Parsing.GENERAL_CATEGORY Char.ClosePunctuation
+  , initialPi = const $ return $ Just $ Parsing.GENERAL_CATEGORY Char.InitialQuote
+  , initialPf = const $ return $ Just $ Parsing.GENERAL_CATEGORY Char.FinalQuote
+  , initialPo = const $ return $ Just $ Parsing.GENERAL_CATEGORY Char.OtherPunctuation
+  , initialSm = const $ return $ Just $ Parsing.GENERAL_CATEGORY Char.MathSymbol
+  , initialSc = const $ return $ Just $ Parsing.GENERAL_CATEGORY Char.CurrencySymbol
+  , initialSk = const $ return $ Just $ Parsing.GENERAL_CATEGORY Char.ModifierSymbol
+  , initialSo = const $ return $ Just $ Parsing.GENERAL_CATEGORY Char.OtherSymbol
+  , initialZs = const $ return $ Just $ Parsing.GENERAL_CATEGORY Char.Space
+  , initialZl = const $ return $ Just $ Parsing.GENERAL_CATEGORY Char.LineSeparator
+  , initialZp = const $ return $ Just $ Parsing.GENERAL_CATEGORY Char.ParagraphSeparator
+  , initialCc = const $ return $ Just $ Parsing.GENERAL_CATEGORY Char.Control
+  , initialCf = const $ return $ Just $ Parsing.GENERAL_CATEGORY Char.Format
+  , initialCs = const $ return $ Just $ Parsing.GENERAL_CATEGORY Char.Surrogate
+  , initialCo = const $ return $ Just $ Parsing.GENERAL_CATEGORY Char.PrivateUse
+  , initialCn = const $ return $ Just $ Parsing.GENERAL_CATEGORY Char.NotAssigned
+  , initialHat = const $ return $ Just $ Parsing.HAT ()
+  , initialHyphen = const $ return $ Just $ Parsing.HYPHEN ()
+  , initialLBracket = const $ return $ Just $ Parsing.LBRACKET ()
+  , initialRBracket = const $ return $ Just $ Parsing.RBRACKET ()
+  , initialComma = const $ return $ Just $ Parsing.COMMA ()
+  , initialDArrow = const $ return $ Just $ Parsing.DARROW ()
+  , initialCase = const $ return $ Just $ Parsing.CASE ()
+  , initialStar = const $ return $ Just $ Parsing.STAR ()
+  , initialPlus = const $ return $ Just $ Parsing.PLUS ()
+  , initialQues = const $ return $ Just $ Parsing.QUES ()
+  , initialLParen = const $ return $ Just $ Parsing.LPAREN ()
+  , initialRParen = const $ return $ Just $ Parsing.RPAREN ()
+  , initialString = return . Just . Parsing.STRING . unescapeString . init . tail
+  , initialChar = return . Just . Parsing.CHAR . head . init . tail
+  , initialHT = const $ return $ Just $ Parsing.CHAR $ '\t'
+  , initialLF = const $ return $ Just $ Parsing.CHAR $ '\n'
+  , initialVT = const $ return $ Just $ Parsing.CHAR $ '\v'
+  , initialFF = const $ return $ Just $ Parsing.CHAR $ '\f'
+  , initialCR = const $ return $ Just $ Parsing.CHAR $ '\r'
+  , initialSingleQuote = const $ return $ Just $ Parsing.CHAR $ '\''
+  , initialPLBrace = const $ do { yybegin Code; return $ Just $ Parsing.PLBRACE () }
+  , initialPModule = const $ do { yybegin Code; return $ Just $ Parsing.PMODULE () }
+  , initialPP = const $ do { yybegin Rule; return $ Just $ Parsing.PP () }
+  , initialPipe = const $ return $ Just $ Parsing.PIPE ()
+  , initialPWhere = const $ return $ Just $ Parsing.PWHERE ()
+  , initialPRBrace = const $ return $ Just $ Parsing.PRBRACE ()
+  , initialSemanticAction = return . Just . Parsing.SEMANTIC_ACTION
+  , initialLexingState = return . Just . Parsing.LEXING_STATE
+  , initialCode = return . Just . Parsing.CODE . head
+  , ruleSpace = const $ return Nothing
+  , ruleNewline = const $ return Nothing
+  , ruleAny = const $ return $ Just $ Parsing.ANY ()
+  , ruleLu = const $ return $ Just $ Parsing.GENERAL_CATEGORY Char.UppercaseLetter
+  , ruleLl = const $ return $ Just $ Parsing.GENERAL_CATEGORY Char.LowercaseLetter
+  , ruleLt = const $ return $ Just $ Parsing.GENERAL_CATEGORY Char.TitlecaseLetter
+  , ruleLm = const $ return $ Just $ Parsing.GENERAL_CATEGORY Char.ModifierLetter
+  , ruleLo = const $ return $ Just $ Parsing.GENERAL_CATEGORY Char.OtherLetter
+  , ruleMn = const $ return $ Just $ Parsing.GENERAL_CATEGORY Char.NonSpacingMark
+  , ruleMc = const $ return $ Just $ Parsing.GENERAL_CATEGORY Char.SpacingCombiningMark
+  , ruleMe = const $ return $ Just $ Parsing.GENERAL_CATEGORY Char.EnclosingMark
+  , ruleNd = const $ return $ Just $ Parsing.GENERAL_CATEGORY Char.DecimalNumber
+  , ruleNl = const $ return $ Just $ Parsing.GENERAL_CATEGORY Char.LetterNumber
+  , ruleNo = const $ return $ Just $ Parsing.GENERAL_CATEGORY Char.OtherNumber
+  , rulePc = const $ return $ Just $ Parsing.GENERAL_CATEGORY Char.ConnectorPunctuation
+  , rulePd = const $ return $ Just $ Parsing.GENERAL_CATEGORY Char.DashPunctuation
+  , rulePs = const $ return $ Just $ Parsing.GENERAL_CATEGORY Char.OpenPunctuation
+  , rulePe = const $ return $ Just $ Parsing.GENERAL_CATEGORY Char.ClosePunctuation
+  , rulePi = const $ return $ Just $ Parsing.GENERAL_CATEGORY Char.InitialQuote
+  , rulePf = const $ return $ Just $ Parsing.GENERAL_CATEGORY Char.FinalQuote
+  , rulePo = const $ return $ Just $ Parsing.GENERAL_CATEGORY Char.OtherPunctuation
+  , ruleSm = const $ return $ Just $ Parsing.GENERAL_CATEGORY Char.MathSymbol
+  , ruleSc = const $ return $ Just $ Parsing.GENERAL_CATEGORY Char.CurrencySymbol
+  , ruleSk = const $ return $ Just $ Parsing.GENERAL_CATEGORY Char.ModifierSymbol
+  , ruleSo = const $ return $ Just $ Parsing.GENERAL_CATEGORY Char.OtherSymbol
+  , ruleZs = const $ return $ Just $ Parsing.GENERAL_CATEGORY Char.Space
+  , ruleZl = const $ return $ Just $ Parsing.GENERAL_CATEGORY Char.LineSeparator
+  , ruleZp = const $ return $ Just $ Parsing.GENERAL_CATEGORY Char.ParagraphSeparator
+  , ruleCc = const $ return $ Just $ Parsing.GENERAL_CATEGORY Char.Control
+  , ruleCf = const $ return $ Just $ Parsing.GENERAL_CATEGORY Char.Format
+  , ruleCs = const $ return $ Just $ Parsing.GENERAL_CATEGORY Char.Surrogate
+  , ruleCo = const $ return $ Just $ Parsing.GENERAL_CATEGORY Char.PrivateUse
+  , ruleCn = const $ return $ Just $ Parsing.GENERAL_CATEGORY Char.NotAssigned
+  , ruleHat = const $ return $ Just $ Parsing.HAT ()
+  , ruleHyphen = const $ return $ Just $ Parsing.HYPHEN ()
+  , ruleLBracket = const $ return $ Just $ Parsing.LBRACKET ()
+  , ruleRBracket = const $ return $ Just $ Parsing.RBRACKET ()
+  , ruleComma = const $ return $ Just $ Parsing.COMMA ()
+  , ruleDArrow = const $ return $ Just $ Parsing.DARROW ()
+  , ruleCase = const $ return $ Just $ Parsing.CASE ()
+  , ruleStar = const $ return $ Just $ Parsing.STAR ()
+  , rulePlus = const $ return $ Just $ Parsing.PLUS ()
+  , ruleQues = const $ return $ Just $ Parsing.QUES ()
+  , ruleLParen = const $ return $ Just $ Parsing.LPAREN ()
+  , ruleRParen = const $ return $ Just $ Parsing.RPAREN ()
+  , ruleString = return . Just . Parsing.STRING  . unescapeString . init . tail
+  , ruleHT = const $ return $ Just $ Parsing.CHAR $ '\t'
+  , ruleLF = const $ return $ Just $ Parsing.CHAR $ '\n'
+  , ruleVT = const $ return $ Just $ Parsing.CHAR $ '\v'
+  , ruleFF = const $ return $ Just $ Parsing.CHAR $ '\f'
+  , ruleCR = const $ return $ Just $ Parsing.CHAR $ '\r'
+  , ruleSingleQuote = const $ return $ Just $ Parsing.CHAR $ '\''
+  , ruleChar = return . Just . Parsing.CHAR . head . init . tail
+  , rulePLBrace = const $ do { yybegin Code; return $ Just $ Parsing.PLBRACE () }
+  , rulePModule = const $ do { yybegin Code; return $ Just $ Parsing.PMODULE () }
+  , rulePP = const $ do { yybegin Code; return $ Just $ Parsing.PP () }
+  , rulePipe = const $ return $ Just $ Parsing.PIPE ()
+  , rulePWhere = const $ return $ Just $ Parsing.PWHERE ()
+  , rulePRBrace = const $ return $ Just $ Parsing.PRBRACE ()
+  , ruleSemanticAction = return . Just . Parsing.SEMANTIC_ACTION
+  , ruleLexingState = return . Just . Parsing.LEXING_STATE
+  , ruleCode = return . Just . Parsing.CODE . head
+  , codePLBrace = const $ do { yybegin Code; return $ Just $ Parsing.PLBRACE () }
+  , codePModule = const $ do { yybegin Code; return $ Just $ Parsing.PMODULE () }
+  , codePP = const $ return $ Just $ Parsing.PP ()
+  , codePWhere = const $ do { yybegin Initial; return $ Just $ Parsing.PWHERE () }
+  , codePRBrace = const $ do { yybegin Initial; return $ Just $ Parsing.PRBRACE () }
+  , codeCode = return . Just . Parsing.CODE . head }
+  where
+    unescapeString [] = []
+    unescapeString ('\\' : 't' : s) =
+      '\t' : unescapeString s
+    unescapeString ('\\' : 'n' : s) =
+      '\n' : unescapeString s
+    unescapeString ('\\' : 'v' : s) =
+      '\v' : unescapeString s
+    unescapeString ('\\' : 'f' : s) =
+      '\f' : unescapeString s
+    unescapeString ('\\' : 'r' : s) =
+      '\r' : unescapeString s
+    unescapeString ('\\' : c : s) =
+      c : unescapeString s
+    unescapeString (c : s) =
+      c : unescapeString s
 
