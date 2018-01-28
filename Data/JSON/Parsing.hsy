@@ -112,6 +112,7 @@ semanticActions = SemanticActions
       return (prop, value)
   , array_implies_LBRACKET_values_RBRACKET = \() values () ->
     return $ JSONArray values
+  , values_implies = return []
   , values_implies_value_values_opt = \value values_opt ->
       return $ maybe [value] (value:) values_opt
   , values_opt_implies = return Nothing

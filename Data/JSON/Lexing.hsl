@@ -1,0 +1,62 @@
+%module Data.JSON.Lexing %where
+
+%{
+import qualified Data.Char         as Char
+import qualified Data.JSON.Parsing as Parsing
+%}
+
+%%
+
+case (Initial, [' ' '\t' '\n' '\f' '\r']) => saWS
+case (Initial, "false") => saFalse
+case (Initial, "null") => saNull
+case (Initial, "true") => saTrue
+case (Initial, '{') => saLBrace
+case (Initial, '}') => saRBrace
+case (Initial, ',') => saComma
+case (Initial, ':') => saColon
+case (Initial, '[') => saLBracket
+case (Initial, ']') => saRBracket
+case (Initial, '-'?('0'|['1'-'9']['0'-'9']*)('.'['0'-'9']+)?(['e' 'E']['-' '+']?['0'-'9']+)?) =>
+  saNumber
+case (Initial, '"'([^'"' '\\'] | '\\' (['"' '\\' '/' 'b' 'f' 'n' 'r' 't'] | 'u' ['0'-'9'|'A'-'F'|'a'-'f'] ['0'-'9'|'A'-'F'|'a'-'f'] ['0'-'9'|'A'-'F'|'a'-'f'] ['0'-'9'|'A'-'F'|'a'-'f']))*'"') =>
+  saString
+
+%%
+
+semanticActions :: Monad m => SemanticActions m (Maybe Parsing.Token)
+semanticActions = SemanticActions
+  { saWS = const $ return Nothing
+  , saFalse = const $ return $ Just $ Parsing.FALSE ()
+  , saNull = const $ return $ Just $ Parsing.NULL ()
+  , saTrue = const $ return $ Just $ Parsing.TRUE ()
+  , saLBrace = const $ return $ Just $ Parsing.LBRACE ()
+  , saRBrace = const $ return $ Just $ Parsing.RBRACE ()
+  , saComma = const $ return $ Just $ Parsing.COMMA ()
+  , saColon = const $ return $ Just $ Parsing.COLON ()
+  , saLBracket = const $ return $ Just $ Parsing.LBRACKET ()
+  , saRBracket = const $ return $ Just $ Parsing.RBRACKET ()
+  , saNumber = return . Just . Parsing.NUMBER . read
+  , saString = return . Just . Parsing.STRING . unescape . init . tail }
+  where
+    unescape [] = []
+    unescape ('\\' : '"' : s) =
+      '"' : unescape s
+    unescape ('\\' : '\\' : s) =
+      '\\' : unescape s
+    unescape ('\\' : '/' : s) =
+      '/' : unescape s
+    unescape ('\\' : 'b' : s) =
+      '\b' : unescape s
+    unescape ('\\' : 'f' : s) =
+      '\f' : unescape s
+    unescape ('\\' : 'n' : s) =
+      '\n' : unescape s
+    unescape ('\\' : 'r' : s) =
+      '\r' : unescape s
+    unescape ('\\' : 't' : s) =
+      '\t' : unescape s
+    unescape ('\\' : 'u' : x1 : x2 : x3 : x4 : s) =
+      Char.chr (read ['0', 'x', x1, x2, x3, x4]) : unescape s
+    unescape (c : s) =
+      c : unescape s
