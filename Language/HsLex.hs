@@ -109,6 +109,15 @@ nullRange (x, y) = x > y
 subsetRange :: Range -> Range -> Bool
 subsetRange (x, y) (x', y') = x' <= x && y <= y'
 
+interRange :: Range -> Range -> Range
+interRange (x, y) (x', y') =
+  (max x x', min y y')
+
+interRanges :: [Range] -> [Range] -> [Range]
+interRanges [] _ = []
+interRanges (r : rs) rs' =
+  filter (Prelude.not . nullRange) $ map (interRange r) rs' ++ interRanges rs rs'
+
 empty :: Regexp
 empty = Empty
 
@@ -310,6 +319,25 @@ convertNFAToDFA nfa = do
     dfaLabel (NFARanges ranges) =
       Just $ DFARanges ranges
 
+    subRanges ranges =
+      let ranges' =
+            concatMap
+              (\r ->
+                Maybe.mapMaybe
+                  (\r' ->
+                    if all (\r'' -> Prelude.any (subsetRange r'') r) r' || all (\r'' -> Prelude.any (subsetRange r'') r') r then
+                      Nothing
+                    else if all nullRange (interRanges r r') then
+                      Nothing
+                    else
+                      Just (interRanges r r'))
+                  ranges)
+              ranges in
+        if ranges == List.nub (ranges' ++ ranges) then
+          ranges
+        else
+          subRanges $ List.nub (ranges' ++ ranges)
+
     splitRange range1 range2 =
       let (c1, c2) = range1 in
       let (c3, c4) = range2 in
@@ -342,7 +370,7 @@ convertNFAToDFA nfa = do
       map (\r -> foldr splitRanges r $ concat $ filter (\r'' -> Prelude.not (all (\r' -> Prelude.any (subsetRange r') r'') r)) ranges) ranges
 
     dfaRanges =
-      RBSet.toList $ RBSet.fromList $ map (filter (Prelude.not . nullRange)) $ splitRanges' $ [(minBound, maxBound)] : (Maybe.mapMaybe (\(_, c) ->
+      RBSet.toList $ RBSet.fromList $ map (filter (Prelude.not . nullRange)) $ splitRanges' $ subRanges $ [(minBound, maxBound)] : (Maybe.mapMaybe (\(_, c) ->
         case c of
           NFAEpsilon -> Nothing
           NFARanges ranges -> Just ranges
