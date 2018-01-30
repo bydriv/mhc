@@ -1,0 +1,181 @@
+%module Data.Scheme.Parsing %where
+
+%start datum
+
+%{
+import qualified Data.Word as Word
+
+type EQUAL = ()
+type SHARP = ()
+type BOOLEAN = Bool
+type NUMBER = Double
+type CHARACTER = Char
+type STRING = String
+type BYTEVECTOR = [Word.Word8]
+type IDENTIFIER = String
+type LPAREN = ()
+type RPAREN = ()
+type DOT = ()
+type QUOTE = ()
+type BACKQUOTE = ()
+type COMMA = ()
+type COMMAAT = ()
+type UINTEGER10 = Word.Word64
+type SHARP_SEMICOLON = ()
+
+data Datum =
+    Bool BOOLEAN
+  | Number NUMBER
+  | Character CHARACTER
+  | String STRING
+  | Symbol Symbol
+  | ByteVector BYTEVECTOR
+  | List0 Data0
+  | List1 (Data1, Datum)
+  | Vector Vector
+  | Quote Datum
+  | Backquote Datum
+  | Comma Datum
+  | CommaAt Datum
+  | Labeling Label Datum
+  | LabelRef Label
+  | ExprComment Datum
+  deriving (Eq, Ord, Read, Show)
+
+type SimpleDatum = Datum
+type Symbol = IDENTIFIER
+type CompoundDatum = Datum
+type List = Datum
+type Data0 = [Datum]
+type Data1 = [Datum]
+type Abbreviation = Datum
+
+data AbbrevPrefix =
+    APQuote
+  | APBackquote
+  | APComma
+  | APCommaAt
+  deriving (Eq, Ord, Read, Show)
+
+type Vector = Datum
+type Label = UINTEGER10
+%}
+
+%%
+
+def rule datum :=
+  simpleDatum
+| compoundDatum
+| label EQUAL datum
+| label SHARP
+| SHARP_SEMICOLON datum
+
+def rule simpleDatum :=
+  BOOLEAN
+| NUMBER
+| CHARACTER
+| STRING
+| symbol
+| BYTEVECTOR
+
+def rule symbol :=
+  IDENTIFIER
+| EQUAL
+
+def rule compoundDatum :=
+  list
+| vector
+| abbreviation
+
+def rule list :=
+  LPAREN data0 RPAREN
+| LPAREN data1 DOT datum RPAREN
+
+def rule data0 :=
+| datum data0
+
+def rule data1 :=
+  datum
+| datum data1
+
+def rule abbreviation :=
+  abbrevPrefix datum
+
+def rule abbrevPrefix :=
+  QUOTE
+| BACKQUOTE
+| COMMA
+| COMMAAT
+
+def rule vector :=
+  SHARP LPAREN datum RPAREN
+
+def rule label :=
+  UINTEGER10
+
+%%
+
+semanticActions :: Monad m => SemanticActions m
+semanticActions = SemanticActions
+  { datum_implies_simpleDatum =
+      return
+  , datum_implies_compoundDatum =
+      return
+  , datum_implies_label_EQUAL_datum = \label () datum ->
+      return $ Labeling label datum
+  , datum_implies_label_SHARP = \label () ->
+      return $ LabelRef label
+  , datum_implies_SHARP_SEMICOLON_datum = \() datum ->
+      return $ ExprComment datum
+  , simpleDatum_implies_BOOLEAN =
+      return . Bool
+  , simpleDatum_implies_NUMBER =
+      return . Number
+  , simpleDatum_implies_CHARACTER =
+      return . Character
+  , simpleDatum_implies_STRING =
+      return . String
+  , simpleDatum_implies_symbol =
+      return . Symbol
+  , simpleDatum_implies_BYTEVECTOR =
+      return . ByteVector
+  , symbol_implies_IDENTIFIER =
+      return
+  , symbol_implies_EQUAL =
+      const $ return "="
+  , compoundDatum_implies_list =
+      return
+  , compoundDatum_implies_vector =
+      return
+  , compoundDatum_implies_abbreviation =
+      return
+  , list_implies_LPAREN_data0_RPAREN = \() data0 () ->
+      return $ List0 data0
+  , list_implies_LPAREN_data1_DOT_datum_RPAREN = \() data1 () datum () ->
+      return $ List1 (data1, datum)
+  , data0_implies =
+      return []
+  , data0_implies_datum_data0 = \datum data0 ->
+      return $ datum : data0
+  , data1_implies_datum = \datum ->
+      return [datum]
+  , data1_implies_datum_data1 = \datum data1 ->
+      return $ datum : data1
+  , abbreviation_implies_abbrevPrefix_datum = \prefix datum ->
+      case prefix of
+        APQuote -> return $ Quote datum
+        APBackquote -> return $ Backquote datum
+        APComma -> return $ Comma datum
+        APCommaAt -> return $ CommaAt datum
+  , abbrevPrefix_implies_QUOTE =
+      const $ return APQuote
+  , abbrevPrefix_implies_BACKQUOTE =
+      const $ return APBackquote
+  , abbrevPrefix_implies_COMMA =
+      const $ return APComma
+  , abbrevPrefix_implies_COMMAAT =
+      const $ return APCommaAt
+  , vector_implies_SHARP_LPAREN_datum_RPAREN = \() () datum () ->
+      return $ Vector datum
+  , label_implies_UINTEGER10 =
+      return }

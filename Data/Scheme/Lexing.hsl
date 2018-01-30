@@ -1,0 +1,85 @@
+%module Data.Scheme.Lexing %where
+
+%{
+import qualified Control.Monad.State as State
+import qualified Control.Monad.Trans as MonadTrans
+import qualified Data.Scheme.Parsing as Parsing
+%}
+
+%%
+
+case (Initial, ' ' | '\t' | '\n' | "\r\n" | '\r') => saWhitespace
+case (Initial, ';' [^'\r' '\n']*) => saComment
+case (Initial, "#|") => saOpenNestedComment
+case (Initial, '|' '#') => saCloseNestedComment
+case (Initial, '#' ';') => saExprComment
+case (Initial, '=') => saEqual
+case (Initial, '#') => saSharp
+case (Initial, '(') => saLParen
+case (Initial, ')') => saRParen
+case (Initial, '.') => saDot
+case (Initial, '\'') => saQuote
+case (Initial, '`') => saBackquote
+case (Initial, ',') => saComma
+case (Initial, ',' '@') => saCommaAt
+case (Initial, "#t" | "#true") => saTrue
+case (Initial, "#f" | "#false") => saFalse
+case (Initial, ['a'-'z'|'A'-'Z'|'!'|'$'|'%'|'&'|'*'|'/'|':'|'<'|'='|'>'|'?'|'^'|'_'|'~']['a'-'z'|'A'-'Z'|'!'|'$'|'%'|'&'|'*'|'/'|':'|'<'|'='|'>'|'?'|'^'|'_'|'~'|'0'-'9'|'+'|'-'|'.'|'@']*) =>
+  saIdentifier
+case (NestedComment, "#|") => saOpenNestedComment
+case (NestedComment, '|' '#') => saCloseNestedComment
+case (NestedComment, .) => saNestedComment
+
+%%
+
+semanticActions :: SemanticActions (State.State Int) (Maybe Parsing.Token)
+semanticActions = SemanticActions
+  { saWhitespace =
+      const $ return Nothing
+  , saComment =
+      const $ return Nothing
+
+  , saOpenNestedComment = const $ do
+      MonadTrans.lift $ State.modify succ
+      yybegin NestedComment
+      return Nothing
+
+  , saCloseNestedComment = const $ do
+      i <- MonadTrans.lift State.get
+
+      if i <= 1 then do
+        MonadTrans.lift $ State.put 0
+        yybegin Initial
+      else
+        MonadTrans.lift $ State.modify pred
+
+      return Nothing
+
+  , saExprComment =
+      const $ return $ Just $ Parsing.SHARP_SEMICOLON ()
+  , saEqual =
+      const $ return $ Just $ Parsing.EQUAL ()
+  , saSharp =
+      const $ return $ Just $ Parsing.SHARP ()
+  , saLParen =
+      const $ return $ Just $ Parsing.LPAREN ()
+  , saRParen =
+      const $ return $ Just $ Parsing.RPAREN ()
+  , saDot =
+      const $ return $ Just $ Parsing.DOT ()
+  , saQuote =
+      const $ return $ Just $ Parsing.QUOTE ()
+  , saBackquote =
+      const $ return $ Just $ Parsing.BACKQUOTE ()
+  , saComma =
+      const $ return $ Just $ Parsing.COMMA ()
+  , saCommaAt =
+      const $ return $ Just $ Parsing.COMMAAT ()
+  , saTrue =
+      const $ return $ Just $ Parsing.BOOLEAN True
+  , saFalse =
+      const $ return $ Just $ Parsing.BOOLEAN False
+  , saIdentifier =
+      return . Just . Parsing.IDENTIFIER
+  , saNestedComment =
+      const $ return Nothing }
