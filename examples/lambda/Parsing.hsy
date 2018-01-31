@@ -3,11 +3,12 @@
 %start abs
 
 %{
-type LAMBDA = ()
-type DOT = ()
-type LPAREN = ()
-type RPAREN = ()
-type ID = String
+type Pos = Int
+type LAMBDA = Pos
+type DOT = Pos
+type LPAREN = Pos
+type RPAREN = Pos
+type ID = (Pos, String)
 
 type Id = ID
 type Ids = [Id]
@@ -55,7 +56,7 @@ semanticActions = SemanticActions
       return $ id' : ids
   , var_implies_id = \id' ->
       return $ Var id'
-  , var_implies_LPAREN_abs_RPAREN = \() exp () ->
+  , var_implies_LPAREN_abs_RPAREN = \_ exp _ ->
       return exp
   , app_implies_var =
       return
@@ -63,5 +64,5 @@ semanticActions = SemanticActions
       return $ App exp1 exp2
   , abs_implies_app =
       return
-  , abs_implies_LAMBDA_ids_DOT_app = \() ids () exp ->
+  , abs_implies_LAMBDA_ids_DOT_app = \_ ids _ exp ->
       return $ foldr Abs exp ids }

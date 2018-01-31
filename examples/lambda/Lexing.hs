@@ -8,6 +8,8 @@ import qualified Control.Monad.Trans as MonadTrans
 import qualified Data.Char           as Char
 
 
+import qualified Control.Monad.State as State
+import qualified Control.Monad.Trans as MonadTrans
 import qualified Parsing
 
 newtype Lexing m a = Lexing { unLexing :: LexingState -> m (a, LexingState) }
@@ -260,12 +262,19 @@ lex actions = lex' where
 
 
 
-semanticActions :: Monad m => SemanticActions m (Maybe Parsing.Token)
+withPosition :: (Int -> String -> Maybe Parsing.Token) -> String -> Lexing (State.State Int) (Maybe Parsing.Token)
+withPosition f yytext = do
+  let n = length yytext
+  pos <- MonadTrans.lift State.get
+  MonadTrans.lift $ State.put $ pos + n
+  return $ f pos yytext
+
+semanticActions :: SemanticActions (State.State Int) (Maybe Parsing.Token)
 semanticActions = SemanticActions
-  { saLambda = const $ return $ Just $ Parsing.LAMBDA ()
-  , saDot = const $ return $ Just $ Parsing.DOT ()
-  , saLParen = const $ return $ Just $ Parsing.LPAREN ()
-  , saRParen = const $ return $ Just $ Parsing.RPAREN ()
-  , saId = return . Just . Parsing.ID
-  , saSpace = const $ return Nothing }
+  { saLambda = withPosition $ const . Just . Parsing.LAMBDA
+  , saDot = withPosition $ const . Just . Parsing.DOT
+  , saLParen = withPosition $ const . Just . Parsing.LPAREN
+  , saRParen = withPosition $ const . Just . Parsing.RPAREN
+  , saId = withPosition $ curry $ Just . Parsing.ID
+  , saSpace = withPosition $ const $ const Nothing }
 

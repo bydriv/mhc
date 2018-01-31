@@ -525,7 +525,7 @@ generateParser modid start0 header footer grm0 = do
     CodeGenerating.write "    (_, _) -> Nothing\n"
     CodeGenerating.write "\n"
 
-    CodeGenerating.write "parse :: Monad m => SemanticActions m -> [Token] -> m (Maybe ("
+    CodeGenerating.write "parse :: Monad m => SemanticActions m -> [Token] -> m (Either (Maybe Token) ("
     case start0 of
       "" ->
         CodeGenerating.write ""
@@ -544,7 +544,9 @@ generateParser modid start0 header footer grm0 = do
     CodeGenerating.write "            (token : _) -> Token token in do\n"
     CodeGenerating.write "      case dfaActionTransition p symbol of\n"
     CodeGenerating.write "        Nothing ->\n"
-    CodeGenerating.write "          return Nothing\n"
+    CodeGenerating.write "          case tokens of\n"
+    CodeGenerating.write "            [] -> return $ Left $ Nothing\n"
+    CodeGenerating.write "            (token : _) -> return $ Left $ Just token\n"
     CodeGenerating.write "        Just (Shift n) ->\n"
     CodeGenerating.write "          let value =\n"
     CodeGenerating.write "                case symbol of\n"
@@ -567,7 +569,9 @@ generateParser modid start0 header footer grm0 = do
     CodeGenerating.write "                [] -> dfaGotoTransition 0 m\n"
     CodeGenerating.write "                ((q', _) : _) -> dfaGotoTransition q' m of\n"
     CodeGenerating.write "              Nothing ->\n"
-    CodeGenerating.write "                return Nothing\n"
+    CodeGenerating.write "                case tokens of\n"
+    CodeGenerating.write "                  [] -> return $ Left $ Nothing\n"
+    CodeGenerating.write "                  (token : _) -> return $ Left $ Just token\n"
     CodeGenerating.write "              Just q -> do\n"
     CodeGenerating.write "                value <-\n"
     CodeGenerating.write "                  case m of\n"
@@ -615,6 +619,6 @@ generateParser modid start0 header footer grm0 = do
     CodeGenerating.write "        Just Accept ->\n"
     CodeGenerating.write "          case stack of { [(_, StackValue_"
     CodeGenerating.write start0
-    CodeGenerating.write " value)] -> return $ Just (value, tokens); _ -> return Nothing }\n"
+    CodeGenerating.write " value)] -> return $ Right (value, tokens); _ -> case tokens of { [] -> return $ Left $ Nothing; (token : _) -> return $ Left $ Just token }}\n"
     CodeGenerating.write "\n"
     CodeGenerating.write footer

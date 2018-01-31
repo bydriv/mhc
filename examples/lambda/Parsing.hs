@@ -2,11 +2,12 @@ module  Parsing  where
 import qualified Control.Monad as Monad
 
 
-type LAMBDA = ()
-type DOT = ()
-type LPAREN = ()
-type RPAREN = ()
-type ID = String
+type Pos = Int
+type LAMBDA = Pos
+type DOT = Pos
+type LPAREN = Pos
+type RPAREN = Pos
+type ID = (Pos, String)
 
 type Id = ID
 type Ids = [Id]
@@ -147,7 +148,7 @@ dfaGotoTransition q s =
     (7, 1) -> Just 13
     (_, _) -> Nothing
 
-parse :: Monad m => SemanticActions m -> [Token] -> m (Maybe (Abs, [Token]))
+parse :: Monad m => SemanticActions m -> [Token] -> m (Either (Maybe Token) (Abs, [Token]))
 parse actions = parse' [] where
   parse' stack tokens =
     let p =
@@ -160,7 +161,9 @@ parse actions = parse' [] where
             (token : _) -> Token token in do
       case dfaActionTransition p symbol of
         Nothing ->
-          return Nothing
+          case tokens of
+            [] -> return $ Left $ Nothing
+            (token : _) -> return $ Left $ Just token
         Just (Shift n) ->
           let value =
                 case symbol of
@@ -184,7 +187,9 @@ parse actions = parse' [] where
                 [] -> dfaGotoTransition 0 m
                 ((q', _) : _) -> dfaGotoTransition q' m of
               Nothing ->
-                return Nothing
+                case tokens of
+                  [] -> return $ Left $ Nothing
+                  (token : _) -> return $ Left $ Just token
               Just q -> do
                 value <-
                   case m of
@@ -208,7 +213,7 @@ parse actions = parse' [] where
                       Monad.liftM StackValue_abs $ abs_implies_LAMBDA_ids_DOT_app actions (case snd (pop !! 3) of { StackValue_LAMBDA value -> value; _ -> undefined }) (case snd (pop !! 2) of { StackValue_ids value -> value; _ -> undefined }) (case snd (pop !! 1) of { StackValue_DOT value -> value; _ -> undefined }) (case snd (pop !! 0) of { StackValue_app value -> value; _ -> undefined })
                 parse' ((q, value) : stack') tokens
         Just Accept ->
-          case stack of { [(_, StackValue_abs value)] -> return $ Just (value, tokens); _ -> return Nothing }
+          case stack of { [(_, StackValue_abs value)] -> return $ Right (value, tokens); _ -> case tokens of { [] -> return $ Left $ Nothing; (token : _) -> return $ Left $ Just token }}
 
 
 
@@ -222,7 +227,7 @@ semanticActions = SemanticActions
       return $ id' : ids
   , var_implies_id = \id' ->
       return $ Var id'
-  , var_implies_LPAREN_abs_RPAREN = \() exp () ->
+  , var_implies_LPAREN_abs_RPAREN = \_ exp _ ->
       return exp
   , app_implies_var =
       return
@@ -230,6 +235,6 @@ semanticActions = SemanticActions
       return $ App exp1 exp2
   , abs_implies_app =
       return
-  , abs_implies_LAMBDA_ids_DOT_app = \() ids () exp ->
+  , abs_implies_LAMBDA_ids_DOT_app = \_ ids _ exp ->
       return $ foldr Abs exp ids }
 
