@@ -14,7 +14,7 @@ posOf (Parsing.RPAREN pos) = pos
 posOf (Parsing.ID (pos, _)) = pos
 
 lineOf :: Parsing.Pos -> String -> Int
-lineOf pos = succ . length . lines . take pos
+lineOf (pos, len) = length . lines . take (pos + len)
 
 main :: IO ()
 main = do
@@ -35,4 +35,4 @@ main = do
         Right (result, _) -> do
           print result
     (c : _) ->
-      putStrLn $ "line " ++ show (lineOf pos s) ++ ": unrecognized character: `" ++ [c] ++ "'."
+      putStrLn $ "line " ++ show (lineOf (pos, 1) s) ++ ": unrecognized character: `" ++ [c] ++ "'."

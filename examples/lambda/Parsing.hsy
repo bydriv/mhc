@@ -3,7 +3,7 @@
 %start abs
 
 %{
-type Pos = Int
+type Pos = (Int, Int)
 type LAMBDA = Pos
 type DOT = Pos
 type LPAREN = Pos

@@ -262,19 +262,19 @@ lex actions = lex' where
 
 
 
-withPosition :: (Int -> String -> Maybe Parsing.Token) -> String -> Lexing (State.State Int) (Maybe Parsing.Token)
+withPosition :: (Int -> Int -> String -> Maybe Parsing.Token) -> String -> Lexing (State.State Int) (Maybe Parsing.Token)
 withPosition f yytext = do
   let n = length yytext
   pos <- MonadTrans.lift State.get
   MonadTrans.lift $ State.put $ pos + n
-  return $ f pos yytext
+  return $ f pos n yytext
 
 semanticActions :: SemanticActions (State.State Int) (Maybe Parsing.Token)
 semanticActions = SemanticActions
-  { saLambda = withPosition $ const . Just . Parsing.LAMBDA
-  , saDot = withPosition $ const . Just . Parsing.DOT
-  , saLParen = withPosition $ const . Just . Parsing.LPAREN
-  , saRParen = withPosition $ const . Just . Parsing.RPAREN
-  , saId = withPosition $ curry $ Just . Parsing.ID
-  , saSpace = withPosition $ const $ const Nothing }
+  { saLambda = withPosition $ curry $ const . Just . Parsing.LAMBDA
+  , saDot = withPosition $ curry $ const . Just . Parsing.DOT
+  , saLParen = withPosition $ curry $ const . Just . Parsing.LPAREN
+  , saRParen = withPosition $ curry $ const . Just . Parsing.RPAREN
+  , saId = withPosition $ curry $ curry $ Just . Parsing.ID
+  , saSpace = withPosition $ const $ const $ const Nothing }
 

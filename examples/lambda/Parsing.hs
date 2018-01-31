@@ -2,7 +2,7 @@ module  Parsing  where
 import qualified Control.Monad as Monad
 
 
-type Pos = Int
+type Pos = (Int, Int)
 type LAMBDA = Pos
 type DOT = Pos
 type LPAREN = Pos
