@@ -26,6 +26,26 @@ library
     , Language.HsYacc.Lexing
     , Language.HsYacc.Parsing
 
+executable mhc
+  hs-source-dirs: .
+  main-is: tools/mhc.hs
+  default-language: Haskell2010
+  build-depends: base, mhc
+  ghc-options: -Wall
+  default-extensions: Safe, Strict, StrictData
+  other-modules:
+      Control.Monad.CodeGenerating
+    , Control.Monad.Identity
+    , Control.Monad.Trans
+    , Control.Monad.Trans.CodeGenerating
+    , Control.Monad.Trans.State
+    , Control.Monad.State
+    , Data.DList
+    , Data.RBMap
+    , Data.RBSet
+    , Language.Haskell2010.Lexing
+    , Language.Haskell2010.Parsing
+
 executable hslex
   hs-source-dirs: .
   main-is: tools/hslex.hs

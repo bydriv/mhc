@@ -1,0 +1,311 @@
+%module Language.Haskell2010.Parsing %where
+
+%start module'
+%trivial
+
+%{
+type Pos = (Int, Int)
+type ARROW = Pos
+type AS = Pos
+type BACKQUOTE = Pos
+type CLASS = Pos
+type COLON_COLON = Pos
+type COMMA = Pos
+type DARROW = Pos
+type DATA = Pos
+type DEFAULT = Pos
+type DERIVING = Pos
+type DOT_DOT = Pos
+type EQUAL = Pos
+type EXCL = Pos
+type FOREIGN = Pos
+type HIDING = Pos
+type IMPORT = Pos
+type INFIX = Pos
+type INFIXL = Pos
+type INFIXR = Pos
+type INSTANCE = Pos
+type INTEGER = (Pos, Integer)
+type LBRACE = Pos
+type LBRACKET = Pos
+type LPAREN = Pos
+type MODULE = Pos
+type NEWTYPE = Pos
+type PIPE = Pos
+type QCONID = (Pos, String)
+type QCONSYM = (Pos, String)
+type QUALIFIED = Pos
+type QVARID = (Pos, String)
+type QVARSYM = (Pos, String)
+type RBRACE = Pos
+type RBRACKET = Pos
+type RPAREN = Pos
+type SEMICOLON = Pos
+type TODO_FDECL = Pos
+type TODO_FUNLHS = Pos
+type TODO_INST = Pos
+type TODO_NEWCONSTR = Pos
+type TOOD_RHS = Pos
+type TYPE = Pos
+type WHERE = Pos
+%}
+
+%%
+
+def rule module' :=
+  MODULE modid exports_opt WHERE body
+| body
+
+def rule modid :=
+  QCONID
+
+def rule body :=
+  LBRACE topdecls RBRACE
+
+def rule topdecls :=
+  topdecl
+| topdecl SEMICOLON topdecls
+
+def rule topdecl :=
+  IMPORT qualified_opt modid as_opt impspec_opt
+| TYPE btype EQUAL type'
+| DATA btype constrs_opt
+| DATA btype constrs_opt DERIVING dclass
+| DATA btype constrs_opt DERIVING LPAREN RPAREN
+| DATA btype constrs_opt DERIVING LPAREN dclass_seq RPAREN
+| DATA btype DARROW btype constrs_opt
+| DATA btype DARROW btype constrs_opt DERIVING dclass
+| DATA btype DARROW btype constrs_opt DERIVING LPAREN RPAREN
+| DATA btype DARROW btype constrs_opt DERIVING LPAREN dclass_seq RPAREN
+| NEWTYPE btype newconstr
+| NEWTYPE btype newconstr DERIVING dclass
+| NEWTYPE btype newconstr DERIVING LPAREN RPAREN
+| NEWTYPE btype newconstr DERIVING LPAREN dclass_seq RPAREN
+| NEWTYPE btype DARROW btype newconstr
+| NEWTYPE btype DARROW btype newconstr DERIVING dclass
+| NEWTYPE btype DARROW btype newconstr DERIVING LPAREN RPAREN
+| NEWTYPE btype DARROW btype newconstr DERIVING LPAREN dclass_seq RPAREN
+| CLASS btype cdecls_opt
+| CLASS btype DARROW btype cdecls_opt
+| INSTANCE btype idecls_opt
+| INSTANCE btype DARROW btype idecls_opt
+| DEFAULT LPAREN RPAREN
+| DEFAULT LPAREN type_seq RPAREN
+| FOREIGN fdecl
+| decl
+
+def rule fdecl :=
+  TODO_FDECL
+
+def rule decls :=
+  LBRACE decl_seq RBRACE
+
+def rule decl_seq :=
+  decl
+| decl SEMICOLON decl_seq
+
+def rule decl :=
+  gendecl
+| funlhs rhs
+| var rhs
+
+def rule cdecls_opt :=
+| WHERE cdecls
+
+def rule cdecls :=
+  LBRACE cdecl_seq RBRACE
+
+def rule cdecl_seq :=
+  cdecl
+| cdecl SEMICOLON cdecl_seq
+
+def rule cdecl :=
+  gendecl
+| funlhs rhs
+| var rhs
+
+def rule idecls_opt :=
+| WHERE idecls
+
+def rule idecls :=
+  LBRACE idecl_seq RBRACE
+
+def rule idecl_seq :=
+  idecl
+| idecl SEMICOLON idecl_seq
+
+def rule idecl :=
+| funlhs rhs
+| var rhs
+
+def rule gendecl :=
+| vars COLON_COLON type'
+| vars COLON_COLON btype DARROW type'
+| fixity integer_opt ops
+
+def rule integer_opt :=
+| INTEGER
+
+def rule funlhs :=
+  TODO_FUNLHS
+
+def rule rhs :=
+  EQUAL exp
+| EQUAL exp WHERE decls
+
+def rule exp :=
+  infixexp
+
+def rule infixexp :=
+  lexp
+
+def rule lexp :=
+  fexp
+
+def rule fexp :=
+  aexp
+| fexp aexp
+
+def rule aexp :=
+  var
+| INTEGER
+
+def rule inst :=
+  TODO_INST
+
+def rule tycls :=
+  QCONID
+
+def rule tyvar :=
+  QVARID
+
+def rule qualified_opt :=
+| QUALIFIED
+
+def rule as_opt :=
+| AS modid
+
+def rule impspec_opt :=
+| impspec
+
+def rule impspec :=
+  LPAREN import_seq RPAREN
+| HIDING LPAREN import_seq RPAREN
+
+def rule import_seq :=
+| import'
+| import' COMMA import_seq
+
+def rule import' :=
+  var
+| con
+| con LPAREN RPAREN
+| con LPAREN DOT_DOT RPAREN
+| con LPAREN cname_seq RPAREN
+
+def rule exports_opt :=
+| exports
+
+def rule exports :=
+  LPAREN export_seq RPAREN
+
+def rule export_seq :=
+| export
+| export COMMA export_seq
+
+def rule export :=
+  var
+| con
+| con LPAREN RPAREN
+| con LPAREN DOT_DOT RPAREN
+| con LPAREN cname_seq RPAREN
+| MODULE modid
+
+def rule cname_seq :=
+  cname
+| cname COMMA cname_seq
+
+def rule cname :=
+  var
+| con
+
+def rule type_seq :=
+  type'
+| type' COMMA type_seq
+def rule type' :=
+  btype
+| btype ARROW type'
+def rule btype :=
+  atype
+| btype atype
+def rule atype :=
+  gtycon
+| tyvar
+| LPAREN type_seq2 RPAREN
+| LBRACKET type' RBRACKET
+| LPAREN type' RPAREN
+| EXCL atype
+def rule type_seq2 :=
+  type' COMMA type'
+| type' COMMA type_seq2
+def rule gtycon :=
+  con
+| LPAREN RPAREN
+| LBRACKET RBRACKET
+| LPAREN ARROW RPAREN
+| LPAREN comma_list RPAREN
+def rule comma_list :=
+  COMMA
+| COMMA comma_list
+def rule constrs_opt :=
+| EQUAL constrs
+def rule constrs :=
+  constr
+| constr PIPE constrs
+def rule constr :=
+  btype
+| btype conop btype
+| con LBRACE RBRACE
+| con LBRACE fielddecl_seq RBRACE
+def rule fielddecl_seq :=
+  fielddecl
+| fielddecl COMMA fielddecl_seq
+def rule fielddecl :=
+  vars COLON_COLON type'
+def rule atypes :=
+| atype atypes
+| EXCL atype atypes
+def rule newconstr :=
+  EQUAL con atype
+| EQUAL con LBRACE var COLON_COLON type' RBRACE
+def rule ops :=
+  op
+| op COMMA ops
+def rule vars :=
+  var
+| var COMMA vars
+def rule var :=
+  QVARID
+| LPAREN QVARSYM RPAREN
+def rule con :=
+  QCONID
+| LPAREN QCONSYM RPAREN
+def rule fixity :=
+  INFIXL
+| INFIXR
+| INFIX
+def rule varop :=
+  QVARSYM
+| BACKQUOTE QVARID BACKQUOTE
+def rule conop :=
+  QCONSYM
+| BACKQUOTE QCONID BACKQUOTE
+def rule op :=
+  varop
+| conop
+def rule dclass :=
+  QCONID
+def rule dclass_seq :=
+  dclass
+| dclass COMMA dclass_seq
+%%

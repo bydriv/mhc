@@ -1,0 +1,174 @@
+%module Language.Haskell2010.Lexing %where
+
+%{
+import qualified Control.Monad.State          as State
+import qualified Control.Monad.Trans          as MonadTrans
+import qualified Language.Haskell2010.Parsing as Parsing
+%}
+
+%%
+
+case (Initial, "\r\n" | '\r' | '\n' | '\f' | '\v' | ' ' | '\t' | Zs) => saWhitechar
+case (Initial, "--" '-'*) => saOpenDashes
+case (Initial, "{-") => saOpenNested
+case (Initial, "->") => saArrow
+case (Initial, "as") => saAs
+case (Initial, '`') => saBackquote
+case (Initial, "class") => saClass
+case (Initial, ':' ':') => saColonColon
+case (Initial, ',') => saComma
+case (Initial, "=>") => saDArrow
+case (Initial, "data") => saData
+case (Initial, "default") => saDefault
+case (Initial, "deriving") => saDeriving
+case (Initial, "..") => saDotDot
+case (Initial, '=') => saEqual
+case (Initial, '!') => saExcl
+case (Initial, "foreign") => saForeign
+case (Initial, "hiding") => saHiding
+case (Initial, "import") => saImport
+case (Initial, "infix") => saInfix
+case (Initial, "infixl") => saInfixL
+case (Initial, "infixr") => saInfixR
+case (Initial, "instance") => saInstance
+case (Initial, Nd+ | ("0o"| "0O") ['0'-'7']+ | ("0x" | "0X") (Nd | ['a'-'f'] | ['A'-'F'])+) => saInteger
+case (Initial, '{') => saLBrace
+case (Initial, '[') => saLBracket
+case (Initial, '(') => saLParen
+case (Initial, "module") => saModule
+case (Initial, "newtype") => saNewtype
+case (Initial, '|') => saPipe
+case (Initial, "qualified") => saQualified
+case (Initial, '}') => saRBrace
+case (Initial, ']') => saRBracket
+case (Initial, ')') => saRParen
+case (Initial, ';') => saSemicolon
+case (Initial, "type") => saType
+case (Initial, "where") => saWhere
+case (Initial, ((Lu | Lt)((Ll | '_') | Lu | Lt | Nd | '\'')* '.')*(Ll | '_')((Ll | '_') | Lu | Lt | Nd | '\'')*) => saVarId
+case (Initial, ((Lu | Lt)((Ll | '_') | Lu | Lt | Nd | '\'')* '.')*(Lu | Lt)((Ll | '_') | Lu | Lt | Nd | '\'')*) => saConId
+case (Initial, ((Lu | Lt)((Ll | '_') | Lu | Lt | Nd | '\'')* '.')*(['!'|'#'|'$'|'%'|'&'|'*'|'+'|'.'|'/'|'<'|'='|'>'|'?'|'@'|'\\'|'^'|'|'|'-'|'~']['!'|'#'|'$'|'%'|'&'|'*'|'+'|'.'|'/'|'<'|'='|'>'|'?'|'@'|'\\'|'^'|'|'|'-'|'~'|':']*)) =>
+  saVarSym
+case (Initial, ((Lu | Lt)((Ll | '_') | Lu | Lt | Nd | '\'')* '.')*(':'['!'|'#'|'$'|'%'|'&'|'*'|'+'|'.'|'/'|'<'|'='|'>'|'?'|'@'|'\\'|'^'|'|'|'-'|'~'|':']*)) =>
+  saConSym
+case (Dashes, "\r\n" | '\r' | '\n' | '\f') => saCloseDashes
+case (Dashes, .) => saComment
+case (Nested, "{-") => saOpenNested
+case (Nested, "-}") => saCloseNested
+case (Nested, .) => saComment
+
+%%
+
+withPosition :: (Int -> Int -> String -> Lexing (State.State (Int, Int)) (Maybe Parsing.Token)) -> String -> Lexing (State.State (Int, Int)) (Maybe Parsing.Token)
+withPosition f yytext = do
+  let n = length yytext
+  (pos, nest) <- MonadTrans.lift State.get
+  MonadTrans.lift $ State.put (pos + n, nest)
+  f pos n yytext
+
+semanticActions :: SemanticActions (State.State (Int, Int)) (Maybe Parsing.Token)
+semanticActions = SemanticActions
+  { saWhitechar = withPosition $ \_ _ _ ->
+      return Nothing
+  , saComment = withPosition $ \_ _ _ ->
+      return Nothing
+  , saOpenDashes = withPosition $ \_ _ _ -> do
+      yybegin Dashes
+      return Nothing
+
+  , saOpenNested = withPosition $ \_ _ _ -> do
+      yybegin Nested
+      (pos, nest) <- MonadTrans.lift State.get
+      MonadTrans.lift $ State.put (pos, nest + 1)
+      return Nothing
+
+  , saCloseNested = withPosition $ \_ _ _ -> do
+      (pos, nest) <- MonadTrans.lift State.get
+
+      if nest <= 1 then do
+        yybegin Initial
+        MonadTrans.lift $ State.put (pos, 0)
+      else
+        MonadTrans.lift $ State.put (pos, nest - 1)
+
+      return Nothing
+
+  , saArrow = withPosition $ \pos n _ ->
+      return $ Just $ Parsing.ARROW (pos, n)
+  , saAs = withPosition $ \pos n _ ->
+      return $ Just $ Parsing.AS (pos, n)
+  , saBackquote = withPosition $ \pos n _ ->
+      return $ Just $ Parsing.BACKQUOTE (pos, n)
+  , saClass = withPosition $ \pos n _ ->
+      return $ Just $ Parsing.CLASS (pos, n)
+  , saColonColon = withPosition $ \pos n _ ->
+      return $ Just $ Parsing.COLON_COLON (pos, n)
+  , saComma = withPosition $ \pos n _ ->
+      return $ Just $ Parsing.COMMA (pos, n)
+  , saDArrow = withPosition $ \pos n _ ->
+      return $ Just $ Parsing.DARROW (pos, n)
+  , saData = withPosition $ \pos n _ ->
+      return $ Just $ Parsing.DATA (pos, n)
+  , saDefault = withPosition $ \pos n _ ->
+      return $ Just $ Parsing.DEFAULT (pos, n)
+  , saDeriving = withPosition $ \pos n _ ->
+      return $ Just $ Parsing.DERIVING (pos, n)
+  , saDotDot = withPosition $ \pos n _ ->
+      return $ Just $ Parsing.DOT_DOT (pos, n)
+  , saEqual = withPosition $ \pos n _ ->
+      return $ Just $ Parsing.EQUAL (pos, n)
+  , saExcl = withPosition $ \pos n _ ->
+      return $ Just $ Parsing.EXCL (pos, n)
+  , saForeign = withPosition $ \pos n _ ->
+      return $ Just $ Parsing.FOREIGN (pos, n)
+  , saHiding = withPosition $ \pos n _ ->
+      return $ Just $ Parsing.HIDING (pos, n)
+  , saImport = withPosition $ \pos n _ ->
+      return $ Just $ Parsing.IMPORT (pos, n)
+  , saInfix = withPosition $ \pos n _ ->
+      return $ Just $ Parsing.INFIX (pos, n)
+  , saInfixL = withPosition $ \pos n _ ->
+      return $ Just $ Parsing.INFIXL (pos, n)
+  , saInfixR = withPosition $ \pos n _ ->
+      return $ Just $ Parsing.INFIXR (pos, n)
+  , saInstance = withPosition $ \pos n _ ->
+      return $ Just $ Parsing.INSTANCE (pos, n)
+  , saInteger = withPosition $ \pos n yytext ->
+      return $ Just $ Parsing.INTEGER ((pos, n), read yytext)
+  , saLBrace = withPosition $ \pos n _ ->
+      return $ Just $ Parsing.LBRACE (pos, n)
+  , saLBracket = withPosition $ \pos n _ ->
+      return $ Just $ Parsing.LBRACKET (pos, n)
+  , saLParen = withPosition $ \pos n _ ->
+      return $ Just $ Parsing.LPAREN (pos, n)
+  , saModule = withPosition $ \pos n _ ->
+      return $ Just $ Parsing.MODULE (pos, n)
+  , saNewtype = withPosition $ \pos n _ ->
+      return $ Just $ Parsing.NEWTYPE (pos, n)
+  , saPipe = withPosition $ \pos n _ ->
+      return $ Just $ Parsing.PIPE (pos, n)
+  , saQualified = withPosition $ \pos n _ ->
+      return $ Just $ Parsing.QUALIFIED (pos, n)
+  , saRBrace = withPosition $ \pos n _ ->
+      return $ Just $ Parsing.RBRACE (pos, n)
+  , saRBracket = withPosition $ \pos n _ ->
+      return $ Just $ Parsing.RBRACKET (pos, n)
+  , saRParen = withPosition $ \pos n _ ->
+      return $ Just $ Parsing.RPAREN (pos, n)
+  , saSemicolon = withPosition $ \pos n _ ->
+      return $ Just $ Parsing.SEMICOLON (pos, n)
+  , saType = withPosition $ \pos n _ ->
+      return $ Just $ Parsing.TYPE (pos, n)
+  , saWhere = withPosition $ \pos n _ ->
+      return $ Just $ Parsing.WHERE (pos, n)
+  , saVarId = withPosition $ \pos n yytext ->
+      return $ Just $ Parsing.QVARID ((pos, n), yytext)
+  , saConId = withPosition $ \pos n yytext ->
+      return $ Just $ Parsing.QCONID ((pos, n), yytext)
+  , saVarSym = withPosition $ \pos n yytext ->
+      return $ Just $ Parsing.QVARSYM ((pos, n), yytext)
+  , saConSym = withPosition $ \pos n yytext ->
+      return $ Just $ Parsing.QCONSYM ((pos, n), yytext)
+  , saCloseDashes = withPosition $ \_ _ _ -> do
+      yybegin Initial
+      return Nothing }
