@@ -27,15 +27,15 @@ main = do
   let (tokens, _) = Identity.runIdentity $ Lexing.runLexing $ Lexing.lex Lexing.semanticActions s
   let result = Identity.runIdentity $ Parsing.parse Parsing.semanticActions $ Maybe.catMaybes tokens
   case result of
-    Nothing ->
+    Left _ ->
       putStrLn "syntax error."
-    Just ((defns, ast, codes), _) ->
+    Right ((defns, ast, codes), _) ->
       let modid = takeModId defns in
       let start = takeStart defns ast in
       let header = takeCodes defns in
       let footer = codes in
       let grm = concatMap (\(left, rights) -> map (\right -> (left, map mapSymbol right)) rights) ast in
-        case HsYacc.generateParser modid start header footer grm of
+        case HsYacc.generateParser (isTrivial defns) modid start header footer grm of
           Nothing ->
             putStrLn "shift/reduce or reduce/reduce conflict."
           Just s' ->
@@ -52,6 +52,10 @@ main = do
     takeStart [] ((start, _) : _) = start
     takeStart (Parsing.DefnStart start : _) _ = start
     takeStart (_ : defns) grm = takeStart defns grm
+
+    isTrivial [] = False
+    isTrivial (Parsing.DefnTrivial : _) = True
+    isTrivial (_ : defns) = isTrivial defns
 
     takeCodes [] = ""
     takeCodes (Parsing.DefnCodes codes : defns) = codes ++ takeCodes defns

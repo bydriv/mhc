@@ -308,8 +308,8 @@ makeTable start grm0 =
         reduces
         (RBSet.toList states)
 
-generateParser :: String -> String -> String -> String -> Grammar String String -> Maybe String
-generateParser modid start0 header footer grm0 = do
+generateParser :: Bool -> String -> String -> String -> String -> Grammar String String -> Maybe String
+generateParser trivial modid start0 header footer grm0 = do
   let terminals =
         List.nub $ concatMap
           (\(_, right) ->
@@ -384,6 +384,57 @@ generateParser modid start0 header footer grm0 = do
     CodeGenerating.write "type GotoState = Int\n"
     CodeGenerating.write "type GotoSymbol = Int\n"
     CodeGenerating.write "\n"
+
+    Monad.when trivial $ do
+      Monad.forM_ nonterminals $ \n -> do
+        CodeGenerating.write "data "
+        case n of
+          [] ->
+            return ()
+          (c : cs) ->
+            CodeGenerating.write $ Char.toUpper c : cs
+        CodeGenerating.write " =\n"
+
+        Monad.forM_ (zip (filter (\(left, _) -> left == n) grm0) [(0 :: Int)..]) $ \((left, right), i) -> do
+          if i == 0 then
+            CodeGenerating.write "    "
+          else
+            CodeGenerating.write "  | "
+
+          case left of
+            [] ->
+              return ()
+            (c : cs) ->
+              CodeGenerating.write $ Char.toUpper c : cs
+
+          CodeGenerating.write "_implies"
+
+          Monad.forM_ right $ \symbol -> do
+            CodeGenerating.write "_"
+
+            case symbol of
+              T t ->
+                CodeGenerating.write t
+              N n' ->
+                CodeGenerating.write n'
+
+          Monad.forM_ right $ \symbol -> do
+            case symbol of
+              T t -> do
+                CodeGenerating.write " "
+                CodeGenerating.write t
+              N n' -> do
+                CodeGenerating.write " "
+                case n' of
+                  [] ->
+                    return ()
+                  (c : cs) ->
+                    CodeGenerating.write $ Char.toUpper c : cs
+
+          CodeGenerating.write "\n"
+
+        CodeGenerating.write "  deriving (Eq, Ord, Read, Show)\n"
+        CodeGenerating.write "\n"
 
     CodeGenerating.write "data StackValue =\n"
     CodeGenerating.write "    StackValue_EOF\n"
@@ -622,3 +673,77 @@ generateParser modid start0 header footer grm0 = do
     CodeGenerating.write " value)] -> return $ Right (value, tokens); _ -> case tokens of { [] -> return $ Left $ Nothing; (token : _) -> return $ Left $ Just token }}\n"
     CodeGenerating.write "\n"
     CodeGenerating.write footer
+
+    Monad.when trivial $ do
+      CodeGenerating.write "semanticActions :: Monad m => SemanticActions m\n"
+      CodeGenerating.write "semanticActions = SemanticActions\n"
+      Monad.forM_ (zip grm0 [0..]) $ \((left, right), i) -> do
+        if i == 0 then
+          CodeGenerating.write "  { "
+        else
+          CodeGenerating.write "  , "
+
+        CodeGenerating.write left
+        CodeGenerating.write "_implies"
+
+        Monad.forM_ right $ \symbol -> do
+          CodeGenerating.write "_"
+
+          case symbol of
+            T t ->
+              CodeGenerating.write t
+            N n ->
+              CodeGenerating.write n
+
+        if (not (null right)) then do
+          CodeGenerating.write " = \\"
+
+          Monad.forM_ (zip right [(0 :: Int)..]) $ \(symbol, j) -> do
+            case symbol of
+              T "" -> do
+                CodeGenerating.write " "
+              T (c : cs) -> do
+                CodeGenerating.write $ (Char.toLower c : cs) ++ show j
+                CodeGenerating.write " "
+              N n -> do
+                CodeGenerating.write $ n ++ show j
+                CodeGenerating.write " "
+
+          CodeGenerating.write "->\n"
+        else
+          CodeGenerating.write " =\n"
+
+        CodeGenerating.write "      return $ "
+
+        case left of
+          [] ->
+            return ()
+          (c : cs) ->
+            CodeGenerating.write $ Char.toUpper c : cs
+
+        CodeGenerating.write "_implies"
+
+        Monad.forM_ right $ \symbol -> do
+          CodeGenerating.write "_"
+
+          case symbol of
+            T t ->
+              CodeGenerating.write t
+            N n ->
+              CodeGenerating.write n
+
+        Monad.forM_ (zip right [(0 :: Int)..]) $ \(symbol, j) -> do
+          case symbol of
+            T "" -> do
+              CodeGenerating.write " "
+            T (c : cs) -> do
+              CodeGenerating.write " "
+              CodeGenerating.write $ (Char.toLower c : cs) ++ show j
+            N n -> do
+              CodeGenerating.write " "
+              CodeGenerating.write $ n ++ show j
+
+        if i == length grm - 1 then
+          CodeGenerating.write " }\n"
+        else
+          CodeGenerating.write "\n"

@@ -3,7 +3,7 @@
 %start start
 
 %{
-type CODE    = Char
+type CODE = Char
 type COLONEQ = ()
 type DEF = ()
 type NONTERMINAL = String
@@ -13,6 +13,7 @@ type PMODULE = ()
 type PP = ()
 type PRBRACE = ()
 type PSTART = ()
+type PTRIVIAL = ()
 type PWHERE = ()
 type RULE = ()
 type TERMINAL = String
@@ -23,6 +24,7 @@ type Definitions = [Definition]
 
 data Definition =
     DefnStart Nonterminal
+  | DefnTrivial
   | DefnModule Codes
   | DefnCodes Codes
   deriving (Eq, Ord, Read, Show)
@@ -48,6 +50,7 @@ def rule definitions :=
 
 def rule definition :=
   PSTART nonterminal
+| PTRIVIAL
 | PMODULE codes PWHERE
 | PLBRACE codes PRBRACE
 
@@ -88,6 +91,8 @@ semanticActions = SemanticActions
       return $ defn : defns
   , definition_implies_PSTART_nonterminal = \() start ->
       return $ DefnStart start
+  , definition_implies_PTRIVIAL = const $
+      return $ DefnTrivial
   , definition_implies_PMODULE_codes_PWHERE = \() codes () ->
       return $ DefnModule codes
   , definition_implies_PLBRACE_codes_PRBRACE = \() codes () ->
