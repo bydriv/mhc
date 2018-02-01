@@ -66,71 +66,94 @@ instance (Ord a, Read a) => Read (RBSet a) where
 instance Show a => Show (RBSet a) where
   show = ("fromList" ++) . show . toList
 
+{-# INLINE unRBSet #-}
 unRBSet :: RBSet a -> RBMap.RBMap a ()
 unRBSet (RBSet rbMap) = rbMap
 
+{-# INLINE empty #-}
 empty :: RBSet a
 empty = RBSet RBMap.empty
 
+{-# INLINE singleton #-}
 singleton :: a -> RBSet a
 singleton = RBSet . flip RBMap.singleton ()
 
+{-# INLINE foldr #-}
 foldr :: (a -> b -> b) -> b -> RBSet a -> b
 foldr f z = RBMap.foldri (const . f) z . unRBSet
 
+{-# INLINE foldl #-}
 foldl :: (a -> b -> b) -> b -> RBSet a -> b
 foldl f z = RBMap.foldli (const . f) z . unRBSet
 
+{-# INLINE foldTree #-}
 foldTree :: (a -> b -> b -> b) -> b -> RBSet a -> b
 foldTree f z = RBMap.foldiTree (const . f) z . unRBSet
 
+{-# INLINE map #-}
 map :: (Ord a, Ord b) => (a -> b) -> RBSet a -> RBSet b
 map f = foldr (insert . f) empty
 
+{-# INLINE concatMap #-}
 concatMap :: (Ord a, Ord b) => (a -> RBSet b) -> RBSet a -> RBSet b
 concatMap f = foldr (union . f) empty
 
+{-# INLINE all #-}
 all :: (a -> Bool) -> RBSet a -> Bool
 all f = foldr ((&&) . f) True
 
+{-# INLINE any #-}
 any :: (a -> Bool) -> RBSet a -> Bool
 any f = foldr ((||) . f) False
 
+{-# INLINE null #-}
 null :: RBSet a -> Bool
 null = RBMap.null . unRBSet
 
+{-# INLINE member #-}
 member :: Ord a => a -> RBSet a -> Bool
 member x = RBMap.member x . unRBSet
 
+{-# INLINE subset #-}
 subset :: Ord a => RBSet a -> RBSet a -> Bool
 subset = flip $ all . flip member
 
+{-# INLINE insert #-}
 insert :: Ord a => a -> RBSet a -> RBSet a
 insert x = RBSet . RBMap.insert x () . unRBSet
 
+{-# INLINE delete #-}
 delete :: Ord a => a -> RBSet a -> RBSet a
 delete x = RBSet . RBMap.delete x . unRBSet
 
+{-# INLINE union #-}
 union :: Ord a => RBSet a -> RBSet a -> RBSet a
 union rbSet = RBSet . RBMap.unionr (unRBSet rbSet) . unRBSet
 
+{-# INLINE unions #-}
 unions :: Ord a => [RBSet a] -> RBSet a
 unions = Prelude.foldr union empty
 
+{-# INLINE inter #-}
 inter :: Ord a => RBSet a -> RBSet a -> RBSet a
 inter rbSet = RBSet . RBMap.interr (unRBSet rbSet) . unRBSet
 
+{-# INLINE diff #-}
 diff :: Ord a => RBSet a -> RBSet a -> RBSet a
 diff rbSet = RBSet . RBMap.diff (unRBSet rbSet) . unRBSet
 
+{-# INLINE maximum #-}
 maximum :: Ord a => RBSet a -> Maybe a
 maximum = RBMap.maximumKey . unRBSet
 
+{-# INLINE minimum #-}
 minimum :: Ord a => RBSet a -> Maybe a
 minimum = RBMap.minimumKey . unRBSet
 
+{-# INLINE toList #-}
 toList :: RBSet a -> [a]
 toList = foldr (:) []
 
+{-# INLINE fromList #-}
 fromList :: Ord a => [a] -> RBSet a
 fromList = Prelude.foldr insert empty

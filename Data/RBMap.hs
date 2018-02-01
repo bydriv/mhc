@@ -100,14 +100,17 @@ instance (Ord k, Read k, Read a) => Read (RBMap k a) where
 instance (Show k, Show a) => Show (RBMap k a) where
   show = ("fromList" ++) . show . toList
 
+{-# INLINE toRed #-}
 toRed :: RBMap k a -> RBMap k a
 toRed Empty = Empty
 toRed (Node _ l r k x) = Node Red l r k x
 
+{-# INLINE toBlack #-}
 toBlack :: RBMap k a -> RBMap k a
 toBlack Empty = Empty
 toBlack (Node _ l r k x) = Node Black l r k x
 
+{-# INLINE balance #-}
 balance :: RBMap k a -> RBMap k a
 balance (Node Black (Node Red (Node Red l2 r2 k2 x2) r1 k1 x1) r0 k0 x0) =
   Node Red (Node Black l2 r2 k2 x2) (Node Black r1 r0 k0 x0) k1 x1
@@ -120,43 +123,55 @@ balance (Node Black l0 (Node Red l1 (Node Red l2 r2 k2 x2) k1 x1) k0 x0) =
 balance rbMap =
   rbMap
 
+{-# INLINE empty #-}
 empty :: RBMap k a
 empty = Empty
 
+{-# INLINE singleton #-}
 singleton :: k -> a -> RBMap k a
 singleton = Node Black Empty Empty
 
+{-# INLINE foldri #-}
 foldri :: (k -> a -> b -> b) -> b -> RBMap k a -> b
 foldri _ z Empty = z
 foldri f z (Node _ l r k x) = foldri f (f k x (foldri f z r)) l
 
+{-# INLINE foldr #-}
 foldr :: (a -> b -> b) -> b -> RBMap k a -> b
 foldr = foldri . const
 
+{-# INLINE foldli #-}
 foldli :: (k -> a -> b -> b) -> b -> RBMap k a -> b
 foldli _ z Empty = z
 foldli f z (Node _ l r k x) = foldli f (f k x (foldli f z l)) r
 
+{-# INLINE foldl #-}
 foldl :: (a -> b -> b) -> b -> RBMap k a -> b
 foldl = foldli . const
 
+{-# INLINE foldiTree #-}
 foldiTree :: (k -> a -> b -> b -> b) -> b -> RBMap k a -> b
 foldiTree _ z Empty = z
 foldiTree f z (Node _ l r k x) = f k x (foldiTree f z l) (foldiTree f z r)
 
+{-# INLINE foldTree #-}
 foldTree :: (a -> b -> b -> b) -> b -> RBMap k a -> b
 foldTree = foldiTree . const
 
+{-# INLINE mapi #-}
 mapi :: (k -> a -> b) -> RBMap k a -> RBMap k b
 mapi _ Empty = Empty
 mapi f (Node color l r k x) = Node color (mapi f l) (mapi f r) k (f k x)
 
+{-# INLINE map #-}
 map :: (a -> b) -> RBMap k a -> RBMap k b
 map = mapi . const
 
+{-# INLINE gmap #-}
 gmap :: (Ord k, Ord k') => (k -> a -> (k', b)) -> RBMap k a -> RBMap k' b
 gmap f = foldri (\k -> uncurry insert . f k) empty
 
+{-# INLINE filteri #-}
 filteri :: Ord k => (k -> a -> Bool) -> RBMap k a -> RBMap k a
 filteri f = flip foldri empty $ \k x ->
   if f k x then
@@ -164,21 +179,27 @@ filteri f = flip foldri empty $ \k x ->
   else
     id
 
+{-# INLINE filter #-}
 filter :: Ord k => (a -> Bool) -> RBMap k a -> RBMap k a
 filter = filteri . const
 
+{-# INLINE alli #-}
 alli :: (k -> a -> Bool) -> RBMap k a -> Bool
 alli f = foldri (\k -> (&&) . (f k)) True
 
+{-# INLINE all #-}
 all :: (a -> Bool) -> RBMap k a -> Bool
 all = alli . const
 
+{-# INLINE anyi #-}
 anyi :: (k -> a -> Bool) -> RBMap k a -> Bool
 anyi f = foldri (\k -> (||) . (f k)) False
 
+{-# INLINE any #-}
 any :: (a -> Bool) -> RBMap k a -> Bool
 any = anyi . const
 
+{-# INLINE lookup #-}
 lookup :: Ord k => k -> RBMap k a -> Maybe a
 lookup _ Empty =
   Nothing
@@ -188,6 +209,7 @@ lookup k (Node _ l0 r0 k0 x0) =
     EQ -> Just x0
     GT -> lookup k r0
 
+{-# INLINE insert #-}
 insert :: Ord k => k -> a -> RBMap k a -> RBMap k a
 insert k x = toBlack . insert' where
   insert' Empty =
@@ -198,6 +220,7 @@ insert k x = toBlack . insert' where
       EQ -> Node color l0 r0 k x
       GT -> balance $ Node color l0 (insert' r0) k0 x0
 
+{-# INLINE delete #-}
 delete :: Ord k => k -> RBMap k a -> RBMap k a
 delete k = toBlack . delete' where
   cat Empty r0 =
@@ -274,13 +297,16 @@ delete k = toBlack . delete' where
           _ ->
             Node Red l0 (delete' r0) k0 x0
 
+{-# INLINE null #-}
 null :: RBMap k a -> Bool
 null Empty = True
 null _ = False
 
+{-# INLINE member #-}
 member :: Ord k => k -> RBMap k a -> Bool
 member k = Maybe.isJust . lookup k
 
+{-# INLINE insertBy #-}
 insertBy :: Ord k => (a -> a -> a) -> k -> a -> RBMap k a -> RBMap k a
 insertBy f k x rbMap =
   case lookup k rbMap of
@@ -289,6 +315,7 @@ insertBy f k x rbMap =
     Just x' ->
       insert k (f x x') rbMap
 
+{-# INLINE alter #-}
 alter :: Ord k => (Maybe a -> Maybe a) -> k -> RBMap k a -> RBMap k a
 alter f k rbMap =
   case f (lookup k rbMap) of
@@ -297,24 +324,31 @@ alter f k rbMap =
     Just x' ->
       insert k x' rbMap
 
+{-# INLINE update #-}
 update :: Ord k => (a -> Maybe a) -> k -> RBMap k a -> RBMap k a
 update = alter . maybe Nothing
 
+{-# INLINE adjust #-}
 adjust :: Ord k => (a -> a) -> k -> RBMap k a -> RBMap k a
 adjust f = update $ Just . f
 
+{-# INLINE unionBy #-}
 unionBy :: Ord k => (a -> a -> a) -> RBMap k a -> RBMap k a -> RBMap k a
 unionBy = foldri . insertBy . flip
 
+{-# INLINE unionsBy #-}
 unionsBy :: Ord k => (a -> a -> a) -> [RBMap k a] -> RBMap k a
 unionsBy f = Prelude.foldr (unionBy f) empty
 
+{-# INLINE unionl #-}
 unionl :: Ord k => RBMap k a -> RBMap k a -> RBMap k a
 unionl = unionBy const
 
+{-# INLINE unionr #-}
 unionr :: Ord k => RBMap k a -> RBMap k a -> RBMap k a
 unionr = unionBy $ const id
 
+{-# INLINE interBy #-}
 interBy :: Ord k => (a -> a -> a) -> RBMap k a -> RBMap k a -> RBMap k a
 interBy f rbMap = flip foldri empty $ \k x ->
   case lookup k rbMap of
@@ -323,34 +357,43 @@ interBy f rbMap = flip foldri empty $ \k x ->
     Just x' ->
       insert k $ f x' x
 
+{-# INLINE interl #-}
 interl :: Ord k => RBMap k a -> RBMap k a -> RBMap k a
 interl = interBy const
 
+{-# INLINE interr #-}
 interr :: Ord k => RBMap k a -> RBMap k a -> RBMap k a
 interr = interBy $ const id
 
+{-# INLINE diffBy #-}
 diffBy :: Ord k => (a -> a -> Maybe a) -> RBMap k a -> RBMap k a -> RBMap k a
 diffBy f = foldri $ flip $ update . flip f
 
+{-# INLINE diff #-}
 diff :: Ord k => RBMap k a -> RBMap k a -> RBMap k a
 diff = diffBy $ \_ _ -> Nothing
 
+{-# INLINE keys #-}
 keys :: RBMap k a -> [k]
 keys = foldri (const . (:)) []
 
+{-# INLINE elts #-}
 elts :: RBMap k a -> [a]
 elts = foldr (:) []
 
+{-# INLINE maximumKey #-}
 maximumKey :: Ord k => RBMap k a -> Maybe k
 maximumKey = maximumKey' Nothing where
   maximumKey' z Empty = z
   maximumKey' _ (Node _ _ r k _) = maximumKey' (Just k) r
 
+{-# INLINE minimumKey #-}
 minimumKey :: Ord k => RBMap k a -> Maybe k
 minimumKey = minimumKey' Nothing where
   minimumKey' z Empty = z
   minimumKey' _ (Node _ l _ k _) = minimumKey' (Just k) l
 
+{-# INLINE maximum #-}
 maximum :: Ord a => RBMap k a -> Maybe a
 maximum rbMap =
   let alist = elts rbMap in
@@ -359,6 +402,7 @@ maximum rbMap =
     else
       Just $ List.maximum alist
 
+{-# INLINE minimum #-}
 minimum :: Ord a => RBMap k a -> Maybe a
 minimum rbMap =
   let alist = elts rbMap in
@@ -367,8 +411,10 @@ minimum rbMap =
     else
       Just $ List.minimum alist
 
+{-# INLINE toList #-}
 toList :: RBMap k a -> [(k, a)]
 toList = foldri (\k x -> ((k, x) :)) []
 
+{-# INLINE fromList #-}
 fromList :: Ord k => [(k, a)] -> RBMap k a
 fromList = Prelude.foldr (uncurry insert) empty
