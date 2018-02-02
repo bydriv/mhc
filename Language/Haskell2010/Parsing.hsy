@@ -45,11 +45,6 @@ type RARROW = Pos
 type RPAREN = Pos
 type SEMICOLON = Pos
 type STRING = (Pos, String)
-type TODO_FDECL = Pos
-type TODO_FUNLHS = Pos
-type TODO_INST = Pos
-type TODO_NEWCONSTR = Pos
-type TOOD_RHS = Pos
 type TYPE = Pos
 type WHERE = Pos
 %}
