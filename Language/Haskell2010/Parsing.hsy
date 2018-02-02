@@ -148,7 +148,6 @@ def rule decl :=
 | pat PIPE gdrhs
 | pat PIPE gdrhs WHERE decls
 
-
 def rule cdecls_opt :=
 | WHERE cdecls
 
