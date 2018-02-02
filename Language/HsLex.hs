@@ -654,14 +654,6 @@ generateLexer modid header footer rules = CodeGenerating.generate $
     CodeGenerating.write "yybegin :: Monad m => LexingState -> Lexing m ()\n"
     CodeGenerating.write "yybegin s = Lexing $ const $ return ((), s)\n"
     CodeGenerating.write "\n"
-    Monad.forM_ states $ \state ->
-      let regexp =
-            foldr (:|:) Empty $
-              map (\(_, regexp', _) -> regexp') $
-              filter (\(state', _, _) -> state' == state) rules in
-      let dfa = minimize $ convertRegexpToDFA regexp in do
-        generateDFA ("dfa" ++ state) dfa
-        CodeGenerating.write "\n"
     Monad.forM_ (zip [0 :: Int ..] rules) $ \(i, (_, regexp, _)) ->
       let dfa = minimize $ convertRegexpToDFA regexp in do
         generateDFA ("dfa" ++ show i) dfa
@@ -689,23 +681,30 @@ generateLexer modid header footer rules = CodeGenerating.generate $
     CodeGenerating.write "    p <- Lexing $ \\p -> return (p, p)\n"
     CodeGenerating.write "   "
     Monad.forM_ states $ \state -> do
+      let rules' = filter (\(_, (state', _, _)) -> state' == state) $ zip [0 :: Int ..] rules
+      let actions' = map (\(i, (_, _, action)) -> (i, action)) rules'
+
       CodeGenerating.write " if p == "
       CodeGenerating.write state
       CodeGenerating.write " then\n"
-      CodeGenerating.write "      case match dfa"
-      CodeGenerating.write state
-      CodeGenerating.write "InitialState dfa"
-      CodeGenerating.write state
-      CodeGenerating.write "FinalStates dfa"
-      CodeGenerating.write state
-      CodeGenerating.write "Transition s of\n"
+      CodeGenerating.write "      case "
+
+      Monad.forM_  actions' $ \(i, _) -> do
+        CodeGenerating.write "max (match dfa"
+        CodeGenerating.write $ show i
+        CodeGenerating.write "InitialState dfa"
+        CodeGenerating.write $ show i
+        CodeGenerating.write "FinalStates dfa"
+        CodeGenerating.write $ show i
+        CodeGenerating.write "Transition s) $ "
+
+      CodeGenerating.write "Nothing of\n"
       CodeGenerating.write "        Nothing ->\n"
       CodeGenerating.write "          return ([], s)\n"
       CodeGenerating.write "        Just 0 ->\n"
       CodeGenerating.write "          return ([], s)\n"
       CodeGenerating.write "        Just i ->\n"
-      let rules' = filter (\(_, (state', _, _)) -> state' == state) $ zip [0 :: Int ..] rules
-      let actions' = map (\(i, (_, _, action)) -> (i, action)) rules'
+
       CodeGenerating.write "          let (yytext, s') = splitAt i s in\n"
       CodeGenerating.write "           "
       Monad.forM_  actions' $ \(i, action) -> do

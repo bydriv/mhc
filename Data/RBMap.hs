@@ -417,78 +417,82 @@ toList = foldri (\k x -> ((k, x) :)) []
 
 {-# INLINE fromList #-}
 fromList :: Ord k => [(k, a)] -> RBMap k a
-fromList = fromSortedList . List.sortBy (\(k1, _) (k2, _) -> compare k1 k2) where
-  fromSortedList alist =
-    let n = length alist in
-      if even n then
-        blackFromEvenSortedList n alist
-      else
-        blackFromOddSortedList n alist
+fromList =
+  fromSortedList
+    . List.sortBy (\(k1, _) (k2, _) -> compare k1 k2)
+    . List.nubBy (\(k1, _) (k2, _) -> k1 == k2)
+  where
+    fromSortedList alist =
+      let n = length alist in
+        if even n then
+          blackFromEvenSortedList n alist
+        else
+          blackFromOddSortedList n alist
 
-  blackFromEvenSortedList _ [] =
-    empty
-  blackFromEvenSortedList n alist =
-    let m = n `div` 2 in
-      case splitAt m alist of
-        (left, (k, x) : right) ->
-          if even m then
-            let l = redFromEvenSortedList m left in
-            let r = redFromOddSortedList (m - 1) right in
-              Node Black l r k x
-          else
-            let l = redFromOddSortedList m left in
-            let r = redFromEvenSortedList (m - 1) right in
-              Node Black l r k x
-        _ ->
-          undefined
+    blackFromEvenSortedList _ [] =
+      empty
+    blackFromEvenSortedList n alist =
+      let m = n `div` 2 in
+        case splitAt m alist of
+          (left, (k, x) : right) ->
+            if even m then
+              let l = redFromEvenSortedList m left in
+              let r = redFromOddSortedList (m - 1) right in
+                Node Black l r k x
+            else
+              let l = redFromOddSortedList m left in
+              let r = redFromEvenSortedList (m - 1) right in
+                Node Black l r k x
+          _ ->
+            undefined
 
-  redFromEvenSortedList _ [] =
-    empty
-  redFromEvenSortedList n alist =
-    let m = n `div` 2 in
-      case splitAt m alist of
-        (left, (k, x) : right) ->
-          if even m then
-            let l = blackFromEvenSortedList m left in
-            let r = blackFromOddSortedList (m - 1) right in
-              Node Red l r k x
-          else
-            let l = blackFromOddSortedList m left in
-            let r = blackFromEvenSortedList (m - 1) right in
-              Node Red l r k x
-        _ ->
-          undefined
+    redFromEvenSortedList _ [] =
+      empty
+    redFromEvenSortedList n alist =
+      let m = n `div` 2 in
+        case splitAt m alist of
+          (left, (k, x) : right) ->
+            if even m then
+              let l = blackFromEvenSortedList m left in
+              let r = blackFromOddSortedList (m - 1) right in
+                Node Red l r k x
+            else
+              let l = blackFromOddSortedList m left in
+              let r = blackFromEvenSortedList (m - 1) right in
+                Node Red l r k x
+          _ ->
+            undefined
 
-  blackFromOddSortedList _ [] =
-    empty
-  blackFromOddSortedList n alist =
-    let m = n `div` 2 in
-      case splitAt m alist of
-        (left, (k, x) : right) ->
-          if even m then
-            let l = redFromEvenSortedList m left in
-            let r = redFromEvenSortedList m right in
-              Node Black l r k x
-          else
-            let l = redFromOddSortedList m left in
-            let r = redFromOddSortedList m right in
-              Node Black l r k x
-        _ ->
-          undefined
+    blackFromOddSortedList _ [] =
+      empty
+    blackFromOddSortedList n alist =
+      let m = n `div` 2 in
+        case splitAt m alist of
+          (left, (k, x) : right) ->
+            if even m then
+              let l = redFromEvenSortedList m left in
+              let r = redFromEvenSortedList m right in
+                Node Black l r k x
+            else
+              let l = redFromOddSortedList m left in
+              let r = redFromOddSortedList m right in
+                Node Black l r k x
+          _ ->
+            undefined
 
-  redFromOddSortedList _ [] =
-    empty
-  redFromOddSortedList n alist =
-    let m = n `div` 2 in
-      case splitAt m alist of
-        (left, (k, x) : right) ->
-          if even m then
-            let l = blackFromEvenSortedList m left in
-            let r = blackFromEvenSortedList m right in
-              Node Red l r k x
-          else
-            let l = blackFromOddSortedList m left in
-            let r = blackFromOddSortedList m right in
-              Node Red l r k x
-        _ ->
-          undefined
+    redFromOddSortedList _ [] =
+      empty
+    redFromOddSortedList n alist =
+      let m = n `div` 2 in
+        case splitAt m alist of
+          (left, (k, x) : right) ->
+            if even m then
+              let l = blackFromEvenSortedList m left in
+              let r = blackFromEvenSortedList m right in
+                Node Red l r k x
+            else
+              let l = blackFromOddSortedList m left in
+              let r = blackFromOddSortedList m right in
+                Node Red l r k x
+          _ ->
+            undefined

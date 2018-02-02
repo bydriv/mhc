@@ -18,6 +18,7 @@ type DERIVING = Pos
 type DOT_DOT = Pos
 type EQUAL = Pos
 type EXCL = Pos
+type EXPORT = Pos
 type FOREIGN = Pos
 type HIDING = Pos
 type IMPORT = Pos
@@ -41,6 +42,7 @@ type RBRACE = Pos
 type RBRACKET = Pos
 type RPAREN = Pos
 type SEMICOLON = Pos
+type STRING = (Pos, String)
 type TODO_FDECL = Pos
 type TODO_FUNLHS = Pos
 type TODO_INST = Pos
@@ -95,7 +97,21 @@ def rule topdecl :=
 | decl
 
 def rule fdecl :=
-  TODO_FDECL
+  IMPORT callconv impent var COLON_COLON type'
+| IMPORT callconv safety impent var COLON_COLON type'
+| QVARID callconv expent var COLON_COLON type'
+
+def rule callconv :=
+  QVARID
+
+def rule safety :=
+  QVARID
+
+def rule impent :=
+  STRING
+
+def rule expent :=
+  STRING
 
 def rule decls :=
   LBRACE decl_seq RBRACE
@@ -165,6 +181,7 @@ def rule lexp :=
 def rule fexp :=
   aexp
 | fexp aexp
+| fexp op aexp
 
 def rule aexp :=
   var

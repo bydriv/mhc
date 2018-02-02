@@ -22,6 +22,9 @@
 -}
 
 module Main where {
+  foreign import ccall safe "static stdio.h puts"
+    puts :: Foreign.C.CString -> IO ();
+
   -- main function
   main :: IO ();
   main = print 42;
