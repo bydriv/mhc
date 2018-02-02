@@ -227,7 +227,7 @@ makeTable start grm0 =
   let sets = makeSets grm in
   let states0 = RBSet.fromList [closure (RBSet.fromList [(Start, [], [N (UserNonterminal start), T Dollar], Question)]) sets grm] in
   let edges0 = RBSet.empty in
-  let (states1, edges1) = makeStatesAndEdges states0 edges0 sets grm in
+  let (states1, edges1) = makeStatesAndEdges states0 RBSet.empty edges0 RBSet.empty sets grm in
   let (states, edges) = makeLALR1 states1 edges1 in
   let reduces0 = RBSet.empty in
   let reduces = makeReduces reduces0 states in
@@ -282,12 +282,12 @@ makeTable start grm0 =
     else
       Nothing -- shift/reduce or reduce/reduce conflict.
   where
-    makeStatesAndEdges states edges sets grm =
+    makeStatesAndEdges states accStates edges accEdges sets grm =
       let (states', edges') =
-            foldl
-              (\(states0, edges0) items ->
-                foldl
-                  (\(states1, edges1) (left, middle, right, lookahead) ->
+            RBSet.foldl
+              (\items (states0, edges0) ->
+                RBSet.foldl
+                  (\(left, middle, right, lookahead) (states1, edges1) ->
                     case right of
                       [] ->
                         (states1, edges1)
@@ -301,13 +301,15 @@ makeTable start grm0 =
                             let edges2 = RBSet.insert (items, symbol, items') edges1 in
                               (states2, edges2))
                   (states0, edges0)
-                  (RBSet.toList items))
-              (states, edges)
-              (RBSet.toList states) in
-        if states' == states && edges' == edges then
-          (states', edges')
-        else
-          makeStatesAndEdges states' edges' sets grm
+                  items)
+              (RBSet.empty, RBSet.empty)
+              states in
+        let states'' = RBSet.union states accStates in
+        let edges'' = RBSet.union edges accEdges in
+          if RBSet.subset states' states'' && RBSet.subset edges' edges'' then
+            (states'', edges'')
+          else
+            makeStatesAndEdges states' states'' edges' edges'' sets grm
 
     makeLALR1 states0 edges0 =
       let states = RBSet.fromList $ makeLALR1States $ RBSet.toList states0 in
