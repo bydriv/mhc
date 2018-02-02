@@ -159,16 +159,6 @@ data Cname_seq =
   | Cname_seq_implies_cname_COMMA_cname_seq Cname COMMA Cname_seq
   deriving (Eq, Ord, Read, Show)
 
-data Impspec_opt =
-    Impspec_opt_implies
-  | Impspec_opt_implies_impspec Impspec
-  deriving (Eq, Ord, Read, Show)
-
-data Impspec =
-    Impspec_implies_LPAREN_import_seq_RPAREN LPAREN Import_seq RPAREN
-  | Impspec_implies_HIDING_LPAREN_import_seq_RPAREN HIDING LPAREN Import_seq RPAREN
-  deriving (Eq, Ord, Read, Show)
-
 data Import_seq =
     Import_seq_implies
   | Import_seq_implies_import' Import'
@@ -493,9 +483,9 @@ data StackValue =
   | StackValue_RPAREN RPAREN
   | StackValue_COMMA COMMA
   | StackValue_DOT_DOT DOT_DOT
-  | StackValue_HIDING HIDING
   | StackValue_SEMICOLON SEMICOLON
   | StackValue_IMPORT IMPORT
+  | StackValue_HIDING HIDING
   | StackValue_TYPE TYPE
   | StackValue_EQUAL EQUAL
   | StackValue_DATA DATA
@@ -538,8 +528,6 @@ data StackValue =
   | StackValue_var Var
   | StackValue_con Con
   | StackValue_cname_seq Cname_seq
-  | StackValue_impspec_opt Impspec_opt
-  | StackValue_impspec Impspec
   | StackValue_import_seq Import_seq
   | StackValue_import' Import'
   | StackValue_cname Cname
@@ -612,10 +600,6 @@ data SemanticActions m = SemanticActions
   , export_implies_con_LPAREN_DOT_DOT_RPAREN :: Con -> LPAREN -> DOT_DOT -> RPAREN -> m Export
   , export_implies_con_LPAREN_cname_seq_RPAREN :: Con -> LPAREN -> Cname_seq -> RPAREN -> m Export
   , export_implies_MODULE_modid :: MODULE -> Modid -> m Export
-  , impspec_opt_implies :: m Impspec_opt
-  , impspec_opt_implies_impspec :: Impspec -> m Impspec_opt
-  , impspec_implies_LPAREN_import_seq_RPAREN :: LPAREN -> Import_seq -> RPAREN -> m Impspec
-  , impspec_implies_HIDING_LPAREN_import_seq_RPAREN :: HIDING -> LPAREN -> Import_seq -> RPAREN -> m Impspec
   , import_seq_implies :: m Import_seq
   , import_seq_implies_import' :: Import' -> m Import_seq
   , import_seq_implies_import'_COMMA_import_seq :: Import' -> COMMA -> Import_seq -> m Import_seq
@@ -793,25 +777,25 @@ dfaActionTransition q s =
     (8, Token (QCONID _)) -> Just (Shift 11)
     (9, Token (QCONID _)) -> Just (Shift 11)
     (10, Token (QCONID _)) -> Just (Shift 11)
-    (11, Token (MODULE _)) -> Just (Reduce 1 176)
-    (11, Token (WHERE _)) -> Just (Reduce 1 176)
-    (11, Token (RBRACE _)) -> Just (Reduce 1 176)
-    (11, Token (LPAREN _)) -> Just (Reduce 1 176)
-    (11, Token (RPAREN _)) -> Just (Reduce 1 176)
-    (11, Token (COMMA _)) -> Just (Reduce 1 176)
-    (11, Token (HIDING _)) -> Just (Reduce 1 176)
-    (11, Token (SEMICOLON _)) -> Just (Reduce 1 176)
-    (11, Token (QCONID _)) -> Just (Reduce 1 176)
-    (11, Token (EXPORT _)) -> Just (Reduce 1 176)
-    (11, Token (AS _)) -> Just (Reduce 1 176)
-    (11, Token (QVARID _)) -> Just (Reduce 1 176)
-    (11, Token (QVARSYM _)) -> Just (Reduce 1 176)
-    (11, Token (QCONSYM _)) -> Just (Reduce 1 176)
+    (11, Token (MODULE _)) -> Just (Reduce 1 172)
+    (11, Token (WHERE _)) -> Just (Reduce 1 172)
+    (11, Token (RBRACE _)) -> Just (Reduce 1 172)
+    (11, Token (LPAREN _)) -> Just (Reduce 1 172)
+    (11, Token (RPAREN _)) -> Just (Reduce 1 172)
+    (11, Token (COMMA _)) -> Just (Reduce 1 172)
+    (11, Token (SEMICOLON _)) -> Just (Reduce 1 172)
+    (11, Token (HIDING _)) -> Just (Reduce 1 172)
+    (11, Token (QCONID _)) -> Just (Reduce 1 172)
+    (11, Token (EXPORT _)) -> Just (Reduce 1 172)
+    (11, Token (AS _)) -> Just (Reduce 1 172)
+    (11, Token (QVARID _)) -> Just (Reduce 1 172)
+    (11, Token (QVARSYM _)) -> Just (Reduce 1 172)
+    (11, Token (QCONSYM _)) -> Just (Reduce 1 172)
     (12, Token (WHERE _)) -> Just (Reduce 1 4)
-    (13, Token (RBRACE _)) -> Just (Reduce 0 83)
+    (13, Token (RBRACE _)) -> Just (Reduce 0 79)
     (13, Token (LPAREN _)) -> Just (Shift 55)
-    (13, Token (SEMICOLON _)) -> Just (Reduce 0 83)
-    (13, Token (IMPORT _)) -> Just (Shift 138)
+    (13, Token (SEMICOLON _)) -> Just (Reduce 0 79)
+    (13, Token (IMPORT _)) -> Just (Shift 137)
     (13, Token (TYPE _)) -> Just (Shift 95)
     (13, Token (DATA _)) -> Just (Shift 71)
     (13, Token (NEWTYPE _)) -> Just (Shift 93)
@@ -828,10 +812,10 @@ dfaActionTransition q s =
     (13, Token (TODO_FUNLHS _)) -> Just (Shift 216)
     (14, EOF) -> Just (Reduce 3 2)
     (15, Token (RBRACE _)) -> Just (Shift 14)
-    (16, Token (RBRACE _)) -> Just (Reduce 0 83)
+    (16, Token (RBRACE _)) -> Just (Reduce 0 79)
     (16, Token (LPAREN _)) -> Just (Shift 55)
-    (16, Token (SEMICOLON _)) -> Just (Reduce 0 83)
-    (16, Token (IMPORT _)) -> Just (Shift 138)
+    (16, Token (SEMICOLON _)) -> Just (Reduce 0 79)
+    (16, Token (IMPORT _)) -> Just (Shift 137)
     (16, Token (TYPE _)) -> Just (Shift 95)
     (16, Token (DATA _)) -> Just (Shift 71)
     (16, Token (NEWTYPE _)) -> Just (Shift 93)
@@ -846,8 +830,8 @@ dfaActionTransition q s =
     (16, Token (AS _)) -> Just (Shift 59)
     (16, Token (QVARID _)) -> Just (Shift 60)
     (16, Token (TODO_FUNLHS _)) -> Just (Shift 216)
-    (17, Token (RBRACE _)) -> Just (Reduce 3 32)
-    (18, Token (RBRACE _)) -> Just (Reduce 1 31)
+    (17, Token (RBRACE _)) -> Just (Reduce 3 28)
+    (18, Token (RBRACE _)) -> Just (Reduce 1 27)
     (18, Token (SEMICOLON _)) -> Just (Shift 16)
     (19, Token (MODULE _)) -> Just (Shift 10)
     (19, Token (LPAREN _)) -> Just (Shift 56)
@@ -895,10 +879,10 @@ dfaActionTransition q s =
     (34, Token (AS _)) -> Just (Shift 59)
     (34, Token (QVARID _)) -> Just (Shift 60)
     (34, Token (INTEGER _)) -> Just (Shift 298)
-    (35, Token (WHERE _)) -> Just (Reduce 1 148)
-    (35, Token (RBRACE _)) -> Just (Reduce 1 148)
+    (35, Token (WHERE _)) -> Just (Reduce 1 144)
+    (35, Token (RBRACE _)) -> Just (Reduce 1 144)
     (35, Token (LPAREN _)) -> Just (Shift 55)
-    (35, Token (SEMICOLON _)) -> Just (Reduce 1 148)
+    (35, Token (SEMICOLON _)) -> Just (Reduce 1 144)
     (35, Token (EXPORT _)) -> Just (Shift 58)
     (35, Token (AS _)) -> Just (Shift 59)
     (35, Token (QVARID _)) -> Just (Shift 60)
@@ -911,9 +895,9 @@ dfaActionTransition q s =
     (36, Token (AS _)) -> Just (Shift 59)
     (36, Token (QVARID _)) -> Just (Shift 60)
     (36, Token (INTEGER _)) -> Just (Shift 298)
-    (37, Token (RBRACE _)) -> Just (Reduce 0 83)
+    (37, Token (RBRACE _)) -> Just (Reduce 0 79)
     (37, Token (LPAREN _)) -> Just (Shift 55)
-    (37, Token (SEMICOLON _)) -> Just (Reduce 0 83)
+    (37, Token (SEMICOLON _)) -> Just (Reduce 0 79)
     (37, Token (INFIXL _)) -> Just (Shift 238)
     (37, Token (INFIXR _)) -> Just (Shift 239)
     (37, Token (INFIX _)) -> Just (Shift 240)
@@ -921,9 +905,9 @@ dfaActionTransition q s =
     (37, Token (AS _)) -> Just (Shift 59)
     (37, Token (QVARID _)) -> Just (Shift 60)
     (37, Token (TODO_FUNLHS _)) -> Just (Shift 216)
-    (38, Token (RBRACE _)) -> Just (Reduce 0 83)
+    (38, Token (RBRACE _)) -> Just (Reduce 0 79)
     (38, Token (LPAREN _)) -> Just (Shift 55)
-    (38, Token (SEMICOLON _)) -> Just (Reduce 0 83)
+    (38, Token (SEMICOLON _)) -> Just (Reduce 0 79)
     (38, Token (INFIXL _)) -> Just (Shift 238)
     (38, Token (INFIXR _)) -> Just (Shift 239)
     (38, Token (INFIX _)) -> Just (Shift 240)
@@ -931,9 +915,9 @@ dfaActionTransition q s =
     (38, Token (AS _)) -> Just (Shift 59)
     (38, Token (QVARID _)) -> Just (Shift 60)
     (38, Token (TODO_FUNLHS _)) -> Just (Shift 216)
-    (39, Token (RBRACE _)) -> Just (Reduce 0 83)
+    (39, Token (RBRACE _)) -> Just (Reduce 0 79)
     (39, Token (LPAREN _)) -> Just (Shift 55)
-    (39, Token (SEMICOLON _)) -> Just (Reduce 0 83)
+    (39, Token (SEMICOLON _)) -> Just (Reduce 0 79)
     (39, Token (INFIXL _)) -> Just (Shift 238)
     (39, Token (INFIXR _)) -> Just (Shift 239)
     (39, Token (INFIX _)) -> Just (Shift 240)
@@ -941,9 +925,9 @@ dfaActionTransition q s =
     (39, Token (AS _)) -> Just (Shift 59)
     (39, Token (QVARID _)) -> Just (Shift 60)
     (39, Token (TODO_FUNLHS _)) -> Just (Shift 216)
-    (40, Token (RBRACE _)) -> Just (Reduce 0 83)
+    (40, Token (RBRACE _)) -> Just (Reduce 0 79)
     (40, Token (LPAREN _)) -> Just (Shift 55)
-    (40, Token (SEMICOLON _)) -> Just (Reduce 0 83)
+    (40, Token (SEMICOLON _)) -> Just (Reduce 0 79)
     (40, Token (INFIXL _)) -> Just (Shift 238)
     (40, Token (INFIXR _)) -> Just (Shift 239)
     (40, Token (INFIX _)) -> Just (Shift 240)
@@ -951,34 +935,34 @@ dfaActionTransition q s =
     (40, Token (AS _)) -> Just (Shift 59)
     (40, Token (QVARID _)) -> Just (Shift 60)
     (40, Token (TODO_FUNLHS _)) -> Just (Shift 216)
-    (41, Token (RBRACE _)) -> Just (Reduce 0 80)
+    (41, Token (RBRACE _)) -> Just (Reduce 0 76)
     (41, Token (LPAREN _)) -> Just (Shift 55)
-    (41, Token (SEMICOLON _)) -> Just (Reduce 0 80)
+    (41, Token (SEMICOLON _)) -> Just (Reduce 0 76)
     (41, Token (EXPORT _)) -> Just (Shift 58)
     (41, Token (AS _)) -> Just (Shift 59)
     (41, Token (QVARID _)) -> Just (Shift 60)
     (41, Token (TODO_FUNLHS _)) -> Just (Shift 216)
-    (42, Token (RBRACE _)) -> Just (Reduce 0 80)
+    (42, Token (RBRACE _)) -> Just (Reduce 0 76)
     (42, Token (LPAREN _)) -> Just (Shift 55)
-    (42, Token (SEMICOLON _)) -> Just (Reduce 0 80)
+    (42, Token (SEMICOLON _)) -> Just (Reduce 0 76)
     (42, Token (EXPORT _)) -> Just (Shift 58)
     (42, Token (AS _)) -> Just (Shift 59)
     (42, Token (QVARID _)) -> Just (Shift 60)
     (42, Token (TODO_FUNLHS _)) -> Just (Shift 216)
     (43, Token (LPAREN _)) -> Just (Shift 56)
-    (43, Token (RPAREN _)) -> Just (Reduce 0 19)
+    (43, Token (RPAREN _)) -> Just (Reduce 0 15)
     (43, Token (QCONID _)) -> Just (Shift 106)
     (43, Token (EXPORT _)) -> Just (Shift 58)
     (43, Token (AS _)) -> Just (Shift 59)
     (43, Token (QVARID _)) -> Just (Shift 60)
     (44, Token (LPAREN _)) -> Just (Shift 56)
-    (44, Token (RPAREN _)) -> Just (Reduce 0 19)
+    (44, Token (RPAREN _)) -> Just (Reduce 0 15)
     (44, Token (QCONID _)) -> Just (Shift 106)
     (44, Token (EXPORT _)) -> Just (Shift 58)
     (44, Token (AS _)) -> Just (Shift 59)
     (44, Token (QVARID _)) -> Just (Shift 60)
     (45, Token (LPAREN _)) -> Just (Shift 56)
-    (45, Token (RPAREN _)) -> Just (Reduce 0 19)
+    (45, Token (RPAREN _)) -> Just (Reduce 0 15)
     (45, Token (QCONID _)) -> Just (Shift 106)
     (45, Token (EXPORT _)) -> Just (Shift 58)
     (45, Token (AS _)) -> Just (Shift 59)
@@ -1027,70 +1011,70 @@ dfaActionTransition q s =
     (55, Token (QVARSYM _)) -> Just (Shift 61)
     (56, Token (QVARSYM _)) -> Just (Shift 61)
     (56, Token (QCONSYM _)) -> Just (Shift 107)
-    (57, Token (WHERE _)) -> Just (Reduce 3 157)
-    (57, Token (RBRACE _)) -> Just (Reduce 3 157)
-    (57, Token (LPAREN _)) -> Just (Reduce 3 157)
-    (57, Token (RPAREN _)) -> Just (Reduce 3 157)
-    (57, Token (COMMA _)) -> Just (Reduce 3 157)
-    (57, Token (SEMICOLON _)) -> Just (Reduce 3 157)
-    (57, Token (EQUAL _)) -> Just (Reduce 3 157)
-    (57, Token (COLON_COLON _)) -> Just (Reduce 3 157)
-    (57, Token (QCONID _)) -> Just (Reduce 3 157)
-    (57, Token (EXPORT _)) -> Just (Reduce 3 157)
-    (57, Token (AS _)) -> Just (Reduce 3 157)
-    (57, Token (QVARID _)) -> Just (Reduce 3 157)
-    (57, Token (INTEGER _)) -> Just (Reduce 3 157)
-    (57, Token (QVARSYM _)) -> Just (Reduce 3 157)
-    (57, Token (QCONSYM _)) -> Just (Reduce 3 157)
-    (57, Token (BACKQUOTE _)) -> Just (Reduce 3 157)
-    (58, Token (WHERE _)) -> Just (Reduce 1 155)
-    (58, Token (RBRACE _)) -> Just (Reduce 1 155)
-    (58, Token (LPAREN _)) -> Just (Reduce 1 155)
-    (58, Token (RPAREN _)) -> Just (Reduce 1 155)
-    (58, Token (COMMA _)) -> Just (Reduce 1 155)
-    (58, Token (SEMICOLON _)) -> Just (Reduce 1 155)
-    (58, Token (EQUAL _)) -> Just (Reduce 1 155)
-    (58, Token (COLON_COLON _)) -> Just (Reduce 1 155)
-    (58, Token (QCONID _)) -> Just (Reduce 1 155)
-    (58, Token (EXPORT _)) -> Just (Reduce 1 155)
-    (58, Token (AS _)) -> Just (Reduce 1 155)
-    (58, Token (QVARID _)) -> Just (Reduce 1 155)
-    (58, Token (INTEGER _)) -> Just (Reduce 1 155)
-    (58, Token (QVARSYM _)) -> Just (Reduce 1 155)
-    (58, Token (QCONSYM _)) -> Just (Reduce 1 155)
-    (58, Token (BACKQUOTE _)) -> Just (Reduce 1 155)
-    (59, Token (WHERE _)) -> Just (Reduce 1 154)
-    (59, Token (RBRACE _)) -> Just (Reduce 1 154)
-    (59, Token (LPAREN _)) -> Just (Reduce 1 154)
-    (59, Token (RPAREN _)) -> Just (Reduce 1 154)
-    (59, Token (COMMA _)) -> Just (Reduce 1 154)
-    (59, Token (SEMICOLON _)) -> Just (Reduce 1 154)
-    (59, Token (EQUAL _)) -> Just (Reduce 1 154)
-    (59, Token (COLON_COLON _)) -> Just (Reduce 1 154)
-    (59, Token (QCONID _)) -> Just (Reduce 1 154)
-    (59, Token (EXPORT _)) -> Just (Reduce 1 154)
-    (59, Token (AS _)) -> Just (Reduce 1 154)
-    (59, Token (QVARID _)) -> Just (Reduce 1 154)
-    (59, Token (INTEGER _)) -> Just (Reduce 1 154)
-    (59, Token (QVARSYM _)) -> Just (Reduce 1 154)
-    (59, Token (QCONSYM _)) -> Just (Reduce 1 154)
-    (59, Token (BACKQUOTE _)) -> Just (Reduce 1 154)
-    (60, Token (WHERE _)) -> Just (Reduce 1 156)
-    (60, Token (RBRACE _)) -> Just (Reduce 1 156)
-    (60, Token (LPAREN _)) -> Just (Reduce 1 156)
-    (60, Token (RPAREN _)) -> Just (Reduce 1 156)
-    (60, Token (COMMA _)) -> Just (Reduce 1 156)
-    (60, Token (SEMICOLON _)) -> Just (Reduce 1 156)
-    (60, Token (EQUAL _)) -> Just (Reduce 1 156)
-    (60, Token (COLON_COLON _)) -> Just (Reduce 1 156)
-    (60, Token (QCONID _)) -> Just (Reduce 1 156)
-    (60, Token (EXPORT _)) -> Just (Reduce 1 156)
-    (60, Token (AS _)) -> Just (Reduce 1 156)
-    (60, Token (QVARID _)) -> Just (Reduce 1 156)
-    (60, Token (INTEGER _)) -> Just (Reduce 1 156)
-    (60, Token (QVARSYM _)) -> Just (Reduce 1 156)
-    (60, Token (QCONSYM _)) -> Just (Reduce 1 156)
-    (60, Token (BACKQUOTE _)) -> Just (Reduce 1 156)
+    (57, Token (WHERE _)) -> Just (Reduce 3 153)
+    (57, Token (RBRACE _)) -> Just (Reduce 3 153)
+    (57, Token (LPAREN _)) -> Just (Reduce 3 153)
+    (57, Token (RPAREN _)) -> Just (Reduce 3 153)
+    (57, Token (COMMA _)) -> Just (Reduce 3 153)
+    (57, Token (SEMICOLON _)) -> Just (Reduce 3 153)
+    (57, Token (EQUAL _)) -> Just (Reduce 3 153)
+    (57, Token (COLON_COLON _)) -> Just (Reduce 3 153)
+    (57, Token (QCONID _)) -> Just (Reduce 3 153)
+    (57, Token (EXPORT _)) -> Just (Reduce 3 153)
+    (57, Token (AS _)) -> Just (Reduce 3 153)
+    (57, Token (QVARID _)) -> Just (Reduce 3 153)
+    (57, Token (INTEGER _)) -> Just (Reduce 3 153)
+    (57, Token (QVARSYM _)) -> Just (Reduce 3 153)
+    (57, Token (QCONSYM _)) -> Just (Reduce 3 153)
+    (57, Token (BACKQUOTE _)) -> Just (Reduce 3 153)
+    (58, Token (WHERE _)) -> Just (Reduce 1 151)
+    (58, Token (RBRACE _)) -> Just (Reduce 1 151)
+    (58, Token (LPAREN _)) -> Just (Reduce 1 151)
+    (58, Token (RPAREN _)) -> Just (Reduce 1 151)
+    (58, Token (COMMA _)) -> Just (Reduce 1 151)
+    (58, Token (SEMICOLON _)) -> Just (Reduce 1 151)
+    (58, Token (EQUAL _)) -> Just (Reduce 1 151)
+    (58, Token (COLON_COLON _)) -> Just (Reduce 1 151)
+    (58, Token (QCONID _)) -> Just (Reduce 1 151)
+    (58, Token (EXPORT _)) -> Just (Reduce 1 151)
+    (58, Token (AS _)) -> Just (Reduce 1 151)
+    (58, Token (QVARID _)) -> Just (Reduce 1 151)
+    (58, Token (INTEGER _)) -> Just (Reduce 1 151)
+    (58, Token (QVARSYM _)) -> Just (Reduce 1 151)
+    (58, Token (QCONSYM _)) -> Just (Reduce 1 151)
+    (58, Token (BACKQUOTE _)) -> Just (Reduce 1 151)
+    (59, Token (WHERE _)) -> Just (Reduce 1 150)
+    (59, Token (RBRACE _)) -> Just (Reduce 1 150)
+    (59, Token (LPAREN _)) -> Just (Reduce 1 150)
+    (59, Token (RPAREN _)) -> Just (Reduce 1 150)
+    (59, Token (COMMA _)) -> Just (Reduce 1 150)
+    (59, Token (SEMICOLON _)) -> Just (Reduce 1 150)
+    (59, Token (EQUAL _)) -> Just (Reduce 1 150)
+    (59, Token (COLON_COLON _)) -> Just (Reduce 1 150)
+    (59, Token (QCONID _)) -> Just (Reduce 1 150)
+    (59, Token (EXPORT _)) -> Just (Reduce 1 150)
+    (59, Token (AS _)) -> Just (Reduce 1 150)
+    (59, Token (QVARID _)) -> Just (Reduce 1 150)
+    (59, Token (INTEGER _)) -> Just (Reduce 1 150)
+    (59, Token (QVARSYM _)) -> Just (Reduce 1 150)
+    (59, Token (QCONSYM _)) -> Just (Reduce 1 150)
+    (59, Token (BACKQUOTE _)) -> Just (Reduce 1 150)
+    (60, Token (WHERE _)) -> Just (Reduce 1 152)
+    (60, Token (RBRACE _)) -> Just (Reduce 1 152)
+    (60, Token (LPAREN _)) -> Just (Reduce 1 152)
+    (60, Token (RPAREN _)) -> Just (Reduce 1 152)
+    (60, Token (COMMA _)) -> Just (Reduce 1 152)
+    (60, Token (SEMICOLON _)) -> Just (Reduce 1 152)
+    (60, Token (EQUAL _)) -> Just (Reduce 1 152)
+    (60, Token (COLON_COLON _)) -> Just (Reduce 1 152)
+    (60, Token (QCONID _)) -> Just (Reduce 1 152)
+    (60, Token (EXPORT _)) -> Just (Reduce 1 152)
+    (60, Token (AS _)) -> Just (Reduce 1 152)
+    (60, Token (QVARID _)) -> Just (Reduce 1 152)
+    (60, Token (INTEGER _)) -> Just (Reduce 1 152)
+    (60, Token (QVARSYM _)) -> Just (Reduce 1 152)
+    (60, Token (QCONSYM _)) -> Just (Reduce 1 152)
+    (60, Token (BACKQUOTE _)) -> Just (Reduce 1 152)
     (61, Token (RPAREN _)) -> Just (Shift 57)
     (62, Token (LPAREN _)) -> Just (Shift 99)
     (62, Token (LBRACKET _)) -> Just (Shift 103)
@@ -1107,9 +1091,9 @@ dfaActionTransition q s =
     (63, Token (AS _)) -> Just (Shift 265)
     (63, Token (QVARID _)) -> Just (Shift 266)
     (64, Token (WHERE _)) -> Just (Shift 183)
-    (64, Token (RBRACE _)) -> Just (Reduce 0 67)
+    (64, Token (RBRACE _)) -> Just (Reduce 0 63)
     (64, Token (LPAREN _)) -> Just (Shift 99)
-    (64, Token (SEMICOLON _)) -> Just (Reduce 0 67)
+    (64, Token (SEMICOLON _)) -> Just (Reduce 0 63)
     (64, Token (DARROW _)) -> Just (Shift 67)
     (64, Token (LBRACKET _)) -> Just (Shift 103)
     (64, Token (EXCL _)) -> Just (Shift 62)
@@ -1125,9 +1109,9 @@ dfaActionTransition q s =
     (65, Token (AS _)) -> Just (Shift 265)
     (65, Token (QVARID _)) -> Just (Shift 266)
     (66, Token (WHERE _)) -> Just (Shift 185)
-    (66, Token (RBRACE _)) -> Just (Reduce 0 75)
+    (66, Token (RBRACE _)) -> Just (Reduce 0 71)
     (66, Token (LPAREN _)) -> Just (Shift 99)
-    (66, Token (SEMICOLON _)) -> Just (Reduce 0 75)
+    (66, Token (SEMICOLON _)) -> Just (Reduce 0 71)
     (66, Token (DARROW _)) -> Just (Shift 69)
     (66, Token (LBRACKET _)) -> Just (Shift 103)
     (66, Token (EXCL _)) -> Just (Shift 62)
@@ -1143,9 +1127,9 @@ dfaActionTransition q s =
     (67, Token (AS _)) -> Just (Shift 265)
     (67, Token (QVARID _)) -> Just (Shift 266)
     (68, Token (WHERE _)) -> Just (Shift 183)
-    (68, Token (RBRACE _)) -> Just (Reduce 0 67)
+    (68, Token (RBRACE _)) -> Just (Reduce 0 63)
     (68, Token (LPAREN _)) -> Just (Shift 99)
-    (68, Token (SEMICOLON _)) -> Just (Reduce 0 67)
+    (68, Token (SEMICOLON _)) -> Just (Reduce 0 63)
     (68, Token (LBRACKET _)) -> Just (Shift 103)
     (68, Token (EXCL _)) -> Just (Shift 62)
     (68, Token (QCONID _)) -> Just (Shift 106)
@@ -1160,9 +1144,9 @@ dfaActionTransition q s =
     (69, Token (AS _)) -> Just (Shift 265)
     (69, Token (QVARID _)) -> Just (Shift 266)
     (70, Token (WHERE _)) -> Just (Shift 185)
-    (70, Token (RBRACE _)) -> Just (Reduce 0 75)
+    (70, Token (RBRACE _)) -> Just (Reduce 0 71)
     (70, Token (LPAREN _)) -> Just (Shift 99)
-    (70, Token (SEMICOLON _)) -> Just (Reduce 0 75)
+    (70, Token (SEMICOLON _)) -> Just (Reduce 0 71)
     (70, Token (LBRACKET _)) -> Just (Shift 103)
     (70, Token (EXCL _)) -> Just (Shift 62)
     (70, Token (QCONID _)) -> Just (Shift 106)
@@ -1176,11 +1160,11 @@ dfaActionTransition q s =
     (71, Token (EXPORT _)) -> Just (Shift 264)
     (71, Token (AS _)) -> Just (Shift 265)
     (71, Token (QVARID _)) -> Just (Shift 266)
-    (72, Token (RBRACE _)) -> Just (Reduce 0 115)
+    (72, Token (RBRACE _)) -> Just (Reduce 0 111)
     (72, Token (LPAREN _)) -> Just (Shift 99)
-    (72, Token (SEMICOLON _)) -> Just (Reduce 0 115)
+    (72, Token (SEMICOLON _)) -> Just (Reduce 0 111)
     (72, Token (EQUAL _)) -> Just (Shift 75)
-    (72, Token (DERIVING _)) -> Just (Reduce 0 115)
+    (72, Token (DERIVING _)) -> Just (Reduce 0 111)
     (72, Token (DARROW _)) -> Just (Shift 73)
     (72, Token (LBRACKET _)) -> Just (Shift 103)
     (72, Token (EXCL _)) -> Just (Shift 62)
@@ -1195,11 +1179,11 @@ dfaActionTransition q s =
     (73, Token (EXPORT _)) -> Just (Shift 264)
     (73, Token (AS _)) -> Just (Shift 265)
     (73, Token (QVARID _)) -> Just (Shift 266)
-    (74, Token (RBRACE _)) -> Just (Reduce 0 115)
+    (74, Token (RBRACE _)) -> Just (Reduce 0 111)
     (74, Token (LPAREN _)) -> Just (Shift 99)
-    (74, Token (SEMICOLON _)) -> Just (Reduce 0 115)
+    (74, Token (SEMICOLON _)) -> Just (Reduce 0 111)
     (74, Token (EQUAL _)) -> Just (Shift 75)
-    (74, Token (DERIVING _)) -> Just (Reduce 0 115)
+    (74, Token (DERIVING _)) -> Just (Reduce 0 111)
     (74, Token (LBRACKET _)) -> Just (Shift 103)
     (74, Token (EXCL _)) -> Just (Shift 62)
     (74, Token (QCONID _)) -> Just (Shift 106)
@@ -1222,13 +1206,13 @@ dfaActionTransition q s =
     (76, Token (QVARID _)) -> Just (Shift 266)
     (77, Token (LPAREN _)) -> Just (Shift 104)
     (77, Token (QCONID _)) -> Just (Shift 106)
-    (78, Token (RBRACE _)) -> Just (Reduce 1 119)
+    (78, Token (RBRACE _)) -> Just (Reduce 1 115)
     (78, Token (LPAREN _)) -> Just (Shift 99)
-    (78, Token (SEMICOLON _)) -> Just (Reduce 1 119)
-    (78, Token (DERIVING _)) -> Just (Reduce 1 119)
+    (78, Token (SEMICOLON _)) -> Just (Reduce 1 115)
+    (78, Token (DERIVING _)) -> Just (Reduce 1 115)
     (78, Token (LBRACKET _)) -> Just (Shift 103)
     (78, Token (EXCL _)) -> Just (Shift 62)
-    (78, Token (PIPE _)) -> Just (Reduce 1 119)
+    (78, Token (PIPE _)) -> Just (Reduce 1 115)
     (78, Token (QCONID _)) -> Just (Shift 106)
     (78, Token (EXPORT _)) -> Just (Shift 264)
     (78, Token (AS _)) -> Just (Shift 265)
@@ -1242,13 +1226,13 @@ dfaActionTransition q s =
     (79, Token (EXPORT _)) -> Just (Shift 264)
     (79, Token (AS _)) -> Just (Shift 265)
     (79, Token (QVARID _)) -> Just (Shift 266)
-    (80, Token (RBRACE _)) -> Just (Reduce 3 120)
+    (80, Token (RBRACE _)) -> Just (Reduce 3 116)
     (80, Token (LPAREN _)) -> Just (Shift 99)
-    (80, Token (SEMICOLON _)) -> Just (Reduce 3 120)
-    (80, Token (DERIVING _)) -> Just (Reduce 3 120)
+    (80, Token (SEMICOLON _)) -> Just (Reduce 3 116)
+    (80, Token (DERIVING _)) -> Just (Reduce 3 116)
     (80, Token (LBRACKET _)) -> Just (Shift 103)
     (80, Token (EXCL _)) -> Just (Shift 62)
-    (80, Token (PIPE _)) -> Just (Reduce 3 120)
+    (80, Token (PIPE _)) -> Just (Reduce 3 116)
     (80, Token (QCONID _)) -> Just (Shift 106)
     (80, Token (EXPORT _)) -> Just (Shift 264)
     (80, Token (AS _)) -> Just (Shift 265)
@@ -1260,9 +1244,9 @@ dfaActionTransition q s =
     (81, Token (EXPORT _)) -> Just (Shift 264)
     (81, Token (AS _)) -> Just (Shift 265)
     (81, Token (QVARID _)) -> Just (Shift 266)
-    (82, Token (RBRACE _)) -> Just (Reduce 1 96)
+    (82, Token (RBRACE _)) -> Just (Reduce 1 92)
     (82, Token (LPAREN _)) -> Just (Shift 99)
-    (82, Token (SEMICOLON _)) -> Just (Reduce 1 96)
+    (82, Token (SEMICOLON _)) -> Just (Reduce 1 92)
     (82, Token (DARROW _)) -> Just (Shift 88)
     (82, Token (ARROW _)) -> Just (Shift 84)
     (82, Token (LBRACKET _)) -> Just (Shift 103)
@@ -1313,14 +1297,14 @@ dfaActionTransition q s =
     (88, Token (EXPORT _)) -> Just (Shift 264)
     (88, Token (AS _)) -> Just (Shift 265)
     (88, Token (QVARID _)) -> Just (Shift 266)
-    (89, Token (RBRACE _)) -> Just (Reduce 1 96)
+    (89, Token (RBRACE _)) -> Just (Reduce 1 92)
     (89, Token (LPAREN _)) -> Just (Shift 99)
-    (89, Token (RPAREN _)) -> Just (Reduce 1 96)
-    (89, Token (COMMA _)) -> Just (Reduce 1 96)
-    (89, Token (SEMICOLON _)) -> Just (Reduce 1 96)
+    (89, Token (RPAREN _)) -> Just (Reduce 1 92)
+    (89, Token (COMMA _)) -> Just (Reduce 1 92)
+    (89, Token (SEMICOLON _)) -> Just (Reduce 1 92)
     (89, Token (ARROW _)) -> Just (Shift 84)
     (89, Token (LBRACKET _)) -> Just (Shift 103)
-    (89, Token (RBRACKET _)) -> Just (Reduce 1 96)
+    (89, Token (RBRACKET _)) -> Just (Reduce 1 92)
     (89, Token (EXCL _)) -> Just (Shift 62)
     (89, Token (QCONID _)) -> Just (Shift 106)
     (89, Token (EXPORT _)) -> Just (Shift 264)
@@ -1436,86 +1420,86 @@ dfaActionTransition q s =
     (103, Token (AS _)) -> Just (Shift 265)
     (103, Token (QVARID _)) -> Just (Shift 266)
     (104, Token (QCONSYM _)) -> Just (Shift 107)
-    (105, Token (WHERE _)) -> Just (Reduce 3 159)
-    (105, Token (LBRACE _)) -> Just (Reduce 3 159)
-    (105, Token (RBRACE _)) -> Just (Reduce 3 159)
-    (105, Token (LPAREN _)) -> Just (Reduce 3 159)
-    (105, Token (RPAREN _)) -> Just (Reduce 3 159)
-    (105, Token (COMMA _)) -> Just (Reduce 3 159)
-    (105, Token (SEMICOLON _)) -> Just (Reduce 3 159)
-    (105, Token (EQUAL _)) -> Just (Reduce 3 159)
-    (105, Token (DERIVING _)) -> Just (Reduce 3 159)
-    (105, Token (DARROW _)) -> Just (Reduce 3 159)
-    (105, Token (COLON_COLON _)) -> Just (Reduce 3 159)
-    (105, Token (INFIXL _)) -> Just (Reduce 3 159)
-    (105, Token (INFIXR _)) -> Just (Reduce 3 159)
-    (105, Token (INFIX _)) -> Just (Reduce 3 159)
-    (105, Token (ARROW _)) -> Just (Reduce 3 159)
-    (105, Token (LBRACKET _)) -> Just (Reduce 3 159)
-    (105, Token (RBRACKET _)) -> Just (Reduce 3 159)
-    (105, Token (EXCL _)) -> Just (Reduce 3 159)
-    (105, Token (PIPE _)) -> Just (Reduce 3 159)
-    (105, Token (QCONID _)) -> Just (Reduce 3 159)
-    (105, Token (EXPORT _)) -> Just (Reduce 3 159)
-    (105, Token (AS _)) -> Just (Reduce 3 159)
-    (105, Token (QVARID _)) -> Just (Reduce 3 159)
-    (105, Token (TODO_FUNLHS _)) -> Just (Reduce 3 159)
-    (105, Token (INTEGER _)) -> Just (Reduce 3 159)
-    (105, Token (QVARSYM _)) -> Just (Reduce 3 159)
-    (105, Token (QCONSYM _)) -> Just (Reduce 3 159)
-    (105, Token (BACKQUOTE _)) -> Just (Reduce 3 159)
-    (106, Token (WHERE _)) -> Just (Reduce 1 158)
-    (106, Token (LBRACE _)) -> Just (Reduce 1 158)
-    (106, Token (RBRACE _)) -> Just (Reduce 1 158)
-    (106, Token (LPAREN _)) -> Just (Reduce 1 158)
-    (106, Token (RPAREN _)) -> Just (Reduce 1 158)
-    (106, Token (COMMA _)) -> Just (Reduce 1 158)
-    (106, Token (SEMICOLON _)) -> Just (Reduce 1 158)
-    (106, Token (EQUAL _)) -> Just (Reduce 1 158)
-    (106, Token (DERIVING _)) -> Just (Reduce 1 158)
-    (106, Token (DARROW _)) -> Just (Reduce 1 158)
-    (106, Token (COLON_COLON _)) -> Just (Reduce 1 158)
-    (106, Token (INFIXL _)) -> Just (Reduce 1 158)
-    (106, Token (INFIXR _)) -> Just (Reduce 1 158)
-    (106, Token (INFIX _)) -> Just (Reduce 1 158)
-    (106, Token (ARROW _)) -> Just (Reduce 1 158)
-    (106, Token (LBRACKET _)) -> Just (Reduce 1 158)
-    (106, Token (RBRACKET _)) -> Just (Reduce 1 158)
-    (106, Token (EXCL _)) -> Just (Reduce 1 158)
-    (106, Token (PIPE _)) -> Just (Reduce 1 158)
-    (106, Token (QCONID _)) -> Just (Reduce 1 158)
-    (106, Token (EXPORT _)) -> Just (Reduce 1 158)
-    (106, Token (AS _)) -> Just (Reduce 1 158)
-    (106, Token (QVARID _)) -> Just (Reduce 1 158)
-    (106, Token (TODO_FUNLHS _)) -> Just (Reduce 1 158)
-    (106, Token (INTEGER _)) -> Just (Reduce 1 158)
-    (106, Token (QVARSYM _)) -> Just (Reduce 1 158)
-    (106, Token (QCONSYM _)) -> Just (Reduce 1 158)
-    (106, Token (BACKQUOTE _)) -> Just (Reduce 1 158)
+    (105, Token (WHERE _)) -> Just (Reduce 3 155)
+    (105, Token (LBRACE _)) -> Just (Reduce 3 155)
+    (105, Token (RBRACE _)) -> Just (Reduce 3 155)
+    (105, Token (LPAREN _)) -> Just (Reduce 3 155)
+    (105, Token (RPAREN _)) -> Just (Reduce 3 155)
+    (105, Token (COMMA _)) -> Just (Reduce 3 155)
+    (105, Token (SEMICOLON _)) -> Just (Reduce 3 155)
+    (105, Token (EQUAL _)) -> Just (Reduce 3 155)
+    (105, Token (DERIVING _)) -> Just (Reduce 3 155)
+    (105, Token (DARROW _)) -> Just (Reduce 3 155)
+    (105, Token (COLON_COLON _)) -> Just (Reduce 3 155)
+    (105, Token (INFIXL _)) -> Just (Reduce 3 155)
+    (105, Token (INFIXR _)) -> Just (Reduce 3 155)
+    (105, Token (INFIX _)) -> Just (Reduce 3 155)
+    (105, Token (ARROW _)) -> Just (Reduce 3 155)
+    (105, Token (LBRACKET _)) -> Just (Reduce 3 155)
+    (105, Token (RBRACKET _)) -> Just (Reduce 3 155)
+    (105, Token (EXCL _)) -> Just (Reduce 3 155)
+    (105, Token (PIPE _)) -> Just (Reduce 3 155)
+    (105, Token (QCONID _)) -> Just (Reduce 3 155)
+    (105, Token (EXPORT _)) -> Just (Reduce 3 155)
+    (105, Token (AS _)) -> Just (Reduce 3 155)
+    (105, Token (QVARID _)) -> Just (Reduce 3 155)
+    (105, Token (TODO_FUNLHS _)) -> Just (Reduce 3 155)
+    (105, Token (INTEGER _)) -> Just (Reduce 3 155)
+    (105, Token (QVARSYM _)) -> Just (Reduce 3 155)
+    (105, Token (QCONSYM _)) -> Just (Reduce 3 155)
+    (105, Token (BACKQUOTE _)) -> Just (Reduce 3 155)
+    (106, Token (WHERE _)) -> Just (Reduce 1 154)
+    (106, Token (LBRACE _)) -> Just (Reduce 1 154)
+    (106, Token (RBRACE _)) -> Just (Reduce 1 154)
+    (106, Token (LPAREN _)) -> Just (Reduce 1 154)
+    (106, Token (RPAREN _)) -> Just (Reduce 1 154)
+    (106, Token (COMMA _)) -> Just (Reduce 1 154)
+    (106, Token (SEMICOLON _)) -> Just (Reduce 1 154)
+    (106, Token (EQUAL _)) -> Just (Reduce 1 154)
+    (106, Token (DERIVING _)) -> Just (Reduce 1 154)
+    (106, Token (DARROW _)) -> Just (Reduce 1 154)
+    (106, Token (COLON_COLON _)) -> Just (Reduce 1 154)
+    (106, Token (INFIXL _)) -> Just (Reduce 1 154)
+    (106, Token (INFIXR _)) -> Just (Reduce 1 154)
+    (106, Token (INFIX _)) -> Just (Reduce 1 154)
+    (106, Token (ARROW _)) -> Just (Reduce 1 154)
+    (106, Token (LBRACKET _)) -> Just (Reduce 1 154)
+    (106, Token (RBRACKET _)) -> Just (Reduce 1 154)
+    (106, Token (EXCL _)) -> Just (Reduce 1 154)
+    (106, Token (PIPE _)) -> Just (Reduce 1 154)
+    (106, Token (QCONID _)) -> Just (Reduce 1 154)
+    (106, Token (EXPORT _)) -> Just (Reduce 1 154)
+    (106, Token (AS _)) -> Just (Reduce 1 154)
+    (106, Token (QVARID _)) -> Just (Reduce 1 154)
+    (106, Token (TODO_FUNLHS _)) -> Just (Reduce 1 154)
+    (106, Token (INTEGER _)) -> Just (Reduce 1 154)
+    (106, Token (QVARSYM _)) -> Just (Reduce 1 154)
+    (106, Token (QCONSYM _)) -> Just (Reduce 1 154)
+    (106, Token (BACKQUOTE _)) -> Just (Reduce 1 154)
     (107, Token (RPAREN _)) -> Just (Shift 105)
-    (108, Token (RPAREN _)) -> Just (Reduce 3 28)
-    (109, Token (RPAREN _)) -> Just (Reduce 1 27)
+    (108, Token (RPAREN _)) -> Just (Reduce 3 24)
+    (109, Token (RPAREN _)) -> Just (Reduce 1 23)
     (109, Token (COMMA _)) -> Just (Shift 46)
-    (110, Token (RPAREN _)) -> Just (Reduce 3 21)
-    (111, Token (RPAREN _)) -> Just (Reduce 1 20)
+    (110, Token (RPAREN _)) -> Just (Reduce 3 17)
+    (111, Token (RPAREN _)) -> Just (Reduce 1 16)
     (111, Token (COMMA _)) -> Just (Shift 43)
-    (112, Token (RPAREN _)) -> Just (Reduce 3 24)
-    (112, Token (COMMA _)) -> Just (Reduce 3 24)
-    (113, Token (RPAREN _)) -> Just (Reduce 4 25)
-    (113, Token (COMMA _)) -> Just (Reduce 4 25)
-    (114, Token (RPAREN _)) -> Just (Reduce 4 26)
-    (114, Token (COMMA _)) -> Just (Reduce 4 26)
+    (112, Token (RPAREN _)) -> Just (Reduce 3 20)
+    (112, Token (COMMA _)) -> Just (Reduce 3 20)
+    (113, Token (RPAREN _)) -> Just (Reduce 4 21)
+    (113, Token (COMMA _)) -> Just (Reduce 4 21)
+    (114, Token (RPAREN _)) -> Just (Reduce 4 22)
+    (114, Token (COMMA _)) -> Just (Reduce 4 22)
     (115, Token (RPAREN _)) -> Just (Shift 113)
-    (116, Token (RPAREN _)) -> Just (Reduce 1 22)
-    (116, Token (COMMA _)) -> Just (Reduce 1 22)
+    (116, Token (RPAREN _)) -> Just (Reduce 1 18)
+    (116, Token (COMMA _)) -> Just (Reduce 1 18)
     (117, Token (LPAREN _)) -> Just (Shift 47)
-    (117, Token (RPAREN _)) -> Just (Reduce 1 23)
-    (117, Token (COMMA _)) -> Just (Reduce 1 23)
+    (117, Token (RPAREN _)) -> Just (Reduce 1 19)
+    (117, Token (COMMA _)) -> Just (Reduce 1 19)
     (118, Token (RPAREN _)) -> Just (Shift 114)
-    (119, Token (RPAREN _)) -> Just (Reduce 1 29)
-    (119, Token (COMMA _)) -> Just (Reduce 1 29)
-    (120, Token (RPAREN _)) -> Just (Reduce 1 30)
-    (120, Token (COMMA _)) -> Just (Reduce 1 30)
+    (119, Token (RPAREN _)) -> Just (Reduce 1 25)
+    (119, Token (COMMA _)) -> Just (Reduce 1 25)
+    (120, Token (RPAREN _)) -> Just (Reduce 1 26)
+    (120, Token (COMMA _)) -> Just (Reduce 1 26)
     (121, Token (RPAREN _)) -> Just (Shift 125)
     (121, Token (QCONID _)) -> Just (Shift 176)
     (122, Token (RPAREN _)) -> Just (Shift 126)
@@ -1524,33 +1508,33 @@ dfaActionTransition q s =
     (123, Token (QCONID _)) -> Just (Shift 176)
     (124, Token (RPAREN _)) -> Just (Shift 128)
     (124, Token (QCONID _)) -> Just (Shift 176)
-    (125, Token (RBRACE _)) -> Just (Reduce 6 39)
-    (125, Token (SEMICOLON _)) -> Just (Reduce 6 39)
-    (126, Token (RBRACE _)) -> Just (Reduce 8 43)
-    (126, Token (SEMICOLON _)) -> Just (Reduce 8 43)
-    (127, Token (RBRACE _)) -> Just (Reduce 8 51)
-    (127, Token (SEMICOLON _)) -> Just (Reduce 8 51)
-    (128, Token (RBRACE _)) -> Just (Reduce 6 47)
-    (128, Token (SEMICOLON _)) -> Just (Reduce 6 47)
-    (129, Token (RBRACE _)) -> Just (Reduce 3 57)
-    (129, Token (SEMICOLON _)) -> Just (Reduce 3 57)
-    (130, Token (RBRACE _)) -> Just (Reduce 8 35)
-    (130, Token (SEMICOLON _)) -> Just (Reduce 8 35)
-    (131, Token (RBRACE _)) -> Just (Reduce 7 34)
-    (131, Token (SEMICOLON _)) -> Just (Reduce 7 34)
-    (132, Token (RBRACE _)) -> Just (Reduce 7 40)
-    (132, Token (SEMICOLON _)) -> Just (Reduce 7 40)
-    (133, Token (RBRACE _)) -> Just (Reduce 9 44)
-    (133, Token (SEMICOLON _)) -> Just (Reduce 9 44)
-    (134, Token (RBRACE _)) -> Just (Reduce 9 52)
-    (134, Token (SEMICOLON _)) -> Just (Reduce 9 52)
-    (135, Token (RBRACE _)) -> Just (Reduce 7 48)
-    (135, Token (SEMICOLON _)) -> Just (Reduce 7 48)
-    (136, Token (RBRACE _)) -> Just (Reduce 4 58)
-    (136, Token (SEMICOLON _)) -> Just (Reduce 4 58)
-    (137, Token (LPAREN _)) -> Just (Shift 44)
-    (138, Token (QCONID _)) -> Just (Reduce 0 170)
-    (138, Token (QUALIFIED _)) -> Just (Shift 169)
+    (125, Token (RBRACE _)) -> Just (Reduce 6 35)
+    (125, Token (SEMICOLON _)) -> Just (Reduce 6 35)
+    (126, Token (RBRACE _)) -> Just (Reduce 8 39)
+    (126, Token (SEMICOLON _)) -> Just (Reduce 8 39)
+    (127, Token (RBRACE _)) -> Just (Reduce 8 47)
+    (127, Token (SEMICOLON _)) -> Just (Reduce 8 47)
+    (128, Token (RBRACE _)) -> Just (Reduce 6 43)
+    (128, Token (SEMICOLON _)) -> Just (Reduce 6 43)
+    (129, Token (RBRACE _)) -> Just (Reduce 3 53)
+    (129, Token (SEMICOLON _)) -> Just (Reduce 3 53)
+    (130, Token (RBRACE _)) -> Just (Reduce 8 31)
+    (130, Token (SEMICOLON _)) -> Just (Reduce 8 31)
+    (131, Token (RBRACE _)) -> Just (Reduce 7 30)
+    (131, Token (SEMICOLON _)) -> Just (Reduce 7 30)
+    (132, Token (RBRACE _)) -> Just (Reduce 7 36)
+    (132, Token (SEMICOLON _)) -> Just (Reduce 7 36)
+    (133, Token (RBRACE _)) -> Just (Reduce 9 40)
+    (133, Token (SEMICOLON _)) -> Just (Reduce 9 40)
+    (134, Token (RBRACE _)) -> Just (Reduce 9 48)
+    (134, Token (SEMICOLON _)) -> Just (Reduce 9 48)
+    (135, Token (RBRACE _)) -> Just (Reduce 7 44)
+    (135, Token (SEMICOLON _)) -> Just (Reduce 7 44)
+    (136, Token (RBRACE _)) -> Just (Reduce 4 54)
+    (136, Token (SEMICOLON _)) -> Just (Reduce 4 54)
+    (137, Token (QCONID _)) -> Just (Reduce 0 166)
+    (137, Token (QUALIFIED _)) -> Just (Shift 169)
+    (138, Token (LPAREN _)) -> Just (Shift 44)
     (139, Token (LPAREN _)) -> Just (Shift 121)
     (139, Token (QCONID _)) -> Just (Shift 176)
     (140, Token (LPAREN _)) -> Just (Shift 122)
@@ -1562,150 +1546,150 @@ dfaActionTransition q s =
     (143, Token (LPAREN _)) -> Just (Shift 100)
     (144, Token (IMPORT _)) -> Just (Shift 189)
     (144, Token (EXPORT _)) -> Just (Shift 190)
-    (145, Token (RBRACE _)) -> Just (Reduce 0 168)
-    (145, Token (LPAREN _)) -> Just (Reduce 0 168)
-    (145, Token (HIDING _)) -> Just (Reduce 0 168)
-    (145, Token (SEMICOLON _)) -> Just (Reduce 0 168)
+    (145, Token (RBRACE _)) -> Just (Reduce 0 164)
+    (145, Token (LPAREN _)) -> Just (Reduce 0 164)
+    (145, Token (SEMICOLON _)) -> Just (Reduce 0 164)
+    (145, Token (HIDING _)) -> Just (Reduce 0 164)
     (145, Token (AS _)) -> Just (Shift 9)
     (146, Token (RPAREN _)) -> Just (Shift 130)
     (147, Token (RPAREN _)) -> Just (Shift 131)
-    (148, Token (RBRACE _)) -> Just (Reduce 4 33)
+    (148, Token (RBRACE _)) -> Just (Reduce 4 29)
     (148, Token (LPAREN _)) -> Just (Shift 45)
-    (148, Token (HIDING _)) -> Just (Shift 137)
-    (148, Token (SEMICOLON _)) -> Just (Reduce 4 33)
-    (149, Token (RBRACE _)) -> Just (Reduce 4 36)
-    (149, Token (SEMICOLON _)) -> Just (Reduce 4 36)
-    (150, Token (RBRACE _)) -> Just (Reduce 3 37)
-    (150, Token (SEMICOLON _)) -> Just (Reduce 3 37)
+    (148, Token (SEMICOLON _)) -> Just (Reduce 4 29)
+    (148, Token (HIDING _)) -> Just (Shift 138)
+    (149, Token (RBRACE _)) -> Just (Reduce 4 32)
+    (149, Token (SEMICOLON _)) -> Just (Reduce 4 32)
+    (150, Token (RBRACE _)) -> Just (Reduce 3 33)
+    (150, Token (SEMICOLON _)) -> Just (Reduce 3 33)
     (150, Token (DERIVING _)) -> Just (Shift 139)
-    (151, Token (RBRACE _)) -> Just (Reduce 5 41)
-    (151, Token (SEMICOLON _)) -> Just (Reduce 5 41)
+    (151, Token (RBRACE _)) -> Just (Reduce 5 37)
+    (151, Token (SEMICOLON _)) -> Just (Reduce 5 37)
     (151, Token (DERIVING _)) -> Just (Shift 140)
-    (152, Token (RBRACE _)) -> Just (Reduce 5 38)
-    (152, Token (SEMICOLON _)) -> Just (Reduce 5 38)
-    (153, Token (RBRACE _)) -> Just (Reduce 7 42)
-    (153, Token (SEMICOLON _)) -> Just (Reduce 7 42)
-    (154, Token (RBRACE _)) -> Just (Reduce 7 50)
-    (154, Token (SEMICOLON _)) -> Just (Reduce 7 50)
-    (155, Token (RBRACE _)) -> Just (Reduce 5 46)
-    (155, Token (SEMICOLON _)) -> Just (Reduce 5 46)
+    (152, Token (RBRACE _)) -> Just (Reduce 5 34)
+    (152, Token (SEMICOLON _)) -> Just (Reduce 5 34)
+    (153, Token (RBRACE _)) -> Just (Reduce 7 38)
+    (153, Token (SEMICOLON _)) -> Just (Reduce 7 38)
+    (154, Token (RBRACE _)) -> Just (Reduce 7 46)
+    (154, Token (SEMICOLON _)) -> Just (Reduce 7 46)
+    (155, Token (RBRACE _)) -> Just (Reduce 5 42)
+    (155, Token (SEMICOLON _)) -> Just (Reduce 5 42)
     (156, Token (RPAREN _)) -> Just (Shift 132)
     (157, Token (RPAREN _)) -> Just (Shift 133)
     (158, Token (RPAREN _)) -> Just (Shift 134)
     (159, Token (RPAREN _)) -> Just (Shift 135)
-    (160, Token (RBRACE _)) -> Just (Reduce 5 49)
-    (160, Token (SEMICOLON _)) -> Just (Reduce 5 49)
+    (160, Token (RBRACE _)) -> Just (Reduce 5 45)
+    (160, Token (SEMICOLON _)) -> Just (Reduce 5 45)
     (160, Token (DERIVING _)) -> Just (Shift 141)
-    (161, Token (RBRACE _)) -> Just (Reduce 3 45)
-    (161, Token (SEMICOLON _)) -> Just (Reduce 3 45)
+    (161, Token (RBRACE _)) -> Just (Reduce 3 41)
+    (161, Token (SEMICOLON _)) -> Just (Reduce 3 41)
     (161, Token (DERIVING _)) -> Just (Shift 142)
-    (162, Token (RBRACE _)) -> Just (Reduce 5 54)
-    (162, Token (SEMICOLON _)) -> Just (Reduce 5 54)
-    (163, Token (RBRACE _)) -> Just (Reduce 3 53)
-    (163, Token (SEMICOLON _)) -> Just (Reduce 3 53)
-    (164, Token (RBRACE _)) -> Just (Reduce 5 56)
-    (164, Token (SEMICOLON _)) -> Just (Reduce 5 56)
-    (165, Token (RBRACE _)) -> Just (Reduce 3 55)
-    (165, Token (SEMICOLON _)) -> Just (Reduce 3 55)
+    (162, Token (RBRACE _)) -> Just (Reduce 5 50)
+    (162, Token (SEMICOLON _)) -> Just (Reduce 5 50)
+    (163, Token (RBRACE _)) -> Just (Reduce 3 49)
+    (163, Token (SEMICOLON _)) -> Just (Reduce 3 49)
+    (164, Token (RBRACE _)) -> Just (Reduce 5 52)
+    (164, Token (SEMICOLON _)) -> Just (Reduce 5 52)
+    (165, Token (RBRACE _)) -> Just (Reduce 3 51)
+    (165, Token (SEMICOLON _)) -> Just (Reduce 3 51)
     (166, Token (RPAREN _)) -> Just (Shift 136)
-    (167, Token (RBRACE _)) -> Just (Reduce 2 59)
-    (167, Token (SEMICOLON _)) -> Just (Reduce 2 59)
-    (168, Token (RBRACE _)) -> Just (Reduce 1 60)
-    (168, Token (SEMICOLON _)) -> Just (Reduce 1 60)
-    (169, Token (QCONID _)) -> Just (Reduce 1 171)
-    (170, Token (RBRACE _)) -> Just (Reduce 2 169)
-    (170, Token (LPAREN _)) -> Just (Reduce 2 169)
-    (170, Token (HIDING _)) -> Just (Reduce 2 169)
-    (170, Token (SEMICOLON _)) -> Just (Reduce 2 169)
-    (171, Token (WHERE _)) -> Just (Reduce 1 98)
-    (171, Token (LBRACE _)) -> Just (Reduce 1 98)
-    (171, Token (RBRACE _)) -> Just (Reduce 1 98)
-    (171, Token (LPAREN _)) -> Just (Reduce 1 98)
-    (171, Token (RPAREN _)) -> Just (Reduce 1 98)
-    (171, Token (COMMA _)) -> Just (Reduce 1 98)
-    (171, Token (SEMICOLON _)) -> Just (Reduce 1 98)
-    (171, Token (EQUAL _)) -> Just (Reduce 1 98)
-    (171, Token (DERIVING _)) -> Just (Reduce 1 98)
-    (171, Token (DARROW _)) -> Just (Reduce 1 98)
-    (171, Token (COLON_COLON _)) -> Just (Reduce 1 98)
-    (171, Token (INFIXL _)) -> Just (Reduce 1 98)
-    (171, Token (INFIXR _)) -> Just (Reduce 1 98)
-    (171, Token (INFIX _)) -> Just (Reduce 1 98)
-    (171, Token (ARROW _)) -> Just (Reduce 1 98)
-    (171, Token (LBRACKET _)) -> Just (Reduce 1 98)
-    (171, Token (RBRACKET _)) -> Just (Reduce 1 98)
-    (171, Token (EXCL _)) -> Just (Reduce 1 98)
-    (171, Token (PIPE _)) -> Just (Reduce 1 98)
-    (171, Token (QCONID _)) -> Just (Reduce 1 98)
-    (171, Token (EXPORT _)) -> Just (Reduce 1 98)
-    (171, Token (AS _)) -> Just (Reduce 1 98)
-    (171, Token (QVARID _)) -> Just (Reduce 1 98)
-    (171, Token (TODO_FUNLHS _)) -> Just (Reduce 1 98)
-    (171, Token (INTEGER _)) -> Just (Reduce 1 98)
-    (171, Token (QVARSYM _)) -> Just (Reduce 1 98)
-    (171, Token (QCONSYM _)) -> Just (Reduce 1 98)
-    (171, Token (BACKQUOTE _)) -> Just (Reduce 1 98)
-    (172, Token (WHERE _)) -> Just (Reduce 2 99)
-    (172, Token (LBRACE _)) -> Just (Reduce 2 99)
-    (172, Token (RBRACE _)) -> Just (Reduce 2 99)
-    (172, Token (LPAREN _)) -> Just (Reduce 2 99)
-    (172, Token (RPAREN _)) -> Just (Reduce 2 99)
-    (172, Token (COMMA _)) -> Just (Reduce 2 99)
-    (172, Token (SEMICOLON _)) -> Just (Reduce 2 99)
-    (172, Token (EQUAL _)) -> Just (Reduce 2 99)
-    (172, Token (DERIVING _)) -> Just (Reduce 2 99)
-    (172, Token (DARROW _)) -> Just (Reduce 2 99)
-    (172, Token (COLON_COLON _)) -> Just (Reduce 2 99)
-    (172, Token (INFIXL _)) -> Just (Reduce 2 99)
-    (172, Token (INFIXR _)) -> Just (Reduce 2 99)
-    (172, Token (INFIX _)) -> Just (Reduce 2 99)
-    (172, Token (ARROW _)) -> Just (Reduce 2 99)
-    (172, Token (LBRACKET _)) -> Just (Reduce 2 99)
-    (172, Token (RBRACKET _)) -> Just (Reduce 2 99)
-    (172, Token (EXCL _)) -> Just (Reduce 2 99)
-    (172, Token (PIPE _)) -> Just (Reduce 2 99)
-    (172, Token (QCONID _)) -> Just (Reduce 2 99)
-    (172, Token (EXPORT _)) -> Just (Reduce 2 99)
-    (172, Token (AS _)) -> Just (Reduce 2 99)
-    (172, Token (QVARID _)) -> Just (Reduce 2 99)
-    (172, Token (TODO_FUNLHS _)) -> Just (Reduce 2 99)
-    (172, Token (INTEGER _)) -> Just (Reduce 2 99)
-    (172, Token (QVARSYM _)) -> Just (Reduce 2 99)
-    (172, Token (QCONSYM _)) -> Just (Reduce 2 99)
-    (172, Token (BACKQUOTE _)) -> Just (Reduce 2 99)
-    (173, Token (RBRACE _)) -> Just (Reduce 3 97)
-    (173, Token (RPAREN _)) -> Just (Reduce 3 97)
-    (173, Token (COMMA _)) -> Just (Reduce 3 97)
-    (173, Token (SEMICOLON _)) -> Just (Reduce 3 97)
-    (173, Token (RBRACKET _)) -> Just (Reduce 3 97)
-    (174, Token (RBRACE _)) -> Just (Reduce 2 116)
-    (174, Token (SEMICOLON _)) -> Just (Reduce 2 116)
-    (174, Token (DERIVING _)) -> Just (Reduce 2 116)
+    (167, Token (RBRACE _)) -> Just (Reduce 2 55)
+    (167, Token (SEMICOLON _)) -> Just (Reduce 2 55)
+    (168, Token (RBRACE _)) -> Just (Reduce 1 56)
+    (168, Token (SEMICOLON _)) -> Just (Reduce 1 56)
+    (169, Token (QCONID _)) -> Just (Reduce 1 167)
+    (170, Token (RBRACE _)) -> Just (Reduce 2 165)
+    (170, Token (LPAREN _)) -> Just (Reduce 2 165)
+    (170, Token (SEMICOLON _)) -> Just (Reduce 2 165)
+    (170, Token (HIDING _)) -> Just (Reduce 2 165)
+    (171, Token (WHERE _)) -> Just (Reduce 1 94)
+    (171, Token (LBRACE _)) -> Just (Reduce 1 94)
+    (171, Token (RBRACE _)) -> Just (Reduce 1 94)
+    (171, Token (LPAREN _)) -> Just (Reduce 1 94)
+    (171, Token (RPAREN _)) -> Just (Reduce 1 94)
+    (171, Token (COMMA _)) -> Just (Reduce 1 94)
+    (171, Token (SEMICOLON _)) -> Just (Reduce 1 94)
+    (171, Token (EQUAL _)) -> Just (Reduce 1 94)
+    (171, Token (DERIVING _)) -> Just (Reduce 1 94)
+    (171, Token (DARROW _)) -> Just (Reduce 1 94)
+    (171, Token (COLON_COLON _)) -> Just (Reduce 1 94)
+    (171, Token (INFIXL _)) -> Just (Reduce 1 94)
+    (171, Token (INFIXR _)) -> Just (Reduce 1 94)
+    (171, Token (INFIX _)) -> Just (Reduce 1 94)
+    (171, Token (ARROW _)) -> Just (Reduce 1 94)
+    (171, Token (LBRACKET _)) -> Just (Reduce 1 94)
+    (171, Token (RBRACKET _)) -> Just (Reduce 1 94)
+    (171, Token (EXCL _)) -> Just (Reduce 1 94)
+    (171, Token (PIPE _)) -> Just (Reduce 1 94)
+    (171, Token (QCONID _)) -> Just (Reduce 1 94)
+    (171, Token (EXPORT _)) -> Just (Reduce 1 94)
+    (171, Token (AS _)) -> Just (Reduce 1 94)
+    (171, Token (QVARID _)) -> Just (Reduce 1 94)
+    (171, Token (TODO_FUNLHS _)) -> Just (Reduce 1 94)
+    (171, Token (INTEGER _)) -> Just (Reduce 1 94)
+    (171, Token (QVARSYM _)) -> Just (Reduce 1 94)
+    (171, Token (QCONSYM _)) -> Just (Reduce 1 94)
+    (171, Token (BACKQUOTE _)) -> Just (Reduce 1 94)
+    (172, Token (WHERE _)) -> Just (Reduce 2 95)
+    (172, Token (LBRACE _)) -> Just (Reduce 2 95)
+    (172, Token (RBRACE _)) -> Just (Reduce 2 95)
+    (172, Token (LPAREN _)) -> Just (Reduce 2 95)
+    (172, Token (RPAREN _)) -> Just (Reduce 2 95)
+    (172, Token (COMMA _)) -> Just (Reduce 2 95)
+    (172, Token (SEMICOLON _)) -> Just (Reduce 2 95)
+    (172, Token (EQUAL _)) -> Just (Reduce 2 95)
+    (172, Token (DERIVING _)) -> Just (Reduce 2 95)
+    (172, Token (DARROW _)) -> Just (Reduce 2 95)
+    (172, Token (COLON_COLON _)) -> Just (Reduce 2 95)
+    (172, Token (INFIXL _)) -> Just (Reduce 2 95)
+    (172, Token (INFIXR _)) -> Just (Reduce 2 95)
+    (172, Token (INFIX _)) -> Just (Reduce 2 95)
+    (172, Token (ARROW _)) -> Just (Reduce 2 95)
+    (172, Token (LBRACKET _)) -> Just (Reduce 2 95)
+    (172, Token (RBRACKET _)) -> Just (Reduce 2 95)
+    (172, Token (EXCL _)) -> Just (Reduce 2 95)
+    (172, Token (PIPE _)) -> Just (Reduce 2 95)
+    (172, Token (QCONID _)) -> Just (Reduce 2 95)
+    (172, Token (EXPORT _)) -> Just (Reduce 2 95)
+    (172, Token (AS _)) -> Just (Reduce 2 95)
+    (172, Token (QVARID _)) -> Just (Reduce 2 95)
+    (172, Token (TODO_FUNLHS _)) -> Just (Reduce 2 95)
+    (172, Token (INTEGER _)) -> Just (Reduce 2 95)
+    (172, Token (QVARSYM _)) -> Just (Reduce 2 95)
+    (172, Token (QCONSYM _)) -> Just (Reduce 2 95)
+    (172, Token (BACKQUOTE _)) -> Just (Reduce 2 95)
+    (173, Token (RBRACE _)) -> Just (Reduce 3 93)
+    (173, Token (RPAREN _)) -> Just (Reduce 3 93)
+    (173, Token (COMMA _)) -> Just (Reduce 3 93)
+    (173, Token (SEMICOLON _)) -> Just (Reduce 3 93)
+    (173, Token (RBRACKET _)) -> Just (Reduce 3 93)
+    (174, Token (RBRACE _)) -> Just (Reduce 2 112)
+    (174, Token (SEMICOLON _)) -> Just (Reduce 2 112)
+    (174, Token (DERIVING _)) -> Just (Reduce 2 112)
     (175, Token (QCONID _)) -> Just (Shift 176)
-    (176, Token (RBRACE _)) -> Just (Reduce 1 130)
-    (176, Token (RPAREN _)) -> Just (Reduce 1 130)
-    (176, Token (COMMA _)) -> Just (Reduce 1 130)
-    (176, Token (SEMICOLON _)) -> Just (Reduce 1 130)
-    (177, Token (RPAREN _)) -> Just (Reduce 1 128)
+    (176, Token (RBRACE _)) -> Just (Reduce 1 126)
+    (176, Token (RPAREN _)) -> Just (Reduce 1 126)
+    (176, Token (COMMA _)) -> Just (Reduce 1 126)
+    (176, Token (SEMICOLON _)) -> Just (Reduce 1 126)
+    (177, Token (RPAREN _)) -> Just (Reduce 1 124)
     (177, Token (COMMA _)) -> Just (Shift 175)
-    (178, Token (RPAREN _)) -> Just (Reduce 3 129)
-    (179, Token (RBRACE _)) -> Just (Reduce 7 124)
-    (179, Token (SEMICOLON _)) -> Just (Reduce 7 124)
-    (179, Token (DERIVING _)) -> Just (Reduce 7 124)
+    (178, Token (RPAREN _)) -> Just (Reduce 3 125)
+    (179, Token (RBRACE _)) -> Just (Reduce 7 120)
+    (179, Token (SEMICOLON _)) -> Just (Reduce 7 120)
+    (179, Token (DERIVING _)) -> Just (Reduce 7 120)
     (180, Token (COLON_COLON _)) -> Just (Shift 91)
     (181, Token (RBRACE _)) -> Just (Shift 179)
-    (182, Token (RBRACE _)) -> Just (Reduce 3 123)
-    (182, Token (SEMICOLON _)) -> Just (Reduce 3 123)
-    (182, Token (DERIVING _)) -> Just (Reduce 3 123)
+    (182, Token (RBRACE _)) -> Just (Reduce 3 119)
+    (182, Token (SEMICOLON _)) -> Just (Reduce 3 119)
+    (182, Token (DERIVING _)) -> Just (Reduce 3 119)
     (183, Token (LBRACE _)) -> Just (Shift 39)
-    (184, Token (RBRACE _)) -> Just (Reduce 2 68)
-    (184, Token (SEMICOLON _)) -> Just (Reduce 2 68)
+    (184, Token (RBRACE _)) -> Just (Reduce 2 64)
+    (184, Token (SEMICOLON _)) -> Just (Reduce 2 64)
     (185, Token (LBRACE _)) -> Just (Shift 41)
-    (186, Token (RBRACE _)) -> Just (Reduce 2 76)
-    (186, Token (SEMICOLON _)) -> Just (Reduce 2 76)
-    (187, Token (RPAREN _)) -> Just (Reduce 1 94)
+    (186, Token (RBRACE _)) -> Just (Reduce 2 72)
+    (186, Token (SEMICOLON _)) -> Just (Reduce 2 72)
+    (187, Token (RPAREN _)) -> Just (Reduce 1 90)
     (187, Token (COMMA _)) -> Just (Shift 101)
-    (188, Token (RPAREN _)) -> Just (Reduce 3 95)
+    (188, Token (RPAREN _)) -> Just (Reduce 3 91)
     (189, Token (EXPORT _)) -> Just (Shift 285)
     (189, Token (AS _)) -> Just (Shift 286)
     (189, Token (QVARID _)) -> Just (Shift 287)
@@ -1715,12 +1699,12 @@ dfaActionTransition q s =
     (191, Token (COLON_COLON _)) -> Just (Shift 85)
     (192, Token (COLON_COLON _)) -> Just (Shift 86)
     (193, Token (COLON_COLON _)) -> Just (Shift 87)
-    (194, Token (RBRACE _)) -> Just (Reduce 6 132)
-    (194, Token (SEMICOLON _)) -> Just (Reduce 6 132)
-    (195, Token (RBRACE _)) -> Just (Reduce 7 133)
-    (195, Token (SEMICOLON _)) -> Just (Reduce 7 133)
-    (196, Token (RBRACE _)) -> Just (Reduce 6 134)
-    (196, Token (SEMICOLON _)) -> Just (Reduce 6 134)
+    (194, Token (RBRACE _)) -> Just (Reduce 6 128)
+    (194, Token (SEMICOLON _)) -> Just (Reduce 6 128)
+    (195, Token (RBRACE _)) -> Just (Reduce 7 129)
+    (195, Token (SEMICOLON _)) -> Just (Reduce 7 129)
+    (196, Token (RBRACE _)) -> Just (Reduce 6 130)
+    (196, Token (SEMICOLON _)) -> Just (Reduce 6 130)
     (197, Token (EXPORT _)) -> Just (Shift 289)
     (197, Token (AS _)) -> Just (Shift 290)
     (197, Token (QVARID _)) -> Just (Shift 291)
@@ -1729,759 +1713,759 @@ dfaActionTransition q s =
     (199, Token (STRING _)) -> Just (Shift 288)
     (200, Token (COMMA _)) -> Just (Shift 48)
     (200, Token (EQUAL _)) -> Just (Shift 34)
-    (200, Token (COLON_COLON _)) -> Just (Reduce 1 89)
-    (201, Token (RBRACE _)) -> Just (Reduce 1 64)
-    (201, Token (SEMICOLON _)) -> Just (Reduce 1 64)
+    (200, Token (COLON_COLON _)) -> Just (Reduce 1 85)
+    (201, Token (RBRACE _)) -> Just (Reduce 1 60)
+    (201, Token (SEMICOLON _)) -> Just (Reduce 1 60)
     (202, Token (EQUAL _)) -> Just (Shift 34)
-    (203, Token (RBRACE _)) -> Just (Reduce 2 66)
-    (203, Token (SEMICOLON _)) -> Just (Reduce 2 66)
-    (204, Token (RBRACE _)) -> Just (Reduce 2 65)
-    (204, Token (SEMICOLON _)) -> Just (Reduce 2 65)
+    (203, Token (RBRACE _)) -> Just (Reduce 2 62)
+    (203, Token (SEMICOLON _)) -> Just (Reduce 2 62)
+    (204, Token (RBRACE _)) -> Just (Reduce 2 61)
+    (204, Token (SEMICOLON _)) -> Just (Reduce 2 61)
     (205, Token (LBRACE _)) -> Just (Shift 37)
-    (206, Token (RBRACE _)) -> Just (Reduce 3 61)
-    (206, Token (SEMICOLON _)) -> Just (Reduce 3 61)
+    (206, Token (RBRACE _)) -> Just (Reduce 3 57)
+    (206, Token (SEMICOLON _)) -> Just (Reduce 3 57)
     (207, Token (RBRACE _)) -> Just (Shift 206)
-    (208, Token (RBRACE _)) -> Just (Reduce 1 62)
+    (208, Token (RBRACE _)) -> Just (Reduce 1 58)
     (208, Token (SEMICOLON _)) -> Just (Shift 38)
-    (209, Token (RBRACE _)) -> Just (Reduce 3 63)
-    (210, Token (RBRACE _)) -> Just (Reduce 5 85)
-    (210, Token (SEMICOLON _)) -> Just (Reduce 5 85)
-    (211, Token (RBRACE _)) -> Just (Reduce 3 84)
-    (211, Token (SEMICOLON _)) -> Just (Reduce 3 84)
+    (209, Token (RBRACE _)) -> Just (Reduce 3 59)
+    (210, Token (RBRACE _)) -> Just (Reduce 5 81)
+    (210, Token (SEMICOLON _)) -> Just (Reduce 5 81)
+    (211, Token (RBRACE _)) -> Just (Reduce 3 80)
+    (211, Token (SEMICOLON _)) -> Just (Reduce 3 80)
     (212, Token (COLON_COLON _)) -> Just (Shift 81)
-    (213, Token (COMMA _)) -> Just (Reduce 0 177)
-    (213, Token (QCONID _)) -> Just (Reduce 0 177)
-    (213, Token (EXPORT _)) -> Just (Reduce 0 177)
-    (213, Token (AS _)) -> Just (Reduce 0 177)
-    (213, Token (QVARID _)) -> Just (Reduce 0 177)
+    (213, Token (COMMA _)) -> Just (Reduce 0 173)
+    (213, Token (QCONID _)) -> Just (Reduce 0 173)
+    (213, Token (EXPORT _)) -> Just (Reduce 0 173)
+    (213, Token (AS _)) -> Just (Reduce 0 173)
+    (213, Token (QVARID _)) -> Just (Reduce 0 173)
     (213, Token (INTEGER _)) -> Just (Shift 241)
-    (213, Token (QVARSYM _)) -> Just (Reduce 0 177)
-    (213, Token (QCONSYM _)) -> Just (Reduce 0 177)
-    (213, Token (BACKQUOTE _)) -> Just (Reduce 0 177)
+    (213, Token (QVARSYM _)) -> Just (Reduce 0 173)
+    (213, Token (QCONSYM _)) -> Just (Reduce 0 173)
+    (213, Token (BACKQUOTE _)) -> Just (Reduce 0 173)
     (214, Token (QVARSYM _)) -> Just (Shift 303)
     (214, Token (QCONSYM _)) -> Just (Shift 277)
     (214, Token (BACKQUOTE _)) -> Just (Shift 278)
-    (215, Token (RBRACE _)) -> Just (Reduce 3 86)
-    (215, Token (SEMICOLON _)) -> Just (Reduce 3 86)
-    (216, Token (LPAREN _)) -> Just (Reduce 1 143)
-    (216, Token (EQUAL _)) -> Just (Reduce 1 143)
-    (216, Token (QCONID _)) -> Just (Reduce 1 143)
-    (216, Token (EXPORT _)) -> Just (Reduce 1 143)
-    (216, Token (AS _)) -> Just (Reduce 1 143)
-    (216, Token (QVARID _)) -> Just (Reduce 1 143)
-    (216, Token (INTEGER _)) -> Just (Reduce 1 143)
-    (216, Token (QVARSYM _)) -> Just (Reduce 1 143)
-    (216, Token (QCONSYM _)) -> Just (Reduce 1 143)
-    (216, Token (BACKQUOTE _)) -> Just (Reduce 1 143)
+    (215, Token (RBRACE _)) -> Just (Reduce 3 82)
+    (215, Token (SEMICOLON _)) -> Just (Reduce 3 82)
+    (216, Token (LPAREN _)) -> Just (Reduce 1 139)
+    (216, Token (EQUAL _)) -> Just (Reduce 1 139)
+    (216, Token (QCONID _)) -> Just (Reduce 1 139)
+    (216, Token (EXPORT _)) -> Just (Reduce 1 139)
+    (216, Token (AS _)) -> Just (Reduce 1 139)
+    (216, Token (QVARID _)) -> Just (Reduce 1 139)
+    (216, Token (INTEGER _)) -> Just (Reduce 1 139)
+    (216, Token (QVARSYM _)) -> Just (Reduce 1 139)
+    (216, Token (QCONSYM _)) -> Just (Reduce 1 139)
+    (216, Token (BACKQUOTE _)) -> Just (Reduce 1 139)
     (217, Token (COMMA _)) -> Just (Shift 48)
     (217, Token (EQUAL _)) -> Just (Shift 34)
-    (217, Token (COLON_COLON _)) -> Just (Reduce 1 89)
+    (217, Token (COLON_COLON _)) -> Just (Reduce 1 85)
     (218, Token (EQUAL _)) -> Just (Shift 34)
     (219, Token (EQUAL _)) -> Just (Shift 34)
     (220, Token (EQUAL _)) -> Just (Shift 34)
-    (221, Token (RBRACE _)) -> Just (Reduce 4 145)
-    (221, Token (SEMICOLON _)) -> Just (Reduce 4 145)
+    (221, Token (RBRACE _)) -> Just (Reduce 4 141)
+    (221, Token (SEMICOLON _)) -> Just (Reduce 4 141)
     (222, Token (WHERE _)) -> Just (Shift 205)
-    (222, Token (RBRACE _)) -> Just (Reduce 2 144)
-    (222, Token (SEMICOLON _)) -> Just (Reduce 2 144)
-    (223, Token (RBRACE _)) -> Just (Reduce 3 69)
-    (223, Token (SEMICOLON _)) -> Just (Reduce 3 69)
+    (222, Token (RBRACE _)) -> Just (Reduce 2 140)
+    (222, Token (SEMICOLON _)) -> Just (Reduce 2 140)
+    (223, Token (RBRACE _)) -> Just (Reduce 3 65)
+    (223, Token (SEMICOLON _)) -> Just (Reduce 3 65)
     (224, Token (RBRACE _)) -> Just (Shift 223)
-    (225, Token (RBRACE _)) -> Just (Reduce 3 71)
-    (226, Token (RBRACE _)) -> Just (Reduce 1 70)
+    (225, Token (RBRACE _)) -> Just (Reduce 3 67)
+    (226, Token (RBRACE _)) -> Just (Reduce 1 66)
     (226, Token (SEMICOLON _)) -> Just (Shift 40)
-    (227, Token (RBRACE _)) -> Just (Reduce 1 72)
-    (227, Token (SEMICOLON _)) -> Just (Reduce 1 72)
-    (228, Token (RBRACE _)) -> Just (Reduce 2 74)
-    (228, Token (SEMICOLON _)) -> Just (Reduce 2 74)
-    (229, Token (RBRACE _)) -> Just (Reduce 2 73)
-    (229, Token (SEMICOLON _)) -> Just (Reduce 2 73)
-    (230, Token (RBRACE _)) -> Just (Reduce 3 77)
-    (230, Token (SEMICOLON _)) -> Just (Reduce 3 77)
+    (227, Token (RBRACE _)) -> Just (Reduce 1 68)
+    (227, Token (SEMICOLON _)) -> Just (Reduce 1 68)
+    (228, Token (RBRACE _)) -> Just (Reduce 2 70)
+    (228, Token (SEMICOLON _)) -> Just (Reduce 2 70)
+    (229, Token (RBRACE _)) -> Just (Reduce 2 69)
+    (229, Token (SEMICOLON _)) -> Just (Reduce 2 69)
+    (230, Token (RBRACE _)) -> Just (Reduce 3 73)
+    (230, Token (SEMICOLON _)) -> Just (Reduce 3 73)
     (231, Token (RBRACE _)) -> Just (Shift 230)
-    (232, Token (RBRACE _)) -> Just (Reduce 3 79)
-    (233, Token (RBRACE _)) -> Just (Reduce 1 78)
+    (232, Token (RBRACE _)) -> Just (Reduce 3 75)
+    (233, Token (RBRACE _)) -> Just (Reduce 1 74)
     (233, Token (SEMICOLON _)) -> Just (Shift 42)
-    (234, Token (RBRACE _)) -> Just (Reduce 2 82)
-    (234, Token (SEMICOLON _)) -> Just (Reduce 2 82)
-    (235, Token (RBRACE _)) -> Just (Reduce 2 81)
-    (235, Token (SEMICOLON _)) -> Just (Reduce 2 81)
+    (234, Token (RBRACE _)) -> Just (Reduce 2 78)
+    (234, Token (SEMICOLON _)) -> Just (Reduce 2 78)
+    (235, Token (RBRACE _)) -> Just (Reduce 2 77)
+    (235, Token (SEMICOLON _)) -> Just (Reduce 2 77)
     (236, Token (COMMA _)) -> Just (Shift 48)
-    (236, Token (COLON_COLON _)) -> Just (Reduce 1 89)
-    (237, Token (COLON_COLON _)) -> Just (Reduce 3 90)
-    (238, Token (COMMA _)) -> Just (Reduce 1 91)
-    (238, Token (QCONID _)) -> Just (Reduce 1 91)
-    (238, Token (EXPORT _)) -> Just (Reduce 1 91)
-    (238, Token (AS _)) -> Just (Reduce 1 91)
-    (238, Token (QVARID _)) -> Just (Reduce 1 91)
-    (238, Token (INTEGER _)) -> Just (Reduce 1 91)
-    (238, Token (QVARSYM _)) -> Just (Reduce 1 91)
-    (238, Token (QCONSYM _)) -> Just (Reduce 1 91)
-    (238, Token (BACKQUOTE _)) -> Just (Reduce 1 91)
-    (239, Token (COMMA _)) -> Just (Reduce 1 92)
-    (239, Token (QCONID _)) -> Just (Reduce 1 92)
-    (239, Token (EXPORT _)) -> Just (Reduce 1 92)
-    (239, Token (AS _)) -> Just (Reduce 1 92)
-    (239, Token (QVARID _)) -> Just (Reduce 1 92)
-    (239, Token (INTEGER _)) -> Just (Reduce 1 92)
-    (239, Token (QVARSYM _)) -> Just (Reduce 1 92)
-    (239, Token (QCONSYM _)) -> Just (Reduce 1 92)
-    (239, Token (BACKQUOTE _)) -> Just (Reduce 1 92)
-    (240, Token (COMMA _)) -> Just (Reduce 1 93)
-    (240, Token (QCONID _)) -> Just (Reduce 1 93)
-    (240, Token (EXPORT _)) -> Just (Reduce 1 93)
-    (240, Token (AS _)) -> Just (Reduce 1 93)
-    (240, Token (QVARID _)) -> Just (Reduce 1 93)
-    (240, Token (INTEGER _)) -> Just (Reduce 1 93)
-    (240, Token (QVARSYM _)) -> Just (Reduce 1 93)
-    (240, Token (QCONSYM _)) -> Just (Reduce 1 93)
-    (240, Token (BACKQUOTE _)) -> Just (Reduce 1 93)
-    (241, Token (COMMA _)) -> Just (Reduce 1 178)
-    (241, Token (QCONID _)) -> Just (Reduce 1 178)
-    (241, Token (EXPORT _)) -> Just (Reduce 1 178)
-    (241, Token (AS _)) -> Just (Reduce 1 178)
-    (241, Token (QVARID _)) -> Just (Reduce 1 178)
-    (241, Token (QVARSYM _)) -> Just (Reduce 1 178)
-    (241, Token (QCONSYM _)) -> Just (Reduce 1 178)
-    (241, Token (BACKQUOTE _)) -> Just (Reduce 1 178)
+    (236, Token (COLON_COLON _)) -> Just (Reduce 1 85)
+    (237, Token (COLON_COLON _)) -> Just (Reduce 3 86)
+    (238, Token (COMMA _)) -> Just (Reduce 1 87)
+    (238, Token (QCONID _)) -> Just (Reduce 1 87)
+    (238, Token (EXPORT _)) -> Just (Reduce 1 87)
+    (238, Token (AS _)) -> Just (Reduce 1 87)
+    (238, Token (QVARID _)) -> Just (Reduce 1 87)
+    (238, Token (INTEGER _)) -> Just (Reduce 1 87)
+    (238, Token (QVARSYM _)) -> Just (Reduce 1 87)
+    (238, Token (QCONSYM _)) -> Just (Reduce 1 87)
+    (238, Token (BACKQUOTE _)) -> Just (Reduce 1 87)
+    (239, Token (COMMA _)) -> Just (Reduce 1 88)
+    (239, Token (QCONID _)) -> Just (Reduce 1 88)
+    (239, Token (EXPORT _)) -> Just (Reduce 1 88)
+    (239, Token (AS _)) -> Just (Reduce 1 88)
+    (239, Token (QVARID _)) -> Just (Reduce 1 88)
+    (239, Token (INTEGER _)) -> Just (Reduce 1 88)
+    (239, Token (QVARSYM _)) -> Just (Reduce 1 88)
+    (239, Token (QCONSYM _)) -> Just (Reduce 1 88)
+    (239, Token (BACKQUOTE _)) -> Just (Reduce 1 88)
+    (240, Token (COMMA _)) -> Just (Reduce 1 89)
+    (240, Token (QCONID _)) -> Just (Reduce 1 89)
+    (240, Token (EXPORT _)) -> Just (Reduce 1 89)
+    (240, Token (AS _)) -> Just (Reduce 1 89)
+    (240, Token (QVARID _)) -> Just (Reduce 1 89)
+    (240, Token (INTEGER _)) -> Just (Reduce 1 89)
+    (240, Token (QVARSYM _)) -> Just (Reduce 1 89)
+    (240, Token (QCONSYM _)) -> Just (Reduce 1 89)
+    (240, Token (BACKQUOTE _)) -> Just (Reduce 1 89)
+    (241, Token (COMMA _)) -> Just (Reduce 1 174)
+    (241, Token (QCONID _)) -> Just (Reduce 1 174)
+    (241, Token (EXPORT _)) -> Just (Reduce 1 174)
+    (241, Token (AS _)) -> Just (Reduce 1 174)
+    (241, Token (QVARID _)) -> Just (Reduce 1 174)
+    (241, Token (QVARSYM _)) -> Just (Reduce 1 174)
+    (241, Token (QCONSYM _)) -> Just (Reduce 1 174)
+    (241, Token (BACKQUOTE _)) -> Just (Reduce 1 174)
     (242, Token (QVARSYM _)) -> Just (Shift 303)
     (242, Token (QCONSYM _)) -> Just (Shift 277)
     (242, Token (BACKQUOTE _)) -> Just (Shift 278)
-    (243, Token (RBRACE _)) -> Just (Reduce 3 88)
-    (243, Token (SEMICOLON _)) -> Just (Reduce 3 88)
-    (244, Token (RBRACE _)) -> Just (Reduce 1 87)
+    (243, Token (RBRACE _)) -> Just (Reduce 3 84)
+    (243, Token (SEMICOLON _)) -> Just (Reduce 3 84)
+    (244, Token (RBRACE _)) -> Just (Reduce 1 83)
     (244, Token (COMMA _)) -> Just (Shift 242)
-    (244, Token (SEMICOLON _)) -> Just (Reduce 1 87)
-    (245, Token (RBRACE _)) -> Just (Reduce 1 167)
-    (245, Token (LPAREN _)) -> Just (Reduce 1 167)
-    (245, Token (COMMA _)) -> Just (Reduce 1 167)
-    (245, Token (SEMICOLON _)) -> Just (Reduce 1 167)
-    (245, Token (EXPORT _)) -> Just (Reduce 1 167)
-    (245, Token (AS _)) -> Just (Reduce 1 167)
-    (245, Token (QVARID _)) -> Just (Reduce 1 167)
-    (245, Token (INTEGER _)) -> Just (Reduce 1 167)
-    (245, Token (QVARSYM _)) -> Just (Reduce 1 167)
-    (246, Token (RBRACE _)) -> Just (Reduce 1 166)
-    (246, Token (LPAREN _)) -> Just (Reduce 1 166)
-    (246, Token (COMMA _)) -> Just (Reduce 1 166)
-    (246, Token (SEMICOLON _)) -> Just (Reduce 1 166)
-    (246, Token (EXPORT _)) -> Just (Reduce 1 166)
-    (246, Token (AS _)) -> Just (Reduce 1 166)
-    (246, Token (QVARID _)) -> Just (Reduce 1 166)
-    (246, Token (INTEGER _)) -> Just (Reduce 1 166)
-    (246, Token (QVARSYM _)) -> Just (Reduce 1 166)
-    (247, Token (WHERE _)) -> Just (Reduce 3 104)
-    (247, Token (LBRACE _)) -> Just (Reduce 3 104)
-    (247, Token (RBRACE _)) -> Just (Reduce 3 104)
-    (247, Token (LPAREN _)) -> Just (Reduce 3 104)
-    (247, Token (RPAREN _)) -> Just (Reduce 3 104)
-    (247, Token (COMMA _)) -> Just (Reduce 3 104)
-    (247, Token (SEMICOLON _)) -> Just (Reduce 3 104)
-    (247, Token (EQUAL _)) -> Just (Reduce 3 104)
-    (247, Token (DERIVING _)) -> Just (Reduce 3 104)
-    (247, Token (DARROW _)) -> Just (Reduce 3 104)
-    (247, Token (COLON_COLON _)) -> Just (Reduce 3 104)
-    (247, Token (INFIXL _)) -> Just (Reduce 3 104)
-    (247, Token (INFIXR _)) -> Just (Reduce 3 104)
-    (247, Token (INFIX _)) -> Just (Reduce 3 104)
-    (247, Token (ARROW _)) -> Just (Reduce 3 104)
-    (247, Token (LBRACKET _)) -> Just (Reduce 3 104)
-    (247, Token (RBRACKET _)) -> Just (Reduce 3 104)
-    (247, Token (EXCL _)) -> Just (Reduce 3 104)
-    (247, Token (PIPE _)) -> Just (Reduce 3 104)
-    (247, Token (QCONID _)) -> Just (Reduce 3 104)
-    (247, Token (EXPORT _)) -> Just (Reduce 3 104)
-    (247, Token (AS _)) -> Just (Reduce 3 104)
-    (247, Token (QVARID _)) -> Just (Reduce 3 104)
-    (247, Token (TODO_FUNLHS _)) -> Just (Reduce 3 104)
-    (247, Token (INTEGER _)) -> Just (Reduce 3 104)
-    (247, Token (QVARSYM _)) -> Just (Reduce 3 104)
-    (247, Token (QCONSYM _)) -> Just (Reduce 3 104)
-    (247, Token (BACKQUOTE _)) -> Just (Reduce 3 104)
-    (248, Token (WHERE _)) -> Just (Reduce 3 102)
-    (248, Token (LBRACE _)) -> Just (Reduce 3 102)
-    (248, Token (RBRACE _)) -> Just (Reduce 3 102)
-    (248, Token (LPAREN _)) -> Just (Reduce 3 102)
-    (248, Token (RPAREN _)) -> Just (Reduce 3 102)
-    (248, Token (COMMA _)) -> Just (Reduce 3 102)
-    (248, Token (SEMICOLON _)) -> Just (Reduce 3 102)
-    (248, Token (EQUAL _)) -> Just (Reduce 3 102)
-    (248, Token (DERIVING _)) -> Just (Reduce 3 102)
-    (248, Token (DARROW _)) -> Just (Reduce 3 102)
-    (248, Token (COLON_COLON _)) -> Just (Reduce 3 102)
-    (248, Token (INFIXL _)) -> Just (Reduce 3 102)
-    (248, Token (INFIXR _)) -> Just (Reduce 3 102)
-    (248, Token (INFIX _)) -> Just (Reduce 3 102)
-    (248, Token (ARROW _)) -> Just (Reduce 3 102)
-    (248, Token (LBRACKET _)) -> Just (Reduce 3 102)
-    (248, Token (RBRACKET _)) -> Just (Reduce 3 102)
-    (248, Token (EXCL _)) -> Just (Reduce 3 102)
-    (248, Token (PIPE _)) -> Just (Reduce 3 102)
-    (248, Token (QCONID _)) -> Just (Reduce 3 102)
-    (248, Token (EXPORT _)) -> Just (Reduce 3 102)
-    (248, Token (AS _)) -> Just (Reduce 3 102)
-    (248, Token (QVARID _)) -> Just (Reduce 3 102)
-    (248, Token (TODO_FUNLHS _)) -> Just (Reduce 3 102)
-    (248, Token (INTEGER _)) -> Just (Reduce 3 102)
-    (248, Token (QVARSYM _)) -> Just (Reduce 3 102)
-    (248, Token (QCONSYM _)) -> Just (Reduce 3 102)
-    (248, Token (BACKQUOTE _)) -> Just (Reduce 3 102)
-    (249, Token (WHERE _)) -> Just (Reduce 3 103)
-    (249, Token (LBRACE _)) -> Just (Reduce 3 103)
-    (249, Token (RBRACE _)) -> Just (Reduce 3 103)
-    (249, Token (LPAREN _)) -> Just (Reduce 3 103)
-    (249, Token (RPAREN _)) -> Just (Reduce 3 103)
-    (249, Token (COMMA _)) -> Just (Reduce 3 103)
-    (249, Token (SEMICOLON _)) -> Just (Reduce 3 103)
-    (249, Token (EQUAL _)) -> Just (Reduce 3 103)
-    (249, Token (DERIVING _)) -> Just (Reduce 3 103)
-    (249, Token (DARROW _)) -> Just (Reduce 3 103)
-    (249, Token (COLON_COLON _)) -> Just (Reduce 3 103)
-    (249, Token (INFIXL _)) -> Just (Reduce 3 103)
-    (249, Token (INFIXR _)) -> Just (Reduce 3 103)
-    (249, Token (INFIX _)) -> Just (Reduce 3 103)
-    (249, Token (ARROW _)) -> Just (Reduce 3 103)
-    (249, Token (LBRACKET _)) -> Just (Reduce 3 103)
-    (249, Token (RBRACKET _)) -> Just (Reduce 3 103)
-    (249, Token (EXCL _)) -> Just (Reduce 3 103)
-    (249, Token (PIPE _)) -> Just (Reduce 3 103)
-    (249, Token (QCONID _)) -> Just (Reduce 3 103)
-    (249, Token (EXPORT _)) -> Just (Reduce 3 103)
-    (249, Token (AS _)) -> Just (Reduce 3 103)
-    (249, Token (QVARID _)) -> Just (Reduce 3 103)
-    (249, Token (TODO_FUNLHS _)) -> Just (Reduce 3 103)
-    (249, Token (INTEGER _)) -> Just (Reduce 3 103)
-    (249, Token (QVARSYM _)) -> Just (Reduce 3 103)
-    (249, Token (QCONSYM _)) -> Just (Reduce 3 103)
-    (249, Token (BACKQUOTE _)) -> Just (Reduce 3 103)
+    (244, Token (SEMICOLON _)) -> Just (Reduce 1 83)
+    (245, Token (RBRACE _)) -> Just (Reduce 1 163)
+    (245, Token (LPAREN _)) -> Just (Reduce 1 163)
+    (245, Token (COMMA _)) -> Just (Reduce 1 163)
+    (245, Token (SEMICOLON _)) -> Just (Reduce 1 163)
+    (245, Token (EXPORT _)) -> Just (Reduce 1 163)
+    (245, Token (AS _)) -> Just (Reduce 1 163)
+    (245, Token (QVARID _)) -> Just (Reduce 1 163)
+    (245, Token (INTEGER _)) -> Just (Reduce 1 163)
+    (245, Token (QVARSYM _)) -> Just (Reduce 1 163)
+    (246, Token (RBRACE _)) -> Just (Reduce 1 162)
+    (246, Token (LPAREN _)) -> Just (Reduce 1 162)
+    (246, Token (COMMA _)) -> Just (Reduce 1 162)
+    (246, Token (SEMICOLON _)) -> Just (Reduce 1 162)
+    (246, Token (EXPORT _)) -> Just (Reduce 1 162)
+    (246, Token (AS _)) -> Just (Reduce 1 162)
+    (246, Token (QVARID _)) -> Just (Reduce 1 162)
+    (246, Token (INTEGER _)) -> Just (Reduce 1 162)
+    (246, Token (QVARSYM _)) -> Just (Reduce 1 162)
+    (247, Token (WHERE _)) -> Just (Reduce 3 100)
+    (247, Token (LBRACE _)) -> Just (Reduce 3 100)
+    (247, Token (RBRACE _)) -> Just (Reduce 3 100)
+    (247, Token (LPAREN _)) -> Just (Reduce 3 100)
+    (247, Token (RPAREN _)) -> Just (Reduce 3 100)
+    (247, Token (COMMA _)) -> Just (Reduce 3 100)
+    (247, Token (SEMICOLON _)) -> Just (Reduce 3 100)
+    (247, Token (EQUAL _)) -> Just (Reduce 3 100)
+    (247, Token (DERIVING _)) -> Just (Reduce 3 100)
+    (247, Token (DARROW _)) -> Just (Reduce 3 100)
+    (247, Token (COLON_COLON _)) -> Just (Reduce 3 100)
+    (247, Token (INFIXL _)) -> Just (Reduce 3 100)
+    (247, Token (INFIXR _)) -> Just (Reduce 3 100)
+    (247, Token (INFIX _)) -> Just (Reduce 3 100)
+    (247, Token (ARROW _)) -> Just (Reduce 3 100)
+    (247, Token (LBRACKET _)) -> Just (Reduce 3 100)
+    (247, Token (RBRACKET _)) -> Just (Reduce 3 100)
+    (247, Token (EXCL _)) -> Just (Reduce 3 100)
+    (247, Token (PIPE _)) -> Just (Reduce 3 100)
+    (247, Token (QCONID _)) -> Just (Reduce 3 100)
+    (247, Token (EXPORT _)) -> Just (Reduce 3 100)
+    (247, Token (AS _)) -> Just (Reduce 3 100)
+    (247, Token (QVARID _)) -> Just (Reduce 3 100)
+    (247, Token (TODO_FUNLHS _)) -> Just (Reduce 3 100)
+    (247, Token (INTEGER _)) -> Just (Reduce 3 100)
+    (247, Token (QVARSYM _)) -> Just (Reduce 3 100)
+    (247, Token (QCONSYM _)) -> Just (Reduce 3 100)
+    (247, Token (BACKQUOTE _)) -> Just (Reduce 3 100)
+    (248, Token (WHERE _)) -> Just (Reduce 3 98)
+    (248, Token (LBRACE _)) -> Just (Reduce 3 98)
+    (248, Token (RBRACE _)) -> Just (Reduce 3 98)
+    (248, Token (LPAREN _)) -> Just (Reduce 3 98)
+    (248, Token (RPAREN _)) -> Just (Reduce 3 98)
+    (248, Token (COMMA _)) -> Just (Reduce 3 98)
+    (248, Token (SEMICOLON _)) -> Just (Reduce 3 98)
+    (248, Token (EQUAL _)) -> Just (Reduce 3 98)
+    (248, Token (DERIVING _)) -> Just (Reduce 3 98)
+    (248, Token (DARROW _)) -> Just (Reduce 3 98)
+    (248, Token (COLON_COLON _)) -> Just (Reduce 3 98)
+    (248, Token (INFIXL _)) -> Just (Reduce 3 98)
+    (248, Token (INFIXR _)) -> Just (Reduce 3 98)
+    (248, Token (INFIX _)) -> Just (Reduce 3 98)
+    (248, Token (ARROW _)) -> Just (Reduce 3 98)
+    (248, Token (LBRACKET _)) -> Just (Reduce 3 98)
+    (248, Token (RBRACKET _)) -> Just (Reduce 3 98)
+    (248, Token (EXCL _)) -> Just (Reduce 3 98)
+    (248, Token (PIPE _)) -> Just (Reduce 3 98)
+    (248, Token (QCONID _)) -> Just (Reduce 3 98)
+    (248, Token (EXPORT _)) -> Just (Reduce 3 98)
+    (248, Token (AS _)) -> Just (Reduce 3 98)
+    (248, Token (QVARID _)) -> Just (Reduce 3 98)
+    (248, Token (TODO_FUNLHS _)) -> Just (Reduce 3 98)
+    (248, Token (INTEGER _)) -> Just (Reduce 3 98)
+    (248, Token (QVARSYM _)) -> Just (Reduce 3 98)
+    (248, Token (QCONSYM _)) -> Just (Reduce 3 98)
+    (248, Token (BACKQUOTE _)) -> Just (Reduce 3 98)
+    (249, Token (WHERE _)) -> Just (Reduce 3 99)
+    (249, Token (LBRACE _)) -> Just (Reduce 3 99)
+    (249, Token (RBRACE _)) -> Just (Reduce 3 99)
+    (249, Token (LPAREN _)) -> Just (Reduce 3 99)
+    (249, Token (RPAREN _)) -> Just (Reduce 3 99)
+    (249, Token (COMMA _)) -> Just (Reduce 3 99)
+    (249, Token (SEMICOLON _)) -> Just (Reduce 3 99)
+    (249, Token (EQUAL _)) -> Just (Reduce 3 99)
+    (249, Token (DERIVING _)) -> Just (Reduce 3 99)
+    (249, Token (DARROW _)) -> Just (Reduce 3 99)
+    (249, Token (COLON_COLON _)) -> Just (Reduce 3 99)
+    (249, Token (INFIXL _)) -> Just (Reduce 3 99)
+    (249, Token (INFIXR _)) -> Just (Reduce 3 99)
+    (249, Token (INFIX _)) -> Just (Reduce 3 99)
+    (249, Token (ARROW _)) -> Just (Reduce 3 99)
+    (249, Token (LBRACKET _)) -> Just (Reduce 3 99)
+    (249, Token (RBRACKET _)) -> Just (Reduce 3 99)
+    (249, Token (EXCL _)) -> Just (Reduce 3 99)
+    (249, Token (PIPE _)) -> Just (Reduce 3 99)
+    (249, Token (QCONID _)) -> Just (Reduce 3 99)
+    (249, Token (EXPORT _)) -> Just (Reduce 3 99)
+    (249, Token (AS _)) -> Just (Reduce 3 99)
+    (249, Token (QVARID _)) -> Just (Reduce 3 99)
+    (249, Token (TODO_FUNLHS _)) -> Just (Reduce 3 99)
+    (249, Token (INTEGER _)) -> Just (Reduce 3 99)
+    (249, Token (QVARSYM _)) -> Just (Reduce 3 99)
+    (249, Token (QCONSYM _)) -> Just (Reduce 3 99)
+    (249, Token (BACKQUOTE _)) -> Just (Reduce 3 99)
     (250, Token (RPAREN _)) -> Just (Shift 247)
     (250, Token (COMMA _)) -> Just (Shift 102)
     (251, Token (RBRACKET _)) -> Just (Shift 249)
-    (252, Token (WHERE _)) -> Just (Reduce 2 105)
-    (252, Token (LBRACE _)) -> Just (Reduce 2 105)
-    (252, Token (RBRACE _)) -> Just (Reduce 2 105)
-    (252, Token (LPAREN _)) -> Just (Reduce 2 105)
-    (252, Token (RPAREN _)) -> Just (Reduce 2 105)
-    (252, Token (COMMA _)) -> Just (Reduce 2 105)
-    (252, Token (SEMICOLON _)) -> Just (Reduce 2 105)
-    (252, Token (EQUAL _)) -> Just (Reduce 2 105)
-    (252, Token (DERIVING _)) -> Just (Reduce 2 105)
-    (252, Token (DARROW _)) -> Just (Reduce 2 105)
-    (252, Token (COLON_COLON _)) -> Just (Reduce 2 105)
-    (252, Token (INFIXL _)) -> Just (Reduce 2 105)
-    (252, Token (INFIXR _)) -> Just (Reduce 2 105)
-    (252, Token (INFIX _)) -> Just (Reduce 2 105)
-    (252, Token (ARROW _)) -> Just (Reduce 2 105)
-    (252, Token (LBRACKET _)) -> Just (Reduce 2 105)
-    (252, Token (RBRACKET _)) -> Just (Reduce 2 105)
-    (252, Token (EXCL _)) -> Just (Reduce 2 105)
-    (252, Token (PIPE _)) -> Just (Reduce 2 105)
-    (252, Token (QCONID _)) -> Just (Reduce 2 105)
-    (252, Token (EXPORT _)) -> Just (Reduce 2 105)
-    (252, Token (AS _)) -> Just (Reduce 2 105)
-    (252, Token (QVARID _)) -> Just (Reduce 2 105)
-    (252, Token (TODO_FUNLHS _)) -> Just (Reduce 2 105)
-    (252, Token (INTEGER _)) -> Just (Reduce 2 105)
-    (252, Token (QVARSYM _)) -> Just (Reduce 2 105)
-    (252, Token (QCONSYM _)) -> Just (Reduce 2 105)
-    (252, Token (BACKQUOTE _)) -> Just (Reduce 2 105)
-    (253, Token (WHERE _)) -> Just (Reduce 1 100)
-    (253, Token (LBRACE _)) -> Just (Reduce 1 100)
-    (253, Token (RBRACE _)) -> Just (Reduce 1 100)
-    (253, Token (LPAREN _)) -> Just (Reduce 1 100)
-    (253, Token (RPAREN _)) -> Just (Reduce 1 100)
-    (253, Token (COMMA _)) -> Just (Reduce 1 100)
-    (253, Token (SEMICOLON _)) -> Just (Reduce 1 100)
-    (253, Token (EQUAL _)) -> Just (Reduce 1 100)
-    (253, Token (DERIVING _)) -> Just (Reduce 1 100)
-    (253, Token (DARROW _)) -> Just (Reduce 1 100)
-    (253, Token (COLON_COLON _)) -> Just (Reduce 1 100)
-    (253, Token (INFIXL _)) -> Just (Reduce 1 100)
-    (253, Token (INFIXR _)) -> Just (Reduce 1 100)
-    (253, Token (INFIX _)) -> Just (Reduce 1 100)
-    (253, Token (ARROW _)) -> Just (Reduce 1 100)
-    (253, Token (LBRACKET _)) -> Just (Reduce 1 100)
-    (253, Token (RBRACKET _)) -> Just (Reduce 1 100)
-    (253, Token (EXCL _)) -> Just (Reduce 1 100)
-    (253, Token (PIPE _)) -> Just (Reduce 1 100)
-    (253, Token (QCONID _)) -> Just (Reduce 1 100)
-    (253, Token (EXPORT _)) -> Just (Reduce 1 100)
-    (253, Token (AS _)) -> Just (Reduce 1 100)
-    (253, Token (QVARID _)) -> Just (Reduce 1 100)
-    (253, Token (TODO_FUNLHS _)) -> Just (Reduce 1 100)
-    (253, Token (INTEGER _)) -> Just (Reduce 1 100)
-    (253, Token (QVARSYM _)) -> Just (Reduce 1 100)
-    (253, Token (QCONSYM _)) -> Just (Reduce 1 100)
-    (253, Token (BACKQUOTE _)) -> Just (Reduce 1 100)
-    (254, Token (WHERE _)) -> Just (Reduce 1 101)
-    (254, Token (LBRACE _)) -> Just (Reduce 1 101)
-    (254, Token (RBRACE _)) -> Just (Reduce 1 101)
-    (254, Token (LPAREN _)) -> Just (Reduce 1 101)
-    (254, Token (RPAREN _)) -> Just (Reduce 1 101)
-    (254, Token (COMMA _)) -> Just (Reduce 1 101)
-    (254, Token (SEMICOLON _)) -> Just (Reduce 1 101)
-    (254, Token (EQUAL _)) -> Just (Reduce 1 101)
-    (254, Token (DERIVING _)) -> Just (Reduce 1 101)
-    (254, Token (DARROW _)) -> Just (Reduce 1 101)
-    (254, Token (COLON_COLON _)) -> Just (Reduce 1 101)
-    (254, Token (INFIXL _)) -> Just (Reduce 1 101)
-    (254, Token (INFIXR _)) -> Just (Reduce 1 101)
-    (254, Token (INFIX _)) -> Just (Reduce 1 101)
-    (254, Token (ARROW _)) -> Just (Reduce 1 101)
-    (254, Token (LBRACKET _)) -> Just (Reduce 1 101)
-    (254, Token (RBRACKET _)) -> Just (Reduce 1 101)
-    (254, Token (EXCL _)) -> Just (Reduce 1 101)
-    (254, Token (PIPE _)) -> Just (Reduce 1 101)
-    (254, Token (QCONID _)) -> Just (Reduce 1 101)
-    (254, Token (EXPORT _)) -> Just (Reduce 1 101)
-    (254, Token (AS _)) -> Just (Reduce 1 101)
-    (254, Token (QVARID _)) -> Just (Reduce 1 101)
-    (254, Token (TODO_FUNLHS _)) -> Just (Reduce 1 101)
-    (254, Token (INTEGER _)) -> Just (Reduce 1 101)
-    (254, Token (QVARSYM _)) -> Just (Reduce 1 101)
-    (254, Token (QCONSYM _)) -> Just (Reduce 1 101)
-    (254, Token (BACKQUOTE _)) -> Just (Reduce 1 101)
+    (252, Token (WHERE _)) -> Just (Reduce 2 101)
+    (252, Token (LBRACE _)) -> Just (Reduce 2 101)
+    (252, Token (RBRACE _)) -> Just (Reduce 2 101)
+    (252, Token (LPAREN _)) -> Just (Reduce 2 101)
+    (252, Token (RPAREN _)) -> Just (Reduce 2 101)
+    (252, Token (COMMA _)) -> Just (Reduce 2 101)
+    (252, Token (SEMICOLON _)) -> Just (Reduce 2 101)
+    (252, Token (EQUAL _)) -> Just (Reduce 2 101)
+    (252, Token (DERIVING _)) -> Just (Reduce 2 101)
+    (252, Token (DARROW _)) -> Just (Reduce 2 101)
+    (252, Token (COLON_COLON _)) -> Just (Reduce 2 101)
+    (252, Token (INFIXL _)) -> Just (Reduce 2 101)
+    (252, Token (INFIXR _)) -> Just (Reduce 2 101)
+    (252, Token (INFIX _)) -> Just (Reduce 2 101)
+    (252, Token (ARROW _)) -> Just (Reduce 2 101)
+    (252, Token (LBRACKET _)) -> Just (Reduce 2 101)
+    (252, Token (RBRACKET _)) -> Just (Reduce 2 101)
+    (252, Token (EXCL _)) -> Just (Reduce 2 101)
+    (252, Token (PIPE _)) -> Just (Reduce 2 101)
+    (252, Token (QCONID _)) -> Just (Reduce 2 101)
+    (252, Token (EXPORT _)) -> Just (Reduce 2 101)
+    (252, Token (AS _)) -> Just (Reduce 2 101)
+    (252, Token (QVARID _)) -> Just (Reduce 2 101)
+    (252, Token (TODO_FUNLHS _)) -> Just (Reduce 2 101)
+    (252, Token (INTEGER _)) -> Just (Reduce 2 101)
+    (252, Token (QVARSYM _)) -> Just (Reduce 2 101)
+    (252, Token (QCONSYM _)) -> Just (Reduce 2 101)
+    (252, Token (BACKQUOTE _)) -> Just (Reduce 2 101)
+    (253, Token (WHERE _)) -> Just (Reduce 1 96)
+    (253, Token (LBRACE _)) -> Just (Reduce 1 96)
+    (253, Token (RBRACE _)) -> Just (Reduce 1 96)
+    (253, Token (LPAREN _)) -> Just (Reduce 1 96)
+    (253, Token (RPAREN _)) -> Just (Reduce 1 96)
+    (253, Token (COMMA _)) -> Just (Reduce 1 96)
+    (253, Token (SEMICOLON _)) -> Just (Reduce 1 96)
+    (253, Token (EQUAL _)) -> Just (Reduce 1 96)
+    (253, Token (DERIVING _)) -> Just (Reduce 1 96)
+    (253, Token (DARROW _)) -> Just (Reduce 1 96)
+    (253, Token (COLON_COLON _)) -> Just (Reduce 1 96)
+    (253, Token (INFIXL _)) -> Just (Reduce 1 96)
+    (253, Token (INFIXR _)) -> Just (Reduce 1 96)
+    (253, Token (INFIX _)) -> Just (Reduce 1 96)
+    (253, Token (ARROW _)) -> Just (Reduce 1 96)
+    (253, Token (LBRACKET _)) -> Just (Reduce 1 96)
+    (253, Token (RBRACKET _)) -> Just (Reduce 1 96)
+    (253, Token (EXCL _)) -> Just (Reduce 1 96)
+    (253, Token (PIPE _)) -> Just (Reduce 1 96)
+    (253, Token (QCONID _)) -> Just (Reduce 1 96)
+    (253, Token (EXPORT _)) -> Just (Reduce 1 96)
+    (253, Token (AS _)) -> Just (Reduce 1 96)
+    (253, Token (QVARID _)) -> Just (Reduce 1 96)
+    (253, Token (TODO_FUNLHS _)) -> Just (Reduce 1 96)
+    (253, Token (INTEGER _)) -> Just (Reduce 1 96)
+    (253, Token (QVARSYM _)) -> Just (Reduce 1 96)
+    (253, Token (QCONSYM _)) -> Just (Reduce 1 96)
+    (253, Token (BACKQUOTE _)) -> Just (Reduce 1 96)
+    (254, Token (WHERE _)) -> Just (Reduce 1 97)
+    (254, Token (LBRACE _)) -> Just (Reduce 1 97)
+    (254, Token (RBRACE _)) -> Just (Reduce 1 97)
+    (254, Token (LPAREN _)) -> Just (Reduce 1 97)
+    (254, Token (RPAREN _)) -> Just (Reduce 1 97)
+    (254, Token (COMMA _)) -> Just (Reduce 1 97)
+    (254, Token (SEMICOLON _)) -> Just (Reduce 1 97)
+    (254, Token (EQUAL _)) -> Just (Reduce 1 97)
+    (254, Token (DERIVING _)) -> Just (Reduce 1 97)
+    (254, Token (DARROW _)) -> Just (Reduce 1 97)
+    (254, Token (COLON_COLON _)) -> Just (Reduce 1 97)
+    (254, Token (INFIXL _)) -> Just (Reduce 1 97)
+    (254, Token (INFIXR _)) -> Just (Reduce 1 97)
+    (254, Token (INFIX _)) -> Just (Reduce 1 97)
+    (254, Token (ARROW _)) -> Just (Reduce 1 97)
+    (254, Token (LBRACKET _)) -> Just (Reduce 1 97)
+    (254, Token (RBRACKET _)) -> Just (Reduce 1 97)
+    (254, Token (EXCL _)) -> Just (Reduce 1 97)
+    (254, Token (PIPE _)) -> Just (Reduce 1 97)
+    (254, Token (QCONID _)) -> Just (Reduce 1 97)
+    (254, Token (EXPORT _)) -> Just (Reduce 1 97)
+    (254, Token (AS _)) -> Just (Reduce 1 97)
+    (254, Token (QVARID _)) -> Just (Reduce 1 97)
+    (254, Token (TODO_FUNLHS _)) -> Just (Reduce 1 97)
+    (254, Token (INTEGER _)) -> Just (Reduce 1 97)
+    (254, Token (QVARSYM _)) -> Just (Reduce 1 97)
+    (254, Token (QCONSYM _)) -> Just (Reduce 1 97)
+    (254, Token (BACKQUOTE _)) -> Just (Reduce 1 97)
     (255, Token (RPAREN _)) -> Just (Shift 248)
-    (256, Token (WHERE _)) -> Just (Reduce 2 109)
-    (256, Token (LBRACE _)) -> Just (Reduce 2 109)
-    (256, Token (RBRACE _)) -> Just (Reduce 2 109)
-    (256, Token (LPAREN _)) -> Just (Reduce 2 109)
-    (256, Token (RPAREN _)) -> Just (Reduce 2 109)
-    (256, Token (COMMA _)) -> Just (Reduce 2 109)
-    (256, Token (SEMICOLON _)) -> Just (Reduce 2 109)
-    (256, Token (EQUAL _)) -> Just (Reduce 2 109)
-    (256, Token (DERIVING _)) -> Just (Reduce 2 109)
-    (256, Token (DARROW _)) -> Just (Reduce 2 109)
-    (256, Token (COLON_COLON _)) -> Just (Reduce 2 109)
-    (256, Token (INFIXL _)) -> Just (Reduce 2 109)
-    (256, Token (INFIXR _)) -> Just (Reduce 2 109)
-    (256, Token (INFIX _)) -> Just (Reduce 2 109)
-    (256, Token (ARROW _)) -> Just (Reduce 2 109)
-    (256, Token (LBRACKET _)) -> Just (Reduce 2 109)
-    (256, Token (RBRACKET _)) -> Just (Reduce 2 109)
-    (256, Token (EXCL _)) -> Just (Reduce 2 109)
-    (256, Token (PIPE _)) -> Just (Reduce 2 109)
-    (256, Token (QCONID _)) -> Just (Reduce 2 109)
-    (256, Token (EXPORT _)) -> Just (Reduce 2 109)
-    (256, Token (AS _)) -> Just (Reduce 2 109)
-    (256, Token (QVARID _)) -> Just (Reduce 2 109)
-    (256, Token (TODO_FUNLHS _)) -> Just (Reduce 2 109)
-    (256, Token (INTEGER _)) -> Just (Reduce 2 109)
-    (256, Token (QVARSYM _)) -> Just (Reduce 2 109)
-    (256, Token (QCONSYM _)) -> Just (Reduce 2 109)
-    (256, Token (BACKQUOTE _)) -> Just (Reduce 2 109)
-    (257, Token (WHERE _)) -> Just (Reduce 3 111)
-    (257, Token (LBRACE _)) -> Just (Reduce 3 111)
-    (257, Token (RBRACE _)) -> Just (Reduce 3 111)
-    (257, Token (LPAREN _)) -> Just (Reduce 3 111)
-    (257, Token (RPAREN _)) -> Just (Reduce 3 111)
-    (257, Token (COMMA _)) -> Just (Reduce 3 111)
-    (257, Token (SEMICOLON _)) -> Just (Reduce 3 111)
-    (257, Token (EQUAL _)) -> Just (Reduce 3 111)
-    (257, Token (DERIVING _)) -> Just (Reduce 3 111)
-    (257, Token (DARROW _)) -> Just (Reduce 3 111)
-    (257, Token (COLON_COLON _)) -> Just (Reduce 3 111)
-    (257, Token (INFIXL _)) -> Just (Reduce 3 111)
-    (257, Token (INFIXR _)) -> Just (Reduce 3 111)
-    (257, Token (INFIX _)) -> Just (Reduce 3 111)
-    (257, Token (ARROW _)) -> Just (Reduce 3 111)
-    (257, Token (LBRACKET _)) -> Just (Reduce 3 111)
-    (257, Token (RBRACKET _)) -> Just (Reduce 3 111)
-    (257, Token (EXCL _)) -> Just (Reduce 3 111)
-    (257, Token (PIPE _)) -> Just (Reduce 3 111)
-    (257, Token (QCONID _)) -> Just (Reduce 3 111)
-    (257, Token (EXPORT _)) -> Just (Reduce 3 111)
-    (257, Token (AS _)) -> Just (Reduce 3 111)
-    (257, Token (QVARID _)) -> Just (Reduce 3 111)
-    (257, Token (TODO_FUNLHS _)) -> Just (Reduce 3 111)
-    (257, Token (INTEGER _)) -> Just (Reduce 3 111)
-    (257, Token (QVARSYM _)) -> Just (Reduce 3 111)
-    (257, Token (QCONSYM _)) -> Just (Reduce 3 111)
-    (257, Token (BACKQUOTE _)) -> Just (Reduce 3 111)
-    (258, Token (WHERE _)) -> Just (Reduce 3 112)
-    (258, Token (LBRACE _)) -> Just (Reduce 3 112)
-    (258, Token (RBRACE _)) -> Just (Reduce 3 112)
-    (258, Token (LPAREN _)) -> Just (Reduce 3 112)
-    (258, Token (RPAREN _)) -> Just (Reduce 3 112)
-    (258, Token (COMMA _)) -> Just (Reduce 3 112)
-    (258, Token (SEMICOLON _)) -> Just (Reduce 3 112)
-    (258, Token (EQUAL _)) -> Just (Reduce 3 112)
-    (258, Token (DERIVING _)) -> Just (Reduce 3 112)
-    (258, Token (DARROW _)) -> Just (Reduce 3 112)
-    (258, Token (COLON_COLON _)) -> Just (Reduce 3 112)
-    (258, Token (INFIXL _)) -> Just (Reduce 3 112)
-    (258, Token (INFIXR _)) -> Just (Reduce 3 112)
-    (258, Token (INFIX _)) -> Just (Reduce 3 112)
-    (258, Token (ARROW _)) -> Just (Reduce 3 112)
-    (258, Token (LBRACKET _)) -> Just (Reduce 3 112)
-    (258, Token (RBRACKET _)) -> Just (Reduce 3 112)
-    (258, Token (EXCL _)) -> Just (Reduce 3 112)
-    (258, Token (PIPE _)) -> Just (Reduce 3 112)
-    (258, Token (QCONID _)) -> Just (Reduce 3 112)
-    (258, Token (EXPORT _)) -> Just (Reduce 3 112)
-    (258, Token (AS _)) -> Just (Reduce 3 112)
-    (258, Token (QVARID _)) -> Just (Reduce 3 112)
-    (258, Token (TODO_FUNLHS _)) -> Just (Reduce 3 112)
-    (258, Token (INTEGER _)) -> Just (Reduce 3 112)
-    (258, Token (QVARSYM _)) -> Just (Reduce 3 112)
-    (258, Token (QCONSYM _)) -> Just (Reduce 3 112)
-    (258, Token (BACKQUOTE _)) -> Just (Reduce 3 112)
+    (256, Token (WHERE _)) -> Just (Reduce 2 105)
+    (256, Token (LBRACE _)) -> Just (Reduce 2 105)
+    (256, Token (RBRACE _)) -> Just (Reduce 2 105)
+    (256, Token (LPAREN _)) -> Just (Reduce 2 105)
+    (256, Token (RPAREN _)) -> Just (Reduce 2 105)
+    (256, Token (COMMA _)) -> Just (Reduce 2 105)
+    (256, Token (SEMICOLON _)) -> Just (Reduce 2 105)
+    (256, Token (EQUAL _)) -> Just (Reduce 2 105)
+    (256, Token (DERIVING _)) -> Just (Reduce 2 105)
+    (256, Token (DARROW _)) -> Just (Reduce 2 105)
+    (256, Token (COLON_COLON _)) -> Just (Reduce 2 105)
+    (256, Token (INFIXL _)) -> Just (Reduce 2 105)
+    (256, Token (INFIXR _)) -> Just (Reduce 2 105)
+    (256, Token (INFIX _)) -> Just (Reduce 2 105)
+    (256, Token (ARROW _)) -> Just (Reduce 2 105)
+    (256, Token (LBRACKET _)) -> Just (Reduce 2 105)
+    (256, Token (RBRACKET _)) -> Just (Reduce 2 105)
+    (256, Token (EXCL _)) -> Just (Reduce 2 105)
+    (256, Token (PIPE _)) -> Just (Reduce 2 105)
+    (256, Token (QCONID _)) -> Just (Reduce 2 105)
+    (256, Token (EXPORT _)) -> Just (Reduce 2 105)
+    (256, Token (AS _)) -> Just (Reduce 2 105)
+    (256, Token (QVARID _)) -> Just (Reduce 2 105)
+    (256, Token (TODO_FUNLHS _)) -> Just (Reduce 2 105)
+    (256, Token (INTEGER _)) -> Just (Reduce 2 105)
+    (256, Token (QVARSYM _)) -> Just (Reduce 2 105)
+    (256, Token (QCONSYM _)) -> Just (Reduce 2 105)
+    (256, Token (BACKQUOTE _)) -> Just (Reduce 2 105)
+    (257, Token (WHERE _)) -> Just (Reduce 3 107)
+    (257, Token (LBRACE _)) -> Just (Reduce 3 107)
+    (257, Token (RBRACE _)) -> Just (Reduce 3 107)
+    (257, Token (LPAREN _)) -> Just (Reduce 3 107)
+    (257, Token (RPAREN _)) -> Just (Reduce 3 107)
+    (257, Token (COMMA _)) -> Just (Reduce 3 107)
+    (257, Token (SEMICOLON _)) -> Just (Reduce 3 107)
+    (257, Token (EQUAL _)) -> Just (Reduce 3 107)
+    (257, Token (DERIVING _)) -> Just (Reduce 3 107)
+    (257, Token (DARROW _)) -> Just (Reduce 3 107)
+    (257, Token (COLON_COLON _)) -> Just (Reduce 3 107)
+    (257, Token (INFIXL _)) -> Just (Reduce 3 107)
+    (257, Token (INFIXR _)) -> Just (Reduce 3 107)
+    (257, Token (INFIX _)) -> Just (Reduce 3 107)
+    (257, Token (ARROW _)) -> Just (Reduce 3 107)
+    (257, Token (LBRACKET _)) -> Just (Reduce 3 107)
+    (257, Token (RBRACKET _)) -> Just (Reduce 3 107)
+    (257, Token (EXCL _)) -> Just (Reduce 3 107)
+    (257, Token (PIPE _)) -> Just (Reduce 3 107)
+    (257, Token (QCONID _)) -> Just (Reduce 3 107)
+    (257, Token (EXPORT _)) -> Just (Reduce 3 107)
+    (257, Token (AS _)) -> Just (Reduce 3 107)
+    (257, Token (QVARID _)) -> Just (Reduce 3 107)
+    (257, Token (TODO_FUNLHS _)) -> Just (Reduce 3 107)
+    (257, Token (INTEGER _)) -> Just (Reduce 3 107)
+    (257, Token (QVARSYM _)) -> Just (Reduce 3 107)
+    (257, Token (QCONSYM _)) -> Just (Reduce 3 107)
+    (257, Token (BACKQUOTE _)) -> Just (Reduce 3 107)
+    (258, Token (WHERE _)) -> Just (Reduce 3 108)
+    (258, Token (LBRACE _)) -> Just (Reduce 3 108)
+    (258, Token (RBRACE _)) -> Just (Reduce 3 108)
+    (258, Token (LPAREN _)) -> Just (Reduce 3 108)
+    (258, Token (RPAREN _)) -> Just (Reduce 3 108)
+    (258, Token (COMMA _)) -> Just (Reduce 3 108)
+    (258, Token (SEMICOLON _)) -> Just (Reduce 3 108)
+    (258, Token (EQUAL _)) -> Just (Reduce 3 108)
+    (258, Token (DERIVING _)) -> Just (Reduce 3 108)
+    (258, Token (DARROW _)) -> Just (Reduce 3 108)
+    (258, Token (COLON_COLON _)) -> Just (Reduce 3 108)
+    (258, Token (INFIXL _)) -> Just (Reduce 3 108)
+    (258, Token (INFIXR _)) -> Just (Reduce 3 108)
+    (258, Token (INFIX _)) -> Just (Reduce 3 108)
+    (258, Token (ARROW _)) -> Just (Reduce 3 108)
+    (258, Token (LBRACKET _)) -> Just (Reduce 3 108)
+    (258, Token (RBRACKET _)) -> Just (Reduce 3 108)
+    (258, Token (EXCL _)) -> Just (Reduce 3 108)
+    (258, Token (PIPE _)) -> Just (Reduce 3 108)
+    (258, Token (QCONID _)) -> Just (Reduce 3 108)
+    (258, Token (EXPORT _)) -> Just (Reduce 3 108)
+    (258, Token (AS _)) -> Just (Reduce 3 108)
+    (258, Token (QVARID _)) -> Just (Reduce 3 108)
+    (258, Token (TODO_FUNLHS _)) -> Just (Reduce 3 108)
+    (258, Token (INTEGER _)) -> Just (Reduce 3 108)
+    (258, Token (QVARSYM _)) -> Just (Reduce 3 108)
+    (258, Token (QCONSYM _)) -> Just (Reduce 3 108)
+    (258, Token (BACKQUOTE _)) -> Just (Reduce 3 108)
     (259, Token (RPAREN _)) -> Just (Shift 257)
-    (260, Token (WHERE _)) -> Just (Reduce 2 110)
-    (260, Token (LBRACE _)) -> Just (Reduce 2 110)
-    (260, Token (RBRACE _)) -> Just (Reduce 2 110)
-    (260, Token (LPAREN _)) -> Just (Reduce 2 110)
-    (260, Token (RPAREN _)) -> Just (Reduce 2 110)
-    (260, Token (COMMA _)) -> Just (Reduce 2 110)
-    (260, Token (SEMICOLON _)) -> Just (Reduce 2 110)
-    (260, Token (EQUAL _)) -> Just (Reduce 2 110)
-    (260, Token (DERIVING _)) -> Just (Reduce 2 110)
-    (260, Token (DARROW _)) -> Just (Reduce 2 110)
-    (260, Token (COLON_COLON _)) -> Just (Reduce 2 110)
-    (260, Token (INFIXL _)) -> Just (Reduce 2 110)
-    (260, Token (INFIXR _)) -> Just (Reduce 2 110)
-    (260, Token (INFIX _)) -> Just (Reduce 2 110)
-    (260, Token (ARROW _)) -> Just (Reduce 2 110)
-    (260, Token (LBRACKET _)) -> Just (Reduce 2 110)
-    (260, Token (RBRACKET _)) -> Just (Reduce 2 110)
-    (260, Token (EXCL _)) -> Just (Reduce 2 110)
-    (260, Token (PIPE _)) -> Just (Reduce 2 110)
-    (260, Token (QCONID _)) -> Just (Reduce 2 110)
-    (260, Token (EXPORT _)) -> Just (Reduce 2 110)
-    (260, Token (AS _)) -> Just (Reduce 2 110)
-    (260, Token (QVARID _)) -> Just (Reduce 2 110)
-    (260, Token (TODO_FUNLHS _)) -> Just (Reduce 2 110)
-    (260, Token (INTEGER _)) -> Just (Reduce 2 110)
-    (260, Token (QVARSYM _)) -> Just (Reduce 2 110)
-    (260, Token (QCONSYM _)) -> Just (Reduce 2 110)
-    (260, Token (BACKQUOTE _)) -> Just (Reduce 2 110)
-    (261, Token (WHERE _)) -> Just (Reduce 1 108)
-    (261, Token (LBRACE _)) -> Just (Reduce 1 108)
-    (261, Token (RBRACE _)) -> Just (Reduce 1 108)
-    (261, Token (LPAREN _)) -> Just (Reduce 1 108)
-    (261, Token (RPAREN _)) -> Just (Reduce 1 108)
-    (261, Token (COMMA _)) -> Just (Reduce 1 108)
-    (261, Token (SEMICOLON _)) -> Just (Reduce 1 108)
-    (261, Token (EQUAL _)) -> Just (Reduce 1 108)
-    (261, Token (DERIVING _)) -> Just (Reduce 1 108)
-    (261, Token (DARROW _)) -> Just (Reduce 1 108)
-    (261, Token (COLON_COLON _)) -> Just (Reduce 1 108)
-    (261, Token (INFIXL _)) -> Just (Reduce 1 108)
-    (261, Token (INFIXR _)) -> Just (Reduce 1 108)
-    (261, Token (INFIX _)) -> Just (Reduce 1 108)
-    (261, Token (ARROW _)) -> Just (Reduce 1 108)
-    (261, Token (LBRACKET _)) -> Just (Reduce 1 108)
-    (261, Token (RBRACKET _)) -> Just (Reduce 1 108)
-    (261, Token (EXCL _)) -> Just (Reduce 1 108)
-    (261, Token (PIPE _)) -> Just (Reduce 1 108)
-    (261, Token (QCONID _)) -> Just (Reduce 1 108)
-    (261, Token (EXPORT _)) -> Just (Reduce 1 108)
-    (261, Token (AS _)) -> Just (Reduce 1 108)
-    (261, Token (QVARID _)) -> Just (Reduce 1 108)
-    (261, Token (TODO_FUNLHS _)) -> Just (Reduce 1 108)
-    (261, Token (INTEGER _)) -> Just (Reduce 1 108)
-    (261, Token (QVARSYM _)) -> Just (Reduce 1 108)
-    (261, Token (QCONSYM _)) -> Just (Reduce 1 108)
-    (261, Token (BACKQUOTE _)) -> Just (Reduce 1 108)
+    (260, Token (WHERE _)) -> Just (Reduce 2 106)
+    (260, Token (LBRACE _)) -> Just (Reduce 2 106)
+    (260, Token (RBRACE _)) -> Just (Reduce 2 106)
+    (260, Token (LPAREN _)) -> Just (Reduce 2 106)
+    (260, Token (RPAREN _)) -> Just (Reduce 2 106)
+    (260, Token (COMMA _)) -> Just (Reduce 2 106)
+    (260, Token (SEMICOLON _)) -> Just (Reduce 2 106)
+    (260, Token (EQUAL _)) -> Just (Reduce 2 106)
+    (260, Token (DERIVING _)) -> Just (Reduce 2 106)
+    (260, Token (DARROW _)) -> Just (Reduce 2 106)
+    (260, Token (COLON_COLON _)) -> Just (Reduce 2 106)
+    (260, Token (INFIXL _)) -> Just (Reduce 2 106)
+    (260, Token (INFIXR _)) -> Just (Reduce 2 106)
+    (260, Token (INFIX _)) -> Just (Reduce 2 106)
+    (260, Token (ARROW _)) -> Just (Reduce 2 106)
+    (260, Token (LBRACKET _)) -> Just (Reduce 2 106)
+    (260, Token (RBRACKET _)) -> Just (Reduce 2 106)
+    (260, Token (EXCL _)) -> Just (Reduce 2 106)
+    (260, Token (PIPE _)) -> Just (Reduce 2 106)
+    (260, Token (QCONID _)) -> Just (Reduce 2 106)
+    (260, Token (EXPORT _)) -> Just (Reduce 2 106)
+    (260, Token (AS _)) -> Just (Reduce 2 106)
+    (260, Token (QVARID _)) -> Just (Reduce 2 106)
+    (260, Token (TODO_FUNLHS _)) -> Just (Reduce 2 106)
+    (260, Token (INTEGER _)) -> Just (Reduce 2 106)
+    (260, Token (QVARSYM _)) -> Just (Reduce 2 106)
+    (260, Token (QCONSYM _)) -> Just (Reduce 2 106)
+    (260, Token (BACKQUOTE _)) -> Just (Reduce 2 106)
+    (261, Token (WHERE _)) -> Just (Reduce 1 104)
+    (261, Token (LBRACE _)) -> Just (Reduce 1 104)
+    (261, Token (RBRACE _)) -> Just (Reduce 1 104)
+    (261, Token (LPAREN _)) -> Just (Reduce 1 104)
+    (261, Token (RPAREN _)) -> Just (Reduce 1 104)
+    (261, Token (COMMA _)) -> Just (Reduce 1 104)
+    (261, Token (SEMICOLON _)) -> Just (Reduce 1 104)
+    (261, Token (EQUAL _)) -> Just (Reduce 1 104)
+    (261, Token (DERIVING _)) -> Just (Reduce 1 104)
+    (261, Token (DARROW _)) -> Just (Reduce 1 104)
+    (261, Token (COLON_COLON _)) -> Just (Reduce 1 104)
+    (261, Token (INFIXL _)) -> Just (Reduce 1 104)
+    (261, Token (INFIXR _)) -> Just (Reduce 1 104)
+    (261, Token (INFIX _)) -> Just (Reduce 1 104)
+    (261, Token (ARROW _)) -> Just (Reduce 1 104)
+    (261, Token (LBRACKET _)) -> Just (Reduce 1 104)
+    (261, Token (RBRACKET _)) -> Just (Reduce 1 104)
+    (261, Token (EXCL _)) -> Just (Reduce 1 104)
+    (261, Token (PIPE _)) -> Just (Reduce 1 104)
+    (261, Token (QCONID _)) -> Just (Reduce 1 104)
+    (261, Token (EXPORT _)) -> Just (Reduce 1 104)
+    (261, Token (AS _)) -> Just (Reduce 1 104)
+    (261, Token (QVARID _)) -> Just (Reduce 1 104)
+    (261, Token (TODO_FUNLHS _)) -> Just (Reduce 1 104)
+    (261, Token (INTEGER _)) -> Just (Reduce 1 104)
+    (261, Token (QVARSYM _)) -> Just (Reduce 1 104)
+    (261, Token (QCONSYM _)) -> Just (Reduce 1 104)
+    (261, Token (BACKQUOTE _)) -> Just (Reduce 1 104)
     (262, Token (LBRACE _)) -> Just (Shift 49)
-    (262, Token (RBRACE _)) -> Just (Reduce 1 108)
-    (262, Token (LPAREN _)) -> Just (Reduce 1 108)
-    (262, Token (RPAREN _)) -> Just (Reduce 1 108)
-    (262, Token (COMMA _)) -> Just (Reduce 1 108)
-    (262, Token (SEMICOLON _)) -> Just (Reduce 1 108)
-    (262, Token (DERIVING _)) -> Just (Reduce 1 108)
-    (262, Token (ARROW _)) -> Just (Reduce 1 108)
-    (262, Token (LBRACKET _)) -> Just (Reduce 1 108)
-    (262, Token (RBRACKET _)) -> Just (Reduce 1 108)
-    (262, Token (EXCL _)) -> Just (Reduce 1 108)
-    (262, Token (PIPE _)) -> Just (Reduce 1 108)
-    (262, Token (QCONID _)) -> Just (Reduce 1 108)
-    (262, Token (EXPORT _)) -> Just (Reduce 1 108)
-    (262, Token (AS _)) -> Just (Reduce 1 108)
-    (262, Token (QVARID _)) -> Just (Reduce 1 108)
-    (262, Token (QCONSYM _)) -> Just (Reduce 1 108)
-    (262, Token (BACKQUOTE _)) -> Just (Reduce 1 108)
+    (262, Token (RBRACE _)) -> Just (Reduce 1 104)
+    (262, Token (LPAREN _)) -> Just (Reduce 1 104)
+    (262, Token (RPAREN _)) -> Just (Reduce 1 104)
+    (262, Token (COMMA _)) -> Just (Reduce 1 104)
+    (262, Token (SEMICOLON _)) -> Just (Reduce 1 104)
+    (262, Token (DERIVING _)) -> Just (Reduce 1 104)
+    (262, Token (ARROW _)) -> Just (Reduce 1 104)
+    (262, Token (LBRACKET _)) -> Just (Reduce 1 104)
+    (262, Token (RBRACKET _)) -> Just (Reduce 1 104)
+    (262, Token (EXCL _)) -> Just (Reduce 1 104)
+    (262, Token (PIPE _)) -> Just (Reduce 1 104)
+    (262, Token (QCONID _)) -> Just (Reduce 1 104)
+    (262, Token (EXPORT _)) -> Just (Reduce 1 104)
+    (262, Token (AS _)) -> Just (Reduce 1 104)
+    (262, Token (QVARID _)) -> Just (Reduce 1 104)
+    (262, Token (QCONSYM _)) -> Just (Reduce 1 104)
+    (262, Token (BACKQUOTE _)) -> Just (Reduce 1 104)
     (263, Token (RPAREN _)) -> Just (Shift 258)
-    (264, Token (WHERE _)) -> Just (Reduce 1 173)
-    (264, Token (LBRACE _)) -> Just (Reduce 1 173)
-    (264, Token (RBRACE _)) -> Just (Reduce 1 173)
-    (264, Token (LPAREN _)) -> Just (Reduce 1 173)
-    (264, Token (RPAREN _)) -> Just (Reduce 1 173)
-    (264, Token (COMMA _)) -> Just (Reduce 1 173)
-    (264, Token (SEMICOLON _)) -> Just (Reduce 1 173)
-    (264, Token (EQUAL _)) -> Just (Reduce 1 173)
-    (264, Token (DERIVING _)) -> Just (Reduce 1 173)
-    (264, Token (DARROW _)) -> Just (Reduce 1 173)
-    (264, Token (COLON_COLON _)) -> Just (Reduce 1 173)
-    (264, Token (INFIXL _)) -> Just (Reduce 1 173)
-    (264, Token (INFIXR _)) -> Just (Reduce 1 173)
-    (264, Token (INFIX _)) -> Just (Reduce 1 173)
-    (264, Token (ARROW _)) -> Just (Reduce 1 173)
-    (264, Token (LBRACKET _)) -> Just (Reduce 1 173)
-    (264, Token (RBRACKET _)) -> Just (Reduce 1 173)
-    (264, Token (EXCL _)) -> Just (Reduce 1 173)
-    (264, Token (PIPE _)) -> Just (Reduce 1 173)
-    (264, Token (QCONID _)) -> Just (Reduce 1 173)
-    (264, Token (EXPORT _)) -> Just (Reduce 1 173)
-    (264, Token (AS _)) -> Just (Reduce 1 173)
-    (264, Token (QVARID _)) -> Just (Reduce 1 173)
-    (264, Token (TODO_FUNLHS _)) -> Just (Reduce 1 173)
-    (264, Token (INTEGER _)) -> Just (Reduce 1 173)
-    (264, Token (QVARSYM _)) -> Just (Reduce 1 173)
-    (264, Token (QCONSYM _)) -> Just (Reduce 1 173)
-    (264, Token (BACKQUOTE _)) -> Just (Reduce 1 173)
-    (265, Token (WHERE _)) -> Just (Reduce 1 172)
-    (265, Token (LBRACE _)) -> Just (Reduce 1 172)
-    (265, Token (RBRACE _)) -> Just (Reduce 1 172)
-    (265, Token (LPAREN _)) -> Just (Reduce 1 172)
-    (265, Token (RPAREN _)) -> Just (Reduce 1 172)
-    (265, Token (COMMA _)) -> Just (Reduce 1 172)
-    (265, Token (SEMICOLON _)) -> Just (Reduce 1 172)
-    (265, Token (EQUAL _)) -> Just (Reduce 1 172)
-    (265, Token (DERIVING _)) -> Just (Reduce 1 172)
-    (265, Token (DARROW _)) -> Just (Reduce 1 172)
-    (265, Token (COLON_COLON _)) -> Just (Reduce 1 172)
-    (265, Token (INFIXL _)) -> Just (Reduce 1 172)
-    (265, Token (INFIXR _)) -> Just (Reduce 1 172)
-    (265, Token (INFIX _)) -> Just (Reduce 1 172)
-    (265, Token (ARROW _)) -> Just (Reduce 1 172)
-    (265, Token (LBRACKET _)) -> Just (Reduce 1 172)
-    (265, Token (RBRACKET _)) -> Just (Reduce 1 172)
-    (265, Token (EXCL _)) -> Just (Reduce 1 172)
-    (265, Token (PIPE _)) -> Just (Reduce 1 172)
-    (265, Token (QCONID _)) -> Just (Reduce 1 172)
-    (265, Token (EXPORT _)) -> Just (Reduce 1 172)
-    (265, Token (AS _)) -> Just (Reduce 1 172)
-    (265, Token (QVARID _)) -> Just (Reduce 1 172)
-    (265, Token (TODO_FUNLHS _)) -> Just (Reduce 1 172)
-    (265, Token (INTEGER _)) -> Just (Reduce 1 172)
-    (265, Token (QVARSYM _)) -> Just (Reduce 1 172)
-    (265, Token (QCONSYM _)) -> Just (Reduce 1 172)
-    (265, Token (BACKQUOTE _)) -> Just (Reduce 1 172)
-    (266, Token (WHERE _)) -> Just (Reduce 1 174)
-    (266, Token (LBRACE _)) -> Just (Reduce 1 174)
-    (266, Token (RBRACE _)) -> Just (Reduce 1 174)
-    (266, Token (LPAREN _)) -> Just (Reduce 1 174)
-    (266, Token (RPAREN _)) -> Just (Reduce 1 174)
-    (266, Token (COMMA _)) -> Just (Reduce 1 174)
-    (266, Token (SEMICOLON _)) -> Just (Reduce 1 174)
-    (266, Token (EQUAL _)) -> Just (Reduce 1 174)
-    (266, Token (DERIVING _)) -> Just (Reduce 1 174)
-    (266, Token (DARROW _)) -> Just (Reduce 1 174)
-    (266, Token (COLON_COLON _)) -> Just (Reduce 1 174)
-    (266, Token (INFIXL _)) -> Just (Reduce 1 174)
-    (266, Token (INFIXR _)) -> Just (Reduce 1 174)
-    (266, Token (INFIX _)) -> Just (Reduce 1 174)
-    (266, Token (ARROW _)) -> Just (Reduce 1 174)
-    (266, Token (LBRACKET _)) -> Just (Reduce 1 174)
-    (266, Token (RBRACKET _)) -> Just (Reduce 1 174)
-    (266, Token (EXCL _)) -> Just (Reduce 1 174)
-    (266, Token (PIPE _)) -> Just (Reduce 1 174)
-    (266, Token (QCONID _)) -> Just (Reduce 1 174)
-    (266, Token (EXPORT _)) -> Just (Reduce 1 174)
-    (266, Token (AS _)) -> Just (Reduce 1 174)
-    (266, Token (QVARID _)) -> Just (Reduce 1 174)
-    (266, Token (TODO_FUNLHS _)) -> Just (Reduce 1 174)
-    (266, Token (INTEGER _)) -> Just (Reduce 1 174)
-    (266, Token (QVARSYM _)) -> Just (Reduce 1 174)
-    (266, Token (QCONSYM _)) -> Just (Reduce 1 174)
-    (266, Token (BACKQUOTE _)) -> Just (Reduce 1 174)
-    (267, Token (RPAREN _)) -> Just (Reduce 3 106)
+    (264, Token (WHERE _)) -> Just (Reduce 1 169)
+    (264, Token (LBRACE _)) -> Just (Reduce 1 169)
+    (264, Token (RBRACE _)) -> Just (Reduce 1 169)
+    (264, Token (LPAREN _)) -> Just (Reduce 1 169)
+    (264, Token (RPAREN _)) -> Just (Reduce 1 169)
+    (264, Token (COMMA _)) -> Just (Reduce 1 169)
+    (264, Token (SEMICOLON _)) -> Just (Reduce 1 169)
+    (264, Token (EQUAL _)) -> Just (Reduce 1 169)
+    (264, Token (DERIVING _)) -> Just (Reduce 1 169)
+    (264, Token (DARROW _)) -> Just (Reduce 1 169)
+    (264, Token (COLON_COLON _)) -> Just (Reduce 1 169)
+    (264, Token (INFIXL _)) -> Just (Reduce 1 169)
+    (264, Token (INFIXR _)) -> Just (Reduce 1 169)
+    (264, Token (INFIX _)) -> Just (Reduce 1 169)
+    (264, Token (ARROW _)) -> Just (Reduce 1 169)
+    (264, Token (LBRACKET _)) -> Just (Reduce 1 169)
+    (264, Token (RBRACKET _)) -> Just (Reduce 1 169)
+    (264, Token (EXCL _)) -> Just (Reduce 1 169)
+    (264, Token (PIPE _)) -> Just (Reduce 1 169)
+    (264, Token (QCONID _)) -> Just (Reduce 1 169)
+    (264, Token (EXPORT _)) -> Just (Reduce 1 169)
+    (264, Token (AS _)) -> Just (Reduce 1 169)
+    (264, Token (QVARID _)) -> Just (Reduce 1 169)
+    (264, Token (TODO_FUNLHS _)) -> Just (Reduce 1 169)
+    (264, Token (INTEGER _)) -> Just (Reduce 1 169)
+    (264, Token (QVARSYM _)) -> Just (Reduce 1 169)
+    (264, Token (QCONSYM _)) -> Just (Reduce 1 169)
+    (264, Token (BACKQUOTE _)) -> Just (Reduce 1 169)
+    (265, Token (WHERE _)) -> Just (Reduce 1 168)
+    (265, Token (LBRACE _)) -> Just (Reduce 1 168)
+    (265, Token (RBRACE _)) -> Just (Reduce 1 168)
+    (265, Token (LPAREN _)) -> Just (Reduce 1 168)
+    (265, Token (RPAREN _)) -> Just (Reduce 1 168)
+    (265, Token (COMMA _)) -> Just (Reduce 1 168)
+    (265, Token (SEMICOLON _)) -> Just (Reduce 1 168)
+    (265, Token (EQUAL _)) -> Just (Reduce 1 168)
+    (265, Token (DERIVING _)) -> Just (Reduce 1 168)
+    (265, Token (DARROW _)) -> Just (Reduce 1 168)
+    (265, Token (COLON_COLON _)) -> Just (Reduce 1 168)
+    (265, Token (INFIXL _)) -> Just (Reduce 1 168)
+    (265, Token (INFIXR _)) -> Just (Reduce 1 168)
+    (265, Token (INFIX _)) -> Just (Reduce 1 168)
+    (265, Token (ARROW _)) -> Just (Reduce 1 168)
+    (265, Token (LBRACKET _)) -> Just (Reduce 1 168)
+    (265, Token (RBRACKET _)) -> Just (Reduce 1 168)
+    (265, Token (EXCL _)) -> Just (Reduce 1 168)
+    (265, Token (PIPE _)) -> Just (Reduce 1 168)
+    (265, Token (QCONID _)) -> Just (Reduce 1 168)
+    (265, Token (EXPORT _)) -> Just (Reduce 1 168)
+    (265, Token (AS _)) -> Just (Reduce 1 168)
+    (265, Token (QVARID _)) -> Just (Reduce 1 168)
+    (265, Token (TODO_FUNLHS _)) -> Just (Reduce 1 168)
+    (265, Token (INTEGER _)) -> Just (Reduce 1 168)
+    (265, Token (QVARSYM _)) -> Just (Reduce 1 168)
+    (265, Token (QCONSYM _)) -> Just (Reduce 1 168)
+    (265, Token (BACKQUOTE _)) -> Just (Reduce 1 168)
+    (266, Token (WHERE _)) -> Just (Reduce 1 170)
+    (266, Token (LBRACE _)) -> Just (Reduce 1 170)
+    (266, Token (RBRACE _)) -> Just (Reduce 1 170)
+    (266, Token (LPAREN _)) -> Just (Reduce 1 170)
+    (266, Token (RPAREN _)) -> Just (Reduce 1 170)
+    (266, Token (COMMA _)) -> Just (Reduce 1 170)
+    (266, Token (SEMICOLON _)) -> Just (Reduce 1 170)
+    (266, Token (EQUAL _)) -> Just (Reduce 1 170)
+    (266, Token (DERIVING _)) -> Just (Reduce 1 170)
+    (266, Token (DARROW _)) -> Just (Reduce 1 170)
+    (266, Token (COLON_COLON _)) -> Just (Reduce 1 170)
+    (266, Token (INFIXL _)) -> Just (Reduce 1 170)
+    (266, Token (INFIXR _)) -> Just (Reduce 1 170)
+    (266, Token (INFIX _)) -> Just (Reduce 1 170)
+    (266, Token (ARROW _)) -> Just (Reduce 1 170)
+    (266, Token (LBRACKET _)) -> Just (Reduce 1 170)
+    (266, Token (RBRACKET _)) -> Just (Reduce 1 170)
+    (266, Token (EXCL _)) -> Just (Reduce 1 170)
+    (266, Token (PIPE _)) -> Just (Reduce 1 170)
+    (266, Token (QCONID _)) -> Just (Reduce 1 170)
+    (266, Token (EXPORT _)) -> Just (Reduce 1 170)
+    (266, Token (AS _)) -> Just (Reduce 1 170)
+    (266, Token (QVARID _)) -> Just (Reduce 1 170)
+    (266, Token (TODO_FUNLHS _)) -> Just (Reduce 1 170)
+    (266, Token (INTEGER _)) -> Just (Reduce 1 170)
+    (266, Token (QVARSYM _)) -> Just (Reduce 1 170)
+    (266, Token (QCONSYM _)) -> Just (Reduce 1 170)
+    (266, Token (BACKQUOTE _)) -> Just (Reduce 1 170)
+    (267, Token (RPAREN _)) -> Just (Reduce 3 102)
     (267, Token (COMMA _)) -> Just (Shift 102)
-    (268, Token (RPAREN _)) -> Just (Reduce 3 107)
-    (269, Token (RPAREN _)) -> Just (Reduce 1 113)
+    (268, Token (RPAREN _)) -> Just (Reduce 3 103)
+    (269, Token (RPAREN _)) -> Just (Reduce 1 109)
     (269, Token (COMMA _)) -> Just (Shift 269)
-    (270, Token (RPAREN _)) -> Just (Reduce 2 114)
-    (271, Token (RBRACE _)) -> Just (Reduce 3 118)
-    (271, Token (SEMICOLON _)) -> Just (Reduce 3 118)
-    (271, Token (DERIVING _)) -> Just (Reduce 3 118)
-    (272, Token (RBRACE _)) -> Just (Reduce 1 117)
-    (272, Token (SEMICOLON _)) -> Just (Reduce 1 117)
-    (272, Token (DERIVING _)) -> Just (Reduce 1 117)
+    (270, Token (RPAREN _)) -> Just (Reduce 2 110)
+    (271, Token (RBRACE _)) -> Just (Reduce 3 114)
+    (271, Token (SEMICOLON _)) -> Just (Reduce 3 114)
+    (271, Token (DERIVING _)) -> Just (Reduce 3 114)
+    (272, Token (RBRACE _)) -> Just (Reduce 1 113)
+    (272, Token (SEMICOLON _)) -> Just (Reduce 1 113)
+    (272, Token (DERIVING _)) -> Just (Reduce 1 113)
     (272, Token (PIPE _)) -> Just (Shift 76)
-    (273, Token (RBRACE _)) -> Just (Reduce 3 121)
-    (273, Token (SEMICOLON _)) -> Just (Reduce 3 121)
-    (273, Token (DERIVING _)) -> Just (Reduce 3 121)
-    (273, Token (PIPE _)) -> Just (Reduce 3 121)
-    (274, Token (RBRACE _)) -> Just (Reduce 4 122)
-    (274, Token (SEMICOLON _)) -> Just (Reduce 4 122)
-    (274, Token (DERIVING _)) -> Just (Reduce 4 122)
-    (274, Token (PIPE _)) -> Just (Reduce 4 122)
+    (273, Token (RBRACE _)) -> Just (Reduce 3 117)
+    (273, Token (SEMICOLON _)) -> Just (Reduce 3 117)
+    (273, Token (DERIVING _)) -> Just (Reduce 3 117)
+    (273, Token (PIPE _)) -> Just (Reduce 3 117)
+    (274, Token (RBRACE _)) -> Just (Reduce 4 118)
+    (274, Token (SEMICOLON _)) -> Just (Reduce 4 118)
+    (274, Token (DERIVING _)) -> Just (Reduce 4 118)
+    (274, Token (PIPE _)) -> Just (Reduce 4 118)
     (275, Token (RBRACE _)) -> Just (Shift 274)
     (276, Token (BACKQUOTE _)) -> Just (Shift 280)
-    (277, Token (RBRACE _)) -> Just (Reduce 1 164)
-    (277, Token (LPAREN _)) -> Just (Reduce 1 164)
-    (277, Token (RPAREN _)) -> Just (Reduce 1 164)
-    (277, Token (COMMA _)) -> Just (Reduce 1 164)
-    (277, Token (SEMICOLON _)) -> Just (Reduce 1 164)
-    (277, Token (ARROW _)) -> Just (Reduce 1 164)
-    (277, Token (LBRACKET _)) -> Just (Reduce 1 164)
-    (277, Token (RBRACKET _)) -> Just (Reduce 1 164)
-    (277, Token (EXCL _)) -> Just (Reduce 1 164)
-    (277, Token (QCONID _)) -> Just (Reduce 1 164)
-    (277, Token (EXPORT _)) -> Just (Reduce 1 164)
-    (277, Token (AS _)) -> Just (Reduce 1 164)
-    (277, Token (QVARID _)) -> Just (Reduce 1 164)
-    (277, Token (INTEGER _)) -> Just (Reduce 1 164)
-    (277, Token (QVARSYM _)) -> Just (Reduce 1 164)
-    (277, Token (QCONSYM _)) -> Just (Reduce 1 164)
+    (277, Token (RBRACE _)) -> Just (Reduce 1 160)
+    (277, Token (LPAREN _)) -> Just (Reduce 1 160)
+    (277, Token (RPAREN _)) -> Just (Reduce 1 160)
+    (277, Token (COMMA _)) -> Just (Reduce 1 160)
+    (277, Token (SEMICOLON _)) -> Just (Reduce 1 160)
+    (277, Token (ARROW _)) -> Just (Reduce 1 160)
+    (277, Token (LBRACKET _)) -> Just (Reduce 1 160)
+    (277, Token (RBRACKET _)) -> Just (Reduce 1 160)
+    (277, Token (EXCL _)) -> Just (Reduce 1 160)
+    (277, Token (QCONID _)) -> Just (Reduce 1 160)
+    (277, Token (EXPORT _)) -> Just (Reduce 1 160)
+    (277, Token (AS _)) -> Just (Reduce 1 160)
+    (277, Token (QVARID _)) -> Just (Reduce 1 160)
+    (277, Token (INTEGER _)) -> Just (Reduce 1 160)
+    (277, Token (QVARSYM _)) -> Just (Reduce 1 160)
+    (277, Token (QCONSYM _)) -> Just (Reduce 1 160)
     (278, Token (QCONID _)) -> Just (Shift 276)
     (278, Token (EXPORT _)) -> Just (Shift 300)
     (278, Token (AS _)) -> Just (Shift 301)
     (278, Token (QVARID _)) -> Just (Shift 302)
     (279, Token (QCONID _)) -> Just (Shift 276)
-    (280, Token (RBRACE _)) -> Just (Reduce 3 165)
-    (280, Token (LPAREN _)) -> Just (Reduce 3 165)
-    (280, Token (RPAREN _)) -> Just (Reduce 3 165)
-    (280, Token (COMMA _)) -> Just (Reduce 3 165)
-    (280, Token (SEMICOLON _)) -> Just (Reduce 3 165)
-    (280, Token (ARROW _)) -> Just (Reduce 3 165)
-    (280, Token (LBRACKET _)) -> Just (Reduce 3 165)
-    (280, Token (RBRACKET _)) -> Just (Reduce 3 165)
-    (280, Token (EXCL _)) -> Just (Reduce 3 165)
-    (280, Token (QCONID _)) -> Just (Reduce 3 165)
-    (280, Token (EXPORT _)) -> Just (Reduce 3 165)
-    (280, Token (AS _)) -> Just (Reduce 3 165)
-    (280, Token (QVARID _)) -> Just (Reduce 3 165)
-    (280, Token (INTEGER _)) -> Just (Reduce 3 165)
-    (280, Token (QVARSYM _)) -> Just (Reduce 3 165)
-    (280, Token (QCONSYM _)) -> Just (Reduce 3 165)
-    (281, Token (RBRACE _)) -> Just (Reduce 3 126)
-    (282, Token (RBRACE _)) -> Just (Reduce 1 125)
+    (280, Token (RBRACE _)) -> Just (Reduce 3 161)
+    (280, Token (LPAREN _)) -> Just (Reduce 3 161)
+    (280, Token (RPAREN _)) -> Just (Reduce 3 161)
+    (280, Token (COMMA _)) -> Just (Reduce 3 161)
+    (280, Token (SEMICOLON _)) -> Just (Reduce 3 161)
+    (280, Token (ARROW _)) -> Just (Reduce 3 161)
+    (280, Token (LBRACKET _)) -> Just (Reduce 3 161)
+    (280, Token (RBRACKET _)) -> Just (Reduce 3 161)
+    (280, Token (EXCL _)) -> Just (Reduce 3 161)
+    (280, Token (QCONID _)) -> Just (Reduce 3 161)
+    (280, Token (EXPORT _)) -> Just (Reduce 3 161)
+    (280, Token (AS _)) -> Just (Reduce 3 161)
+    (280, Token (QVARID _)) -> Just (Reduce 3 161)
+    (280, Token (INTEGER _)) -> Just (Reduce 3 161)
+    (280, Token (QVARSYM _)) -> Just (Reduce 3 161)
+    (280, Token (QCONSYM _)) -> Just (Reduce 3 161)
+    (281, Token (RBRACE _)) -> Just (Reduce 3 122)
+    (282, Token (RBRACE _)) -> Just (Reduce 1 121)
     (282, Token (COMMA _)) -> Just (Shift 50)
-    (283, Token (RBRACE _)) -> Just (Reduce 3 127)
-    (283, Token (COMMA _)) -> Just (Reduce 3 127)
+    (283, Token (RBRACE _)) -> Just (Reduce 3 123)
+    (283, Token (COMMA _)) -> Just (Reduce 3 123)
     (284, Token (COLON_COLON _)) -> Just (Shift 90)
-    (285, Token (EXPORT _)) -> Just (Reduce 1 136)
-    (285, Token (AS _)) -> Just (Reduce 1 136)
-    (285, Token (QVARID _)) -> Just (Reduce 1 136)
-    (285, Token (STRING _)) -> Just (Reduce 1 136)
-    (286, Token (EXPORT _)) -> Just (Reduce 1 135)
-    (286, Token (AS _)) -> Just (Reduce 1 135)
-    (286, Token (QVARID _)) -> Just (Reduce 1 135)
-    (286, Token (STRING _)) -> Just (Reduce 1 135)
-    (287, Token (EXPORT _)) -> Just (Reduce 1 137)
-    (287, Token (AS _)) -> Just (Reduce 1 137)
-    (287, Token (QVARID _)) -> Just (Reduce 1 137)
-    (287, Token (STRING _)) -> Just (Reduce 1 137)
-    (288, Token (LPAREN _)) -> Just (Reduce 1 138)
-    (288, Token (EXPORT _)) -> Just (Reduce 1 138)
-    (288, Token (AS _)) -> Just (Reduce 1 138)
-    (288, Token (QVARID _)) -> Just (Reduce 1 138)
-    (288, Token (QVARSYM _)) -> Just (Reduce 1 138)
-    (289, Token (STRING _)) -> Just (Reduce 1 141)
-    (290, Token (STRING _)) -> Just (Reduce 1 140)
-    (291, Token (STRING _)) -> Just (Reduce 1 142)
-    (292, Token (LPAREN _)) -> Just (Reduce 1 139)
-    (292, Token (EXPORT _)) -> Just (Reduce 1 139)
-    (292, Token (AS _)) -> Just (Reduce 1 139)
-    (292, Token (QVARID _)) -> Just (Reduce 1 139)
-    (292, Token (QVARSYM _)) -> Just (Reduce 1 139)
-    (293, Token (WHERE _)) -> Just (Reduce 1 146)
-    (293, Token (RBRACE _)) -> Just (Reduce 1 146)
-    (293, Token (SEMICOLON _)) -> Just (Reduce 1 146)
-    (294, Token (WHERE _)) -> Just (Reduce 1 147)
-    (294, Token (RBRACE _)) -> Just (Reduce 1 147)
-    (294, Token (SEMICOLON _)) -> Just (Reduce 1 147)
-    (295, Token (WHERE _)) -> Just (Reduce 1 149)
-    (295, Token (RBRACE _)) -> Just (Reduce 1 149)
-    (295, Token (LPAREN _)) -> Just (Reduce 1 149)
-    (295, Token (SEMICOLON _)) -> Just (Reduce 1 149)
-    (295, Token (QCONID _)) -> Just (Reduce 1 149)
-    (295, Token (EXPORT _)) -> Just (Reduce 1 149)
-    (295, Token (AS _)) -> Just (Reduce 1 149)
-    (295, Token (QVARID _)) -> Just (Reduce 1 149)
-    (295, Token (INTEGER _)) -> Just (Reduce 1 149)
-    (295, Token (QVARSYM _)) -> Just (Reduce 1 149)
-    (295, Token (QCONSYM _)) -> Just (Reduce 1 149)
-    (295, Token (BACKQUOTE _)) -> Just (Reduce 1 149)
-    (296, Token (WHERE _)) -> Just (Reduce 3 151)
-    (296, Token (RBRACE _)) -> Just (Reduce 3 151)
-    (296, Token (LPAREN _)) -> Just (Reduce 3 151)
-    (296, Token (SEMICOLON _)) -> Just (Reduce 3 151)
-    (296, Token (QCONID _)) -> Just (Reduce 3 151)
-    (296, Token (EXPORT _)) -> Just (Reduce 3 151)
-    (296, Token (AS _)) -> Just (Reduce 3 151)
-    (296, Token (QVARID _)) -> Just (Reduce 3 151)
-    (296, Token (INTEGER _)) -> Just (Reduce 3 151)
-    (296, Token (QVARSYM _)) -> Just (Reduce 3 151)
-    (296, Token (QCONSYM _)) -> Just (Reduce 3 151)
-    (296, Token (BACKQUOTE _)) -> Just (Reduce 3 151)
-    (297, Token (WHERE _)) -> Just (Reduce 2 150)
-    (297, Token (RBRACE _)) -> Just (Reduce 2 150)
-    (297, Token (LPAREN _)) -> Just (Reduce 2 150)
-    (297, Token (SEMICOLON _)) -> Just (Reduce 2 150)
-    (297, Token (QCONID _)) -> Just (Reduce 2 150)
-    (297, Token (EXPORT _)) -> Just (Reduce 2 150)
-    (297, Token (AS _)) -> Just (Reduce 2 150)
-    (297, Token (QVARID _)) -> Just (Reduce 2 150)
-    (297, Token (INTEGER _)) -> Just (Reduce 2 150)
-    (297, Token (QVARSYM _)) -> Just (Reduce 2 150)
-    (297, Token (QCONSYM _)) -> Just (Reduce 2 150)
-    (297, Token (BACKQUOTE _)) -> Just (Reduce 2 150)
-    (298, Token (WHERE _)) -> Just (Reduce 1 153)
-    (298, Token (RBRACE _)) -> Just (Reduce 1 153)
-    (298, Token (LPAREN _)) -> Just (Reduce 1 153)
-    (298, Token (SEMICOLON _)) -> Just (Reduce 1 153)
-    (298, Token (QCONID _)) -> Just (Reduce 1 153)
-    (298, Token (EXPORT _)) -> Just (Reduce 1 153)
-    (298, Token (AS _)) -> Just (Reduce 1 153)
-    (298, Token (QVARID _)) -> Just (Reduce 1 153)
-    (298, Token (INTEGER _)) -> Just (Reduce 1 153)
-    (298, Token (QVARSYM _)) -> Just (Reduce 1 153)
-    (298, Token (QCONSYM _)) -> Just (Reduce 1 153)
-    (298, Token (BACKQUOTE _)) -> Just (Reduce 1 153)
-    (299, Token (WHERE _)) -> Just (Reduce 1 152)
-    (299, Token (RBRACE _)) -> Just (Reduce 1 152)
-    (299, Token (LPAREN _)) -> Just (Reduce 1 152)
-    (299, Token (SEMICOLON _)) -> Just (Reduce 1 152)
-    (299, Token (QCONID _)) -> Just (Reduce 1 152)
-    (299, Token (EXPORT _)) -> Just (Reduce 1 152)
-    (299, Token (AS _)) -> Just (Reduce 1 152)
-    (299, Token (QVARID _)) -> Just (Reduce 1 152)
-    (299, Token (INTEGER _)) -> Just (Reduce 1 152)
-    (299, Token (QVARSYM _)) -> Just (Reduce 1 152)
-    (299, Token (QCONSYM _)) -> Just (Reduce 1 152)
-    (299, Token (BACKQUOTE _)) -> Just (Reduce 1 152)
+    (285, Token (EXPORT _)) -> Just (Reduce 1 132)
+    (285, Token (AS _)) -> Just (Reduce 1 132)
+    (285, Token (QVARID _)) -> Just (Reduce 1 132)
+    (285, Token (STRING _)) -> Just (Reduce 1 132)
+    (286, Token (EXPORT _)) -> Just (Reduce 1 131)
+    (286, Token (AS _)) -> Just (Reduce 1 131)
+    (286, Token (QVARID _)) -> Just (Reduce 1 131)
+    (286, Token (STRING _)) -> Just (Reduce 1 131)
+    (287, Token (EXPORT _)) -> Just (Reduce 1 133)
+    (287, Token (AS _)) -> Just (Reduce 1 133)
+    (287, Token (QVARID _)) -> Just (Reduce 1 133)
+    (287, Token (STRING _)) -> Just (Reduce 1 133)
+    (288, Token (LPAREN _)) -> Just (Reduce 1 134)
+    (288, Token (EXPORT _)) -> Just (Reduce 1 134)
+    (288, Token (AS _)) -> Just (Reduce 1 134)
+    (288, Token (QVARID _)) -> Just (Reduce 1 134)
+    (288, Token (QVARSYM _)) -> Just (Reduce 1 134)
+    (289, Token (STRING _)) -> Just (Reduce 1 137)
+    (290, Token (STRING _)) -> Just (Reduce 1 136)
+    (291, Token (STRING _)) -> Just (Reduce 1 138)
+    (292, Token (LPAREN _)) -> Just (Reduce 1 135)
+    (292, Token (EXPORT _)) -> Just (Reduce 1 135)
+    (292, Token (AS _)) -> Just (Reduce 1 135)
+    (292, Token (QVARID _)) -> Just (Reduce 1 135)
+    (292, Token (QVARSYM _)) -> Just (Reduce 1 135)
+    (293, Token (WHERE _)) -> Just (Reduce 1 142)
+    (293, Token (RBRACE _)) -> Just (Reduce 1 142)
+    (293, Token (SEMICOLON _)) -> Just (Reduce 1 142)
+    (294, Token (WHERE _)) -> Just (Reduce 1 143)
+    (294, Token (RBRACE _)) -> Just (Reduce 1 143)
+    (294, Token (SEMICOLON _)) -> Just (Reduce 1 143)
+    (295, Token (WHERE _)) -> Just (Reduce 1 145)
+    (295, Token (RBRACE _)) -> Just (Reduce 1 145)
+    (295, Token (LPAREN _)) -> Just (Reduce 1 145)
+    (295, Token (SEMICOLON _)) -> Just (Reduce 1 145)
+    (295, Token (QCONID _)) -> Just (Reduce 1 145)
+    (295, Token (EXPORT _)) -> Just (Reduce 1 145)
+    (295, Token (AS _)) -> Just (Reduce 1 145)
+    (295, Token (QVARID _)) -> Just (Reduce 1 145)
+    (295, Token (INTEGER _)) -> Just (Reduce 1 145)
+    (295, Token (QVARSYM _)) -> Just (Reduce 1 145)
+    (295, Token (QCONSYM _)) -> Just (Reduce 1 145)
+    (295, Token (BACKQUOTE _)) -> Just (Reduce 1 145)
+    (296, Token (WHERE _)) -> Just (Reduce 3 147)
+    (296, Token (RBRACE _)) -> Just (Reduce 3 147)
+    (296, Token (LPAREN _)) -> Just (Reduce 3 147)
+    (296, Token (SEMICOLON _)) -> Just (Reduce 3 147)
+    (296, Token (QCONID _)) -> Just (Reduce 3 147)
+    (296, Token (EXPORT _)) -> Just (Reduce 3 147)
+    (296, Token (AS _)) -> Just (Reduce 3 147)
+    (296, Token (QVARID _)) -> Just (Reduce 3 147)
+    (296, Token (INTEGER _)) -> Just (Reduce 3 147)
+    (296, Token (QVARSYM _)) -> Just (Reduce 3 147)
+    (296, Token (QCONSYM _)) -> Just (Reduce 3 147)
+    (296, Token (BACKQUOTE _)) -> Just (Reduce 3 147)
+    (297, Token (WHERE _)) -> Just (Reduce 2 146)
+    (297, Token (RBRACE _)) -> Just (Reduce 2 146)
+    (297, Token (LPAREN _)) -> Just (Reduce 2 146)
+    (297, Token (SEMICOLON _)) -> Just (Reduce 2 146)
+    (297, Token (QCONID _)) -> Just (Reduce 2 146)
+    (297, Token (EXPORT _)) -> Just (Reduce 2 146)
+    (297, Token (AS _)) -> Just (Reduce 2 146)
+    (297, Token (QVARID _)) -> Just (Reduce 2 146)
+    (297, Token (INTEGER _)) -> Just (Reduce 2 146)
+    (297, Token (QVARSYM _)) -> Just (Reduce 2 146)
+    (297, Token (QCONSYM _)) -> Just (Reduce 2 146)
+    (297, Token (BACKQUOTE _)) -> Just (Reduce 2 146)
+    (298, Token (WHERE _)) -> Just (Reduce 1 149)
+    (298, Token (RBRACE _)) -> Just (Reduce 1 149)
+    (298, Token (LPAREN _)) -> Just (Reduce 1 149)
+    (298, Token (SEMICOLON _)) -> Just (Reduce 1 149)
+    (298, Token (QCONID _)) -> Just (Reduce 1 149)
+    (298, Token (EXPORT _)) -> Just (Reduce 1 149)
+    (298, Token (AS _)) -> Just (Reduce 1 149)
+    (298, Token (QVARID _)) -> Just (Reduce 1 149)
+    (298, Token (INTEGER _)) -> Just (Reduce 1 149)
+    (298, Token (QVARSYM _)) -> Just (Reduce 1 149)
+    (298, Token (QCONSYM _)) -> Just (Reduce 1 149)
+    (298, Token (BACKQUOTE _)) -> Just (Reduce 1 149)
+    (299, Token (WHERE _)) -> Just (Reduce 1 148)
+    (299, Token (RBRACE _)) -> Just (Reduce 1 148)
+    (299, Token (LPAREN _)) -> Just (Reduce 1 148)
+    (299, Token (SEMICOLON _)) -> Just (Reduce 1 148)
+    (299, Token (QCONID _)) -> Just (Reduce 1 148)
+    (299, Token (EXPORT _)) -> Just (Reduce 1 148)
+    (299, Token (AS _)) -> Just (Reduce 1 148)
+    (299, Token (QVARID _)) -> Just (Reduce 1 148)
+    (299, Token (INTEGER _)) -> Just (Reduce 1 148)
+    (299, Token (QVARSYM _)) -> Just (Reduce 1 148)
+    (299, Token (QCONSYM _)) -> Just (Reduce 1 148)
+    (299, Token (BACKQUOTE _)) -> Just (Reduce 1 148)
     (300, Token (BACKQUOTE _)) -> Just (Shift 304)
     (301, Token (BACKQUOTE _)) -> Just (Shift 305)
     (302, Token (BACKQUOTE _)) -> Just (Shift 306)
-    (303, Token (RBRACE _)) -> Just (Reduce 1 160)
-    (303, Token (LPAREN _)) -> Just (Reduce 1 160)
-    (303, Token (COMMA _)) -> Just (Reduce 1 160)
-    (303, Token (SEMICOLON _)) -> Just (Reduce 1 160)
-    (303, Token (EXPORT _)) -> Just (Reduce 1 160)
-    (303, Token (AS _)) -> Just (Reduce 1 160)
-    (303, Token (QVARID _)) -> Just (Reduce 1 160)
-    (303, Token (INTEGER _)) -> Just (Reduce 1 160)
-    (303, Token (QVARSYM _)) -> Just (Reduce 1 160)
-    (304, Token (RBRACE _)) -> Just (Reduce 3 162)
-    (304, Token (LPAREN _)) -> Just (Reduce 3 162)
-    (304, Token (COMMA _)) -> Just (Reduce 3 162)
-    (304, Token (SEMICOLON _)) -> Just (Reduce 3 162)
-    (304, Token (EXPORT _)) -> Just (Reduce 3 162)
-    (304, Token (AS _)) -> Just (Reduce 3 162)
-    (304, Token (QVARID _)) -> Just (Reduce 3 162)
-    (304, Token (INTEGER _)) -> Just (Reduce 3 162)
-    (304, Token (QVARSYM _)) -> Just (Reduce 3 162)
-    (305, Token (RBRACE _)) -> Just (Reduce 3 161)
-    (305, Token (LPAREN _)) -> Just (Reduce 3 161)
-    (305, Token (COMMA _)) -> Just (Reduce 3 161)
-    (305, Token (SEMICOLON _)) -> Just (Reduce 3 161)
-    (305, Token (EXPORT _)) -> Just (Reduce 3 161)
-    (305, Token (AS _)) -> Just (Reduce 3 161)
-    (305, Token (QVARID _)) -> Just (Reduce 3 161)
-    (305, Token (INTEGER _)) -> Just (Reduce 3 161)
-    (305, Token (QVARSYM _)) -> Just (Reduce 3 161)
-    (306, Token (RBRACE _)) -> Just (Reduce 3 163)
-    (306, Token (LPAREN _)) -> Just (Reduce 3 163)
-    (306, Token (COMMA _)) -> Just (Reduce 3 163)
-    (306, Token (SEMICOLON _)) -> Just (Reduce 3 163)
-    (306, Token (EXPORT _)) -> Just (Reduce 3 163)
-    (306, Token (AS _)) -> Just (Reduce 3 163)
-    (306, Token (QVARID _)) -> Just (Reduce 3 163)
-    (306, Token (INTEGER _)) -> Just (Reduce 3 163)
-    (306, Token (QVARSYM _)) -> Just (Reduce 3 163)
+    (303, Token (RBRACE _)) -> Just (Reduce 1 156)
+    (303, Token (LPAREN _)) -> Just (Reduce 1 156)
+    (303, Token (COMMA _)) -> Just (Reduce 1 156)
+    (303, Token (SEMICOLON _)) -> Just (Reduce 1 156)
+    (303, Token (EXPORT _)) -> Just (Reduce 1 156)
+    (303, Token (AS _)) -> Just (Reduce 1 156)
+    (303, Token (QVARID _)) -> Just (Reduce 1 156)
+    (303, Token (INTEGER _)) -> Just (Reduce 1 156)
+    (303, Token (QVARSYM _)) -> Just (Reduce 1 156)
+    (304, Token (RBRACE _)) -> Just (Reduce 3 158)
+    (304, Token (LPAREN _)) -> Just (Reduce 3 158)
+    (304, Token (COMMA _)) -> Just (Reduce 3 158)
+    (304, Token (SEMICOLON _)) -> Just (Reduce 3 158)
+    (304, Token (EXPORT _)) -> Just (Reduce 3 158)
+    (304, Token (AS _)) -> Just (Reduce 3 158)
+    (304, Token (QVARID _)) -> Just (Reduce 3 158)
+    (304, Token (INTEGER _)) -> Just (Reduce 3 158)
+    (304, Token (QVARSYM _)) -> Just (Reduce 3 158)
+    (305, Token (RBRACE _)) -> Just (Reduce 3 157)
+    (305, Token (LPAREN _)) -> Just (Reduce 3 157)
+    (305, Token (COMMA _)) -> Just (Reduce 3 157)
+    (305, Token (SEMICOLON _)) -> Just (Reduce 3 157)
+    (305, Token (EXPORT _)) -> Just (Reduce 3 157)
+    (305, Token (AS _)) -> Just (Reduce 3 157)
+    (305, Token (QVARID _)) -> Just (Reduce 3 157)
+    (305, Token (INTEGER _)) -> Just (Reduce 3 157)
+    (305, Token (QVARSYM _)) -> Just (Reduce 3 157)
+    (306, Token (RBRACE _)) -> Just (Reduce 3 159)
+    (306, Token (LPAREN _)) -> Just (Reduce 3 159)
+    (306, Token (COMMA _)) -> Just (Reduce 3 159)
+    (306, Token (SEMICOLON _)) -> Just (Reduce 3 159)
+    (306, Token (EXPORT _)) -> Just (Reduce 3 159)
+    (306, Token (AS _)) -> Just (Reduce 3 159)
+    (306, Token (QVARID _)) -> Just (Reduce 3 159)
+    (306, Token (INTEGER _)) -> Just (Reduce 3 159)
+    (306, Token (QVARSYM _)) -> Just (Reduce 3 159)
     (_, _) -> Nothing
 
 production :: Int -> Int
@@ -2502,168 +2486,164 @@ production 13 = 7
 production 14 = 7
 production 15 = 11
 production 16 = 11
-production 17 = 12
+production 17 = 11
 production 18 = 12
-production 19 = 13
-production 20 = 13
-production 21 = 13
-production 22 = 14
-production 23 = 14
-production 24 = 14
-production 25 = 14
-production 26 = 14
-production 27 = 10
-production 28 = 10
-production 29 = 15
-production 30 = 15
-production 31 = 4
-production 32 = 4
-production 33 = 16
-production 34 = 16
-production 35 = 16
-production 36 = 16
-production 37 = 16
-production 38 = 16
-production 39 = 16
-production 40 = 16
-production 41 = 16
-production 42 = 16
-production 43 = 16
-production 44 = 16
-production 45 = 16
-production 46 = 16
-production 47 = 16
-production 48 = 16
-production 49 = 16
-production 50 = 16
-production 51 = 16
-production 52 = 16
-production 53 = 16
-production 54 = 16
-production 55 = 16
-production 56 = 16
-production 57 = 16
-production 58 = 16
-production 59 = 16
-production 60 = 16
-production 61 = 30
-production 62 = 31
-production 63 = 31
-production 64 = 29
-production 65 = 29
-production 66 = 29
-production 67 = 25
-production 68 = 25
+production 19 = 12
+production 20 = 12
+production 21 = 12
+production 22 = 12
+production 23 = 10
+production 24 = 10
+production 25 = 13
+production 26 = 13
+production 27 = 4
+production 28 = 4
+production 29 = 14
+production 30 = 14
+production 31 = 14
+production 32 = 14
+production 33 = 14
+production 34 = 14
+production 35 = 14
+production 36 = 14
+production 37 = 14
+production 38 = 14
+production 39 = 14
+production 40 = 14
+production 41 = 14
+production 42 = 14
+production 43 = 14
+production 44 = 14
+production 45 = 14
+production 46 = 14
+production 47 = 14
+production 48 = 14
+production 49 = 14
+production 50 = 14
+production 51 = 14
+production 52 = 14
+production 53 = 14
+production 54 = 14
+production 55 = 14
+production 56 = 14
+production 57 = 28
+production 58 = 29
+production 59 = 29
+production 60 = 27
+production 61 = 27
+production 62 = 27
+production 63 = 23
+production 64 = 23
+production 65 = 33
+production 66 = 34
+production 67 = 34
+production 68 = 35
 production 69 = 35
-production 70 = 36
-production 71 = 36
-production 72 = 37
-production 73 = 37
+production 70 = 35
+production 71 = 24
+production 72 = 24
+production 73 = 36
 production 74 = 37
-production 75 = 26
-production 76 = 26
+production 75 = 37
+production 76 = 38
 production 77 = 38
-production 78 = 39
-production 79 = 39
-production 80 = 40
-production 81 = 40
-production 82 = 40
-production 83 = 32
-production 84 = 32
-production 85 = 32
-production 86 = 32
-production 87 = 44
-production 88 = 44
-production 89 = 41
-production 90 = 41
-production 91 = 42
-production 92 = 42
-production 93 = 42
-production 94 = 27
-production 95 = 27
-production 96 = 20
-production 97 = 20
-production 98 = 19
-production 99 = 19
-production 100 = 46
-production 101 = 46
-production 102 = 46
-production 103 = 46
-production 104 = 46
-production 105 = 46
-production 106 = 49
-production 107 = 49
-production 108 = 47
-production 109 = 47
-production 110 = 47
-production 111 = 47
-production 112 = 47
-production 113 = 50
-production 114 = 50
-production 115 = 21
-production 116 = 21
-production 117 = 51
-production 118 = 51
-production 119 = 52
-production 120 = 52
+production 78 = 38
+production 79 = 30
+production 80 = 30
+production 81 = 30
+production 82 = 30
+production 83 = 42
+production 84 = 42
+production 85 = 39
+production 86 = 39
+production 87 = 40
+production 88 = 40
+production 89 = 40
+production 90 = 25
+production 91 = 25
+production 92 = 18
+production 93 = 18
+production 94 = 17
+production 95 = 17
+production 96 = 44
+production 97 = 44
+production 98 = 44
+production 99 = 44
+production 100 = 44
+production 101 = 44
+production 102 = 47
+production 103 = 47
+production 104 = 45
+production 105 = 45
+production 106 = 45
+production 107 = 45
+production 108 = 45
+production 109 = 48
+production 110 = 48
+production 111 = 19
+production 112 = 19
+production 113 = 49
+production 114 = 49
+production 115 = 50
+production 116 = 50
+production 117 = 50
+production 118 = 50
+production 119 = 22
+production 120 = 22
 production 121 = 52
 production 122 = 52
-production 123 = 24
-production 124 = 24
-production 125 = 54
-production 126 = 54
-production 127 = 55
-production 128 = 23
-production 129 = 23
-production 130 = 22
-production 131 = 56
-production 132 = 28
-production 133 = 28
-production 134 = 28
-production 135 = 57
+production 123 = 53
+production 124 = 21
+production 125 = 21
+production 126 = 20
+production 127 = 54
+production 128 = 26
+production 129 = 26
+production 130 = 26
+production 131 = 55
+production 132 = 55
+production 133 = 55
+production 134 = 56
+production 135 = 58
 production 136 = 57
 production 137 = 57
-production 138 = 58
-production 139 = 60
-production 140 = 59
-production 141 = 59
+production 138 = 57
+production 139 = 31
+production 140 = 32
+production 141 = 32
 production 142 = 59
-production 143 = 33
-production 144 = 34
-production 145 = 34
-production 146 = 61
+production 143 = 60
+production 144 = 61
+production 145 = 62
+production 146 = 62
 production 147 = 62
 production 148 = 63
-production 149 = 64
-production 150 = 64
-production 151 = 64
-production 152 = 65
-production 153 = 65
-production 154 = 8
-production 155 = 8
-production 156 = 8
-production 157 = 8
-production 158 = 9
-production 159 = 9
-production 160 = 66
-production 161 = 66
-production 162 = 66
-production 163 = 66
-production 164 = 53
-production 165 = 53
-production 166 = 45
-production 167 = 45
-production 168 = 18
-production 169 = 18
-production 170 = 17
-production 171 = 17
-production 172 = 48
-production 173 = 48
-production 174 = 48
-production 175 = 67
-production 176 = 1
-production 177 = 43
-production 178 = 43
+production 149 = 63
+production 150 = 8
+production 151 = 8
+production 152 = 8
+production 153 = 8
+production 154 = 9
+production 155 = 9
+production 156 = 64
+production 157 = 64
+production 158 = 64
+production 159 = 64
+production 160 = 51
+production 161 = 51
+production 162 = 43
+production 163 = 43
+production 164 = 16
+production 165 = 16
+production 166 = 15
+production 167 = 15
+production 168 = 46
+production 169 = 46
+production 170 = 46
+production 171 = 65
+production 172 = 1
+production 173 = 41
+production 174 = 41
 
 dfaGotoTransition :: GotoState -> GotoSymbol -> Maybe GotoState
 dfaGotoTransition q s =
@@ -2679,20 +2659,20 @@ dfaGotoTransition q s =
     (10, 1) -> Just 30
     (13, 4) -> Just 15
     (13, 8) -> Just 200
-    (13, 16) -> Just 18
-    (13, 29) -> Just 168
-    (13, 32) -> Just 201
-    (13, 33) -> Just 202
-    (13, 41) -> Just 212
-    (13, 42) -> Just 213
+    (13, 14) -> Just 18
+    (13, 27) -> Just 168
+    (13, 30) -> Just 201
+    (13, 31) -> Just 202
+    (13, 39) -> Just 212
+    (13, 40) -> Just 213
     (16, 4) -> Just 17
     (16, 8) -> Just 200
-    (16, 16) -> Just 18
-    (16, 29) -> Just 168
-    (16, 32) -> Just 201
-    (16, 33) -> Just 202
-    (16, 41) -> Just 212
-    (16, 42) -> Just 213
+    (16, 14) -> Just 18
+    (16, 27) -> Just 168
+    (16, 30) -> Just 201
+    (16, 31) -> Just 202
+    (16, 39) -> Just 212
+    (16, 40) -> Just 213
     (19, 6) -> Just 21
     (19, 7) -> Just 24
     (19, 8) -> Just 31
@@ -2704,355 +2684,355 @@ dfaGotoTransition q s =
     (25, 8) -> Just 119
     (25, 9) -> Just 120
     (25, 10) -> Just 33
-    (25, 15) -> Just 109
+    (25, 13) -> Just 109
     (34, 8) -> Just 299
-    (34, 61) -> Just 222
-    (34, 62) -> Just 293
-    (34, 63) -> Just 294
-    (34, 64) -> Just 35
-    (34, 65) -> Just 295
+    (34, 59) -> Just 222
+    (34, 60) -> Just 293
+    (34, 61) -> Just 294
+    (34, 62) -> Just 35
+    (34, 63) -> Just 295
     (35, 8) -> Just 299
-    (35, 45) -> Just 36
-    (35, 53) -> Just 245
-    (35, 65) -> Just 297
-    (35, 66) -> Just 246
+    (35, 43) -> Just 36
+    (35, 51) -> Just 245
+    (35, 63) -> Just 297
+    (35, 64) -> Just 246
     (36, 8) -> Just 299
-    (36, 65) -> Just 296
+    (36, 63) -> Just 296
     (37, 8) -> Just 200
-    (37, 29) -> Just 208
-    (37, 31) -> Just 207
-    (37, 32) -> Just 201
-    (37, 33) -> Just 202
-    (37, 41) -> Just 212
-    (37, 42) -> Just 213
+    (37, 27) -> Just 208
+    (37, 29) -> Just 207
+    (37, 30) -> Just 201
+    (37, 31) -> Just 202
+    (37, 39) -> Just 212
+    (37, 40) -> Just 213
     (38, 8) -> Just 200
-    (38, 29) -> Just 208
-    (38, 31) -> Just 209
-    (38, 32) -> Just 201
-    (38, 33) -> Just 202
-    (38, 41) -> Just 212
-    (38, 42) -> Just 213
+    (38, 27) -> Just 208
+    (38, 29) -> Just 209
+    (38, 30) -> Just 201
+    (38, 31) -> Just 202
+    (38, 39) -> Just 212
+    (38, 40) -> Just 213
     (39, 8) -> Just 217
-    (39, 32) -> Just 227
-    (39, 33) -> Just 218
-    (39, 36) -> Just 224
-    (39, 37) -> Just 226
-    (39, 41) -> Just 212
-    (39, 42) -> Just 213
+    (39, 30) -> Just 227
+    (39, 31) -> Just 218
+    (39, 34) -> Just 224
+    (39, 35) -> Just 226
+    (39, 39) -> Just 212
+    (39, 40) -> Just 213
     (40, 8) -> Just 217
-    (40, 32) -> Just 227
-    (40, 33) -> Just 218
-    (40, 36) -> Just 225
-    (40, 37) -> Just 226
-    (40, 41) -> Just 212
-    (40, 42) -> Just 213
+    (40, 30) -> Just 227
+    (40, 31) -> Just 218
+    (40, 34) -> Just 225
+    (40, 35) -> Just 226
+    (40, 39) -> Just 212
+    (40, 40) -> Just 213
     (41, 8) -> Just 219
-    (41, 33) -> Just 220
-    (41, 39) -> Just 231
-    (41, 40) -> Just 233
+    (41, 31) -> Just 220
+    (41, 37) -> Just 231
+    (41, 38) -> Just 233
     (42, 8) -> Just 219
-    (42, 33) -> Just 220
-    (42, 39) -> Just 232
-    (42, 40) -> Just 233
+    (42, 31) -> Just 220
+    (42, 37) -> Just 232
+    (42, 38) -> Just 233
     (43, 8) -> Just 116
     (43, 9) -> Just 117
-    (43, 13) -> Just 110
-    (43, 14) -> Just 111
+    (43, 11) -> Just 110
+    (43, 12) -> Just 111
     (44, 8) -> Just 116
     (44, 9) -> Just 117
-    (44, 13) -> Just 146
-    (44, 14) -> Just 111
+    (44, 11) -> Just 146
+    (44, 12) -> Just 111
     (45, 8) -> Just 116
     (45, 9) -> Just 117
-    (45, 13) -> Just 147
-    (45, 14) -> Just 111
+    (45, 11) -> Just 147
+    (45, 12) -> Just 111
     (46, 8) -> Just 119
     (46, 9) -> Just 120
     (46, 10) -> Just 108
-    (46, 15) -> Just 109
+    (46, 13) -> Just 109
     (47, 8) -> Just 119
     (47, 9) -> Just 120
     (47, 10) -> Just 118
-    (47, 15) -> Just 109
+    (47, 13) -> Just 109
     (48, 8) -> Just 236
-    (48, 41) -> Just 237
+    (48, 39) -> Just 237
     (49, 8) -> Just 236
-    (49, 41) -> Just 284
-    (49, 54) -> Just 275
-    (49, 55) -> Just 282
+    (49, 39) -> Just 284
+    (49, 52) -> Just 275
+    (49, 53) -> Just 282
     (50, 8) -> Just 236
-    (50, 41) -> Just 284
-    (50, 54) -> Just 281
-    (50, 55) -> Just 282
+    (50, 39) -> Just 284
+    (50, 52) -> Just 281
+    (50, 53) -> Just 282
     (51, 8) -> Just 180
     (52, 8) -> Just 191
     (53, 8) -> Just 192
     (54, 8) -> Just 193
     (62, 9) -> Just 261
-    (62, 46) -> Just 252
-    (62, 47) -> Just 253
-    (62, 48) -> Just 254
+    (62, 44) -> Just 252
+    (62, 45) -> Just 253
+    (62, 46) -> Just 254
     (63, 9) -> Just 261
-    (63, 19) -> Just 64
-    (63, 46) -> Just 171
-    (63, 47) -> Just 253
-    (63, 48) -> Just 254
+    (63, 17) -> Just 64
+    (63, 44) -> Just 171
+    (63, 45) -> Just 253
+    (63, 46) -> Just 254
     (64, 9) -> Just 261
-    (64, 25) -> Just 163
-    (64, 46) -> Just 172
-    (64, 47) -> Just 253
-    (64, 48) -> Just 254
+    (64, 23) -> Just 163
+    (64, 44) -> Just 172
+    (64, 45) -> Just 253
+    (64, 46) -> Just 254
     (65, 9) -> Just 261
-    (65, 19) -> Just 66
-    (65, 46) -> Just 171
-    (65, 47) -> Just 253
-    (65, 48) -> Just 254
+    (65, 17) -> Just 66
+    (65, 44) -> Just 171
+    (65, 45) -> Just 253
+    (65, 46) -> Just 254
     (66, 9) -> Just 261
-    (66, 26) -> Just 165
-    (66, 46) -> Just 172
-    (66, 47) -> Just 253
-    (66, 48) -> Just 254
+    (66, 24) -> Just 165
+    (66, 44) -> Just 172
+    (66, 45) -> Just 253
+    (66, 46) -> Just 254
     (67, 9) -> Just 261
-    (67, 19) -> Just 68
-    (67, 46) -> Just 171
-    (67, 47) -> Just 253
-    (67, 48) -> Just 254
+    (67, 17) -> Just 68
+    (67, 44) -> Just 171
+    (67, 45) -> Just 253
+    (67, 46) -> Just 254
     (68, 9) -> Just 261
-    (68, 25) -> Just 162
-    (68, 46) -> Just 172
-    (68, 47) -> Just 253
-    (68, 48) -> Just 254
+    (68, 23) -> Just 162
+    (68, 44) -> Just 172
+    (68, 45) -> Just 253
+    (68, 46) -> Just 254
     (69, 9) -> Just 261
-    (69, 19) -> Just 70
-    (69, 46) -> Just 171
-    (69, 47) -> Just 253
-    (69, 48) -> Just 254
+    (69, 17) -> Just 70
+    (69, 44) -> Just 171
+    (69, 45) -> Just 253
+    (69, 46) -> Just 254
     (70, 9) -> Just 261
-    (70, 26) -> Just 164
-    (70, 46) -> Just 172
-    (70, 47) -> Just 253
-    (70, 48) -> Just 254
+    (70, 24) -> Just 164
+    (70, 44) -> Just 172
+    (70, 45) -> Just 253
+    (70, 46) -> Just 254
     (71, 9) -> Just 261
-    (71, 19) -> Just 72
-    (71, 46) -> Just 171
-    (71, 47) -> Just 253
-    (71, 48) -> Just 254
+    (71, 17) -> Just 72
+    (71, 44) -> Just 171
+    (71, 45) -> Just 253
+    (71, 46) -> Just 254
     (72, 9) -> Just 261
-    (72, 21) -> Just 150
-    (72, 46) -> Just 172
-    (72, 47) -> Just 253
-    (72, 48) -> Just 254
+    (72, 19) -> Just 150
+    (72, 44) -> Just 172
+    (72, 45) -> Just 253
+    (72, 46) -> Just 254
     (73, 9) -> Just 261
-    (73, 19) -> Just 74
-    (73, 46) -> Just 171
-    (73, 47) -> Just 253
-    (73, 48) -> Just 254
+    (73, 17) -> Just 74
+    (73, 44) -> Just 171
+    (73, 45) -> Just 253
+    (73, 46) -> Just 254
     (74, 9) -> Just 261
-    (74, 21) -> Just 151
-    (74, 46) -> Just 172
-    (74, 47) -> Just 253
-    (74, 48) -> Just 254
+    (74, 19) -> Just 151
+    (74, 44) -> Just 172
+    (74, 45) -> Just 253
+    (74, 46) -> Just 254
     (75, 9) -> Just 262
-    (75, 19) -> Just 78
-    (75, 46) -> Just 171
-    (75, 47) -> Just 253
-    (75, 48) -> Just 254
-    (75, 51) -> Just 174
-    (75, 52) -> Just 272
+    (75, 17) -> Just 78
+    (75, 44) -> Just 171
+    (75, 45) -> Just 253
+    (75, 46) -> Just 254
+    (75, 49) -> Just 174
+    (75, 50) -> Just 272
     (76, 9) -> Just 262
-    (76, 19) -> Just 78
-    (76, 46) -> Just 171
-    (76, 47) -> Just 253
-    (76, 48) -> Just 254
-    (76, 51) -> Just 271
-    (76, 52) -> Just 272
+    (76, 17) -> Just 78
+    (76, 44) -> Just 171
+    (76, 45) -> Just 253
+    (76, 46) -> Just 254
+    (76, 49) -> Just 271
+    (76, 50) -> Just 272
     (77, 9) -> Just 92
     (78, 9) -> Just 261
-    (78, 46) -> Just 172
-    (78, 47) -> Just 253
-    (78, 48) -> Just 254
-    (78, 53) -> Just 79
+    (78, 44) -> Just 172
+    (78, 45) -> Just 253
+    (78, 46) -> Just 254
+    (78, 51) -> Just 79
     (79, 9) -> Just 261
-    (79, 19) -> Just 80
-    (79, 46) -> Just 171
-    (79, 47) -> Just 253
-    (79, 48) -> Just 254
+    (79, 17) -> Just 80
+    (79, 44) -> Just 171
+    (79, 45) -> Just 253
+    (79, 46) -> Just 254
     (80, 9) -> Just 261
-    (80, 46) -> Just 172
-    (80, 47) -> Just 253
-    (80, 48) -> Just 254
+    (80, 44) -> Just 172
+    (80, 45) -> Just 253
+    (80, 46) -> Just 254
     (81, 9) -> Just 261
-    (81, 19) -> Just 82
-    (81, 20) -> Just 211
-    (81, 46) -> Just 171
-    (81, 47) -> Just 253
-    (81, 48) -> Just 254
+    (81, 17) -> Just 82
+    (81, 18) -> Just 211
+    (81, 44) -> Just 171
+    (81, 45) -> Just 253
+    (81, 46) -> Just 254
     (82, 9) -> Just 261
-    (82, 46) -> Just 172
-    (82, 47) -> Just 253
-    (82, 48) -> Just 254
+    (82, 44) -> Just 172
+    (82, 45) -> Just 253
+    (82, 46) -> Just 254
     (83, 9) -> Just 261
-    (83, 19) -> Just 89
-    (83, 20) -> Just 149
-    (83, 46) -> Just 171
-    (83, 47) -> Just 253
-    (83, 48) -> Just 254
+    (83, 17) -> Just 89
+    (83, 18) -> Just 149
+    (83, 44) -> Just 171
+    (83, 45) -> Just 253
+    (83, 46) -> Just 254
     (84, 9) -> Just 261
-    (84, 19) -> Just 89
-    (84, 20) -> Just 173
-    (84, 46) -> Just 171
-    (84, 47) -> Just 253
-    (84, 48) -> Just 254
+    (84, 17) -> Just 89
+    (84, 18) -> Just 173
+    (84, 44) -> Just 171
+    (84, 45) -> Just 253
+    (84, 46) -> Just 254
     (85, 9) -> Just 261
-    (85, 19) -> Just 89
-    (85, 20) -> Just 194
-    (85, 46) -> Just 171
-    (85, 47) -> Just 253
-    (85, 48) -> Just 254
+    (85, 17) -> Just 89
+    (85, 18) -> Just 194
+    (85, 44) -> Just 171
+    (85, 45) -> Just 253
+    (85, 46) -> Just 254
     (86, 9) -> Just 261
-    (86, 19) -> Just 89
-    (86, 20) -> Just 195
-    (86, 46) -> Just 171
-    (86, 47) -> Just 253
-    (86, 48) -> Just 254
+    (86, 17) -> Just 89
+    (86, 18) -> Just 195
+    (86, 44) -> Just 171
+    (86, 45) -> Just 253
+    (86, 46) -> Just 254
     (87, 9) -> Just 261
-    (87, 19) -> Just 89
-    (87, 20) -> Just 196
-    (87, 46) -> Just 171
-    (87, 47) -> Just 253
-    (87, 48) -> Just 254
+    (87, 17) -> Just 89
+    (87, 18) -> Just 196
+    (87, 44) -> Just 171
+    (87, 45) -> Just 253
+    (87, 46) -> Just 254
     (88, 9) -> Just 261
-    (88, 19) -> Just 89
-    (88, 20) -> Just 210
-    (88, 46) -> Just 171
-    (88, 47) -> Just 253
-    (88, 48) -> Just 254
+    (88, 17) -> Just 89
+    (88, 18) -> Just 210
+    (88, 44) -> Just 171
+    (88, 45) -> Just 253
+    (88, 46) -> Just 254
     (89, 9) -> Just 261
-    (89, 46) -> Just 172
-    (89, 47) -> Just 253
-    (89, 48) -> Just 254
+    (89, 44) -> Just 172
+    (89, 45) -> Just 253
+    (89, 46) -> Just 254
     (90, 9) -> Just 261
-    (90, 19) -> Just 89
-    (90, 20) -> Just 283
-    (90, 46) -> Just 171
-    (90, 47) -> Just 253
-    (90, 48) -> Just 254
+    (90, 17) -> Just 89
+    (90, 18) -> Just 283
+    (90, 44) -> Just 171
+    (90, 45) -> Just 253
+    (90, 46) -> Just 254
     (91, 9) -> Just 261
-    (91, 19) -> Just 89
-    (91, 20) -> Just 181
-    (91, 46) -> Just 171
-    (91, 47) -> Just 253
-    (91, 48) -> Just 254
+    (91, 17) -> Just 89
+    (91, 18) -> Just 181
+    (91, 44) -> Just 171
+    (91, 45) -> Just 253
+    (91, 46) -> Just 254
     (92, 9) -> Just 261
-    (92, 46) -> Just 182
-    (92, 47) -> Just 253
-    (92, 48) -> Just 254
+    (92, 44) -> Just 182
+    (92, 45) -> Just 253
+    (92, 46) -> Just 254
     (93, 9) -> Just 261
-    (93, 19) -> Just 94
-    (93, 46) -> Just 171
-    (93, 47) -> Just 253
-    (93, 48) -> Just 254
+    (93, 17) -> Just 94
+    (93, 44) -> Just 171
+    (93, 45) -> Just 253
+    (93, 46) -> Just 254
     (94, 9) -> Just 261
-    (94, 24) -> Just 161
-    (94, 46) -> Just 172
-    (94, 47) -> Just 253
-    (94, 48) -> Just 254
+    (94, 22) -> Just 161
+    (94, 44) -> Just 172
+    (94, 45) -> Just 253
+    (94, 46) -> Just 254
     (95, 9) -> Just 261
-    (95, 19) -> Just 97
-    (95, 46) -> Just 171
-    (95, 47) -> Just 253
-    (95, 48) -> Just 254
+    (95, 17) -> Just 97
+    (95, 44) -> Just 171
+    (95, 45) -> Just 253
+    (95, 46) -> Just 254
     (96, 9) -> Just 261
-    (96, 19) -> Just 98
-    (96, 46) -> Just 171
-    (96, 47) -> Just 253
-    (96, 48) -> Just 254
+    (96, 17) -> Just 98
+    (96, 44) -> Just 171
+    (96, 45) -> Just 253
+    (96, 46) -> Just 254
     (97, 9) -> Just 261
-    (97, 46) -> Just 172
-    (97, 47) -> Just 253
-    (97, 48) -> Just 254
+    (97, 44) -> Just 172
+    (97, 45) -> Just 253
+    (97, 46) -> Just 254
     (98, 9) -> Just 261
-    (98, 24) -> Just 160
-    (98, 46) -> Just 172
-    (98, 47) -> Just 253
-    (98, 48) -> Just 254
+    (98, 22) -> Just 160
+    (98, 44) -> Just 172
+    (98, 45) -> Just 253
+    (98, 46) -> Just 254
     (99, 9) -> Just 261
-    (99, 19) -> Just 89
-    (99, 20) -> Just 250
-    (99, 46) -> Just 171
-    (99, 47) -> Just 253
-    (99, 48) -> Just 254
-    (99, 49) -> Just 255
-    (99, 50) -> Just 263
+    (99, 17) -> Just 89
+    (99, 18) -> Just 250
+    (99, 44) -> Just 171
+    (99, 45) -> Just 253
+    (99, 46) -> Just 254
+    (99, 47) -> Just 255
+    (99, 48) -> Just 263
     (100, 9) -> Just 261
-    (100, 19) -> Just 89
-    (100, 20) -> Just 187
-    (100, 27) -> Just 166
-    (100, 46) -> Just 171
-    (100, 47) -> Just 253
-    (100, 48) -> Just 254
+    (100, 17) -> Just 89
+    (100, 18) -> Just 187
+    (100, 25) -> Just 166
+    (100, 44) -> Just 171
+    (100, 45) -> Just 253
+    (100, 46) -> Just 254
     (101, 9) -> Just 261
-    (101, 19) -> Just 89
-    (101, 20) -> Just 187
-    (101, 27) -> Just 188
-    (101, 46) -> Just 171
-    (101, 47) -> Just 253
-    (101, 48) -> Just 254
+    (101, 17) -> Just 89
+    (101, 18) -> Just 187
+    (101, 25) -> Just 188
+    (101, 44) -> Just 171
+    (101, 45) -> Just 253
+    (101, 46) -> Just 254
     (102, 9) -> Just 261
-    (102, 19) -> Just 89
-    (102, 20) -> Just 267
-    (102, 46) -> Just 171
-    (102, 47) -> Just 253
-    (102, 48) -> Just 254
-    (102, 49) -> Just 268
+    (102, 17) -> Just 89
+    (102, 18) -> Just 267
+    (102, 44) -> Just 171
+    (102, 45) -> Just 253
+    (102, 46) -> Just 254
+    (102, 47) -> Just 268
     (103, 9) -> Just 261
-    (103, 19) -> Just 89
-    (103, 20) -> Just 251
-    (103, 46) -> Just 171
-    (103, 47) -> Just 253
-    (103, 48) -> Just 254
-    (121, 22) -> Just 177
-    (121, 23) -> Just 156
-    (122, 22) -> Just 177
-    (122, 23) -> Just 157
-    (123, 22) -> Just 177
-    (123, 23) -> Just 158
-    (124, 22) -> Just 177
-    (124, 23) -> Just 159
-    (138, 17) -> Just 8
-    (139, 22) -> Just 152
-    (140, 22) -> Just 153
-    (141, 22) -> Just 154
-    (142, 22) -> Just 155
-    (144, 28) -> Just 167
-    (145, 18) -> Just 148
-    (175, 22) -> Just 177
-    (175, 23) -> Just 178
-    (183, 35) -> Just 184
-    (185, 38) -> Just 186
-    (189, 57) -> Just 197
-    (190, 57) -> Just 198
-    (197, 58) -> Just 52
-    (197, 59) -> Just 199
-    (198, 60) -> Just 54
-    (199, 58) -> Just 53
-    (200, 34) -> Just 203
-    (202, 34) -> Just 204
-    (205, 30) -> Just 221
-    (213, 43) -> Just 214
-    (214, 44) -> Just 215
-    (214, 45) -> Just 244
-    (214, 53) -> Just 245
-    (214, 66) -> Just 246
-    (217, 34) -> Just 228
-    (218, 34) -> Just 229
-    (219, 34) -> Just 234
-    (220, 34) -> Just 235
-    (242, 44) -> Just 243
-    (242, 45) -> Just 244
-    (242, 53) -> Just 245
-    (242, 66) -> Just 246
-    (269, 50) -> Just 270
+    (103, 17) -> Just 89
+    (103, 18) -> Just 251
+    (103, 44) -> Just 171
+    (103, 45) -> Just 253
+    (103, 46) -> Just 254
+    (121, 20) -> Just 177
+    (121, 21) -> Just 156
+    (122, 20) -> Just 177
+    (122, 21) -> Just 157
+    (123, 20) -> Just 177
+    (123, 21) -> Just 158
+    (124, 20) -> Just 177
+    (124, 21) -> Just 159
+    (137, 15) -> Just 8
+    (139, 20) -> Just 152
+    (140, 20) -> Just 153
+    (141, 20) -> Just 154
+    (142, 20) -> Just 155
+    (144, 26) -> Just 167
+    (145, 16) -> Just 148
+    (175, 20) -> Just 177
+    (175, 21) -> Just 178
+    (183, 33) -> Just 184
+    (185, 36) -> Just 186
+    (189, 55) -> Just 197
+    (190, 55) -> Just 198
+    (197, 56) -> Just 52
+    (197, 57) -> Just 199
+    (198, 58) -> Just 54
+    (199, 56) -> Just 53
+    (200, 32) -> Just 203
+    (202, 32) -> Just 204
+    (205, 28) -> Just 221
+    (213, 41) -> Just 214
+    (214, 42) -> Just 215
+    (214, 43) -> Just 244
+    (214, 51) -> Just 245
+    (214, 64) -> Just 246
+    (217, 32) -> Just 228
+    (218, 32) -> Just 229
+    (219, 32) -> Just 234
+    (220, 32) -> Just 235
+    (242, 42) -> Just 243
+    (242, 43) -> Just 244
+    (242, 51) -> Just 245
+    (242, 64) -> Just 246
+    (269, 48) -> Just 270
     (_, _) -> Nothing
 
 parse :: Monad m => SemanticActions m -> [Token] -> m (Either (Maybe Token) (Module', [Token]))
@@ -3092,12 +3072,12 @@ parse actions = parse' [] where
                     StackValue_COMMA semanticValue
                   Token (DOT_DOT semanticValue) ->
                     StackValue_DOT_DOT semanticValue
-                  Token (HIDING semanticValue) ->
-                    StackValue_HIDING semanticValue
                   Token (SEMICOLON semanticValue) ->
                     StackValue_SEMICOLON semanticValue
                   Token (IMPORT semanticValue) ->
                     StackValue_IMPORT semanticValue
+                  Token (HIDING semanticValue) ->
+                    StackValue_HIDING semanticValue
                   Token (TYPE semanticValue) ->
                     StackValue_TYPE semanticValue
                   Token (EQUAL semanticValue) ->
@@ -3205,332 +3185,324 @@ parse actions = parse' [] where
                     14 ->
                       Monad.liftM StackValue_export $ export_implies_MODULE_modid actions (case snd (pop !! 1) of { StackValue_MODULE value -> value; _ -> undefined }) (case snd (pop !! 0) of { StackValue_modid value -> value; _ -> undefined })
                     15 ->
-                      Monad.liftM StackValue_impspec_opt $ impspec_opt_implies actions
-                    16 ->
-                      Monad.liftM StackValue_impspec_opt $ impspec_opt_implies_impspec actions (case snd (pop !! 0) of { StackValue_impspec value -> value; _ -> undefined })
-                    17 ->
-                      Monad.liftM StackValue_impspec $ impspec_implies_LPAREN_import_seq_RPAREN actions (case snd (pop !! 2) of { StackValue_LPAREN value -> value; _ -> undefined }) (case snd (pop !! 1) of { StackValue_import_seq value -> value; _ -> undefined }) (case snd (pop !! 0) of { StackValue_RPAREN value -> value; _ -> undefined })
-                    18 ->
-                      Monad.liftM StackValue_impspec $ impspec_implies_HIDING_LPAREN_import_seq_RPAREN actions (case snd (pop !! 3) of { StackValue_HIDING value -> value; _ -> undefined }) (case snd (pop !! 2) of { StackValue_LPAREN value -> value; _ -> undefined }) (case snd (pop !! 1) of { StackValue_import_seq value -> value; _ -> undefined }) (case snd (pop !! 0) of { StackValue_RPAREN value -> value; _ -> undefined })
-                    19 ->
                       Monad.liftM StackValue_import_seq $ import_seq_implies actions
-                    20 ->
+                    16 ->
                       Monad.liftM StackValue_import_seq $ import_seq_implies_import' actions (case snd (pop !! 0) of { StackValue_import' value -> value; _ -> undefined })
-                    21 ->
+                    17 ->
                       Monad.liftM StackValue_import_seq $ import_seq_implies_import'_COMMA_import_seq actions (case snd (pop !! 2) of { StackValue_import' value -> value; _ -> undefined }) (case snd (pop !! 1) of { StackValue_COMMA value -> value; _ -> undefined }) (case snd (pop !! 0) of { StackValue_import_seq value -> value; _ -> undefined })
-                    22 ->
+                    18 ->
                       Monad.liftM StackValue_import' $ import'_implies_var actions (case snd (pop !! 0) of { StackValue_var value -> value; _ -> undefined })
-                    23 ->
+                    19 ->
                       Monad.liftM StackValue_import' $ import'_implies_con actions (case snd (pop !! 0) of { StackValue_con value -> value; _ -> undefined })
-                    24 ->
+                    20 ->
                       Monad.liftM StackValue_import' $ import'_implies_con_LPAREN_RPAREN actions (case snd (pop !! 2) of { StackValue_con value -> value; _ -> undefined }) (case snd (pop !! 1) of { StackValue_LPAREN value -> value; _ -> undefined }) (case snd (pop !! 0) of { StackValue_RPAREN value -> value; _ -> undefined })
-                    25 ->
+                    21 ->
                       Monad.liftM StackValue_import' $ import'_implies_con_LPAREN_DOT_DOT_RPAREN actions (case snd (pop !! 3) of { StackValue_con value -> value; _ -> undefined }) (case snd (pop !! 2) of { StackValue_LPAREN value -> value; _ -> undefined }) (case snd (pop !! 1) of { StackValue_DOT_DOT value -> value; _ -> undefined }) (case snd (pop !! 0) of { StackValue_RPAREN value -> value; _ -> undefined })
-                    26 ->
+                    22 ->
                       Monad.liftM StackValue_import' $ import'_implies_con_LPAREN_cname_seq_RPAREN actions (case snd (pop !! 3) of { StackValue_con value -> value; _ -> undefined }) (case snd (pop !! 2) of { StackValue_LPAREN value -> value; _ -> undefined }) (case snd (pop !! 1) of { StackValue_cname_seq value -> value; _ -> undefined }) (case snd (pop !! 0) of { StackValue_RPAREN value -> value; _ -> undefined })
-                    27 ->
+                    23 ->
                       Monad.liftM StackValue_cname_seq $ cname_seq_implies_cname actions (case snd (pop !! 0) of { StackValue_cname value -> value; _ -> undefined })
-                    28 ->
+                    24 ->
                       Monad.liftM StackValue_cname_seq $ cname_seq_implies_cname_COMMA_cname_seq actions (case snd (pop !! 2) of { StackValue_cname value -> value; _ -> undefined }) (case snd (pop !! 1) of { StackValue_COMMA value -> value; _ -> undefined }) (case snd (pop !! 0) of { StackValue_cname_seq value -> value; _ -> undefined })
-                    29 ->
+                    25 ->
                       Monad.liftM StackValue_cname $ cname_implies_var actions (case snd (pop !! 0) of { StackValue_var value -> value; _ -> undefined })
-                    30 ->
+                    26 ->
                       Monad.liftM StackValue_cname $ cname_implies_con actions (case snd (pop !! 0) of { StackValue_con value -> value; _ -> undefined })
-                    31 ->
+                    27 ->
                       Monad.liftM StackValue_topdecls $ topdecls_implies_topdecl actions (case snd (pop !! 0) of { StackValue_topdecl value -> value; _ -> undefined })
-                    32 ->
+                    28 ->
                       Monad.liftM StackValue_topdecls $ topdecls_implies_topdecl_SEMICOLON_topdecls actions (case snd (pop !! 2) of { StackValue_topdecl value -> value; _ -> undefined }) (case snd (pop !! 1) of { StackValue_SEMICOLON value -> value; _ -> undefined }) (case snd (pop !! 0) of { StackValue_topdecls value -> value; _ -> undefined })
-                    33 ->
+                    29 ->
                       Monad.liftM StackValue_topdecl $ topdecl_implies_IMPORT_qualified_opt_modid_as_opt actions (case snd (pop !! 3) of { StackValue_IMPORT value -> value; _ -> undefined }) (case snd (pop !! 2) of { StackValue_qualified_opt value -> value; _ -> undefined }) (case snd (pop !! 1) of { StackValue_modid value -> value; _ -> undefined }) (case snd (pop !! 0) of { StackValue_as_opt value -> value; _ -> undefined })
-                    34 ->
+                    30 ->
                       Monad.liftM StackValue_topdecl $ topdecl_implies_IMPORT_qualified_opt_modid_as_opt_LPAREN_import_seq_RPAREN actions (case snd (pop !! 6) of { StackValue_IMPORT value -> value; _ -> undefined }) (case snd (pop !! 5) of { StackValue_qualified_opt value -> value; _ -> undefined }) (case snd (pop !! 4) of { StackValue_modid value -> value; _ -> undefined }) (case snd (pop !! 3) of { StackValue_as_opt value -> value; _ -> undefined }) (case snd (pop !! 2) of { StackValue_LPAREN value -> value; _ -> undefined }) (case snd (pop !! 1) of { StackValue_import_seq value -> value; _ -> undefined }) (case snd (pop !! 0) of { StackValue_RPAREN value -> value; _ -> undefined })
-                    35 ->
+                    31 ->
                       Monad.liftM StackValue_topdecl $ topdecl_implies_IMPORT_qualified_opt_modid_as_opt_HIDING_LPAREN_import_seq_RPAREN actions (case snd (pop !! 7) of { StackValue_IMPORT value -> value; _ -> undefined }) (case snd (pop !! 6) of { StackValue_qualified_opt value -> value; _ -> undefined }) (case snd (pop !! 5) of { StackValue_modid value -> value; _ -> undefined }) (case snd (pop !! 4) of { StackValue_as_opt value -> value; _ -> undefined }) (case snd (pop !! 3) of { StackValue_HIDING value -> value; _ -> undefined }) (case snd (pop !! 2) of { StackValue_LPAREN value -> value; _ -> undefined }) (case snd (pop !! 1) of { StackValue_import_seq value -> value; _ -> undefined }) (case snd (pop !! 0) of { StackValue_RPAREN value -> value; _ -> undefined })
-                    36 ->
+                    32 ->
                       Monad.liftM StackValue_topdecl $ topdecl_implies_TYPE_btype_EQUAL_type' actions (case snd (pop !! 3) of { StackValue_TYPE value -> value; _ -> undefined }) (case snd (pop !! 2) of { StackValue_btype value -> value; _ -> undefined }) (case snd (pop !! 1) of { StackValue_EQUAL value -> value; _ -> undefined }) (case snd (pop !! 0) of { StackValue_type' value -> value; _ -> undefined })
-                    37 ->
+                    33 ->
                       Monad.liftM StackValue_topdecl $ topdecl_implies_DATA_btype_constrs_opt actions (case snd (pop !! 2) of { StackValue_DATA value -> value; _ -> undefined }) (case snd (pop !! 1) of { StackValue_btype value -> value; _ -> undefined }) (case snd (pop !! 0) of { StackValue_constrs_opt value -> value; _ -> undefined })
-                    38 ->
+                    34 ->
                       Monad.liftM StackValue_topdecl $ topdecl_implies_DATA_btype_constrs_opt_DERIVING_dclass actions (case snd (pop !! 4) of { StackValue_DATA value -> value; _ -> undefined }) (case snd (pop !! 3) of { StackValue_btype value -> value; _ -> undefined }) (case snd (pop !! 2) of { StackValue_constrs_opt value -> value; _ -> undefined }) (case snd (pop !! 1) of { StackValue_DERIVING value -> value; _ -> undefined }) (case snd (pop !! 0) of { StackValue_dclass value -> value; _ -> undefined })
-                    39 ->
+                    35 ->
                       Monad.liftM StackValue_topdecl $ topdecl_implies_DATA_btype_constrs_opt_DERIVING_LPAREN_RPAREN actions (case snd (pop !! 5) of { StackValue_DATA value -> value; _ -> undefined }) (case snd (pop !! 4) of { StackValue_btype value -> value; _ -> undefined }) (case snd (pop !! 3) of { StackValue_constrs_opt value -> value; _ -> undefined }) (case snd (pop !! 2) of { StackValue_DERIVING value -> value; _ -> undefined }) (case snd (pop !! 1) of { StackValue_LPAREN value -> value; _ -> undefined }) (case snd (pop !! 0) of { StackValue_RPAREN value -> value; _ -> undefined })
-                    40 ->
+                    36 ->
                       Monad.liftM StackValue_topdecl $ topdecl_implies_DATA_btype_constrs_opt_DERIVING_LPAREN_dclass_seq_RPAREN actions (case snd (pop !! 6) of { StackValue_DATA value -> value; _ -> undefined }) (case snd (pop !! 5) of { StackValue_btype value -> value; _ -> undefined }) (case snd (pop !! 4) of { StackValue_constrs_opt value -> value; _ -> undefined }) (case snd (pop !! 3) of { StackValue_DERIVING value -> value; _ -> undefined }) (case snd (pop !! 2) of { StackValue_LPAREN value -> value; _ -> undefined }) (case snd (pop !! 1) of { StackValue_dclass_seq value -> value; _ -> undefined }) (case snd (pop !! 0) of { StackValue_RPAREN value -> value; _ -> undefined })
-                    41 ->
+                    37 ->
                       Monad.liftM StackValue_topdecl $ topdecl_implies_DATA_btype_DARROW_btype_constrs_opt actions (case snd (pop !! 4) of { StackValue_DATA value -> value; _ -> undefined }) (case snd (pop !! 3) of { StackValue_btype value -> value; _ -> undefined }) (case snd (pop !! 2) of { StackValue_DARROW value -> value; _ -> undefined }) (case snd (pop !! 1) of { StackValue_btype value -> value; _ -> undefined }) (case snd (pop !! 0) of { StackValue_constrs_opt value -> value; _ -> undefined })
-                    42 ->
+                    38 ->
                       Monad.liftM StackValue_topdecl $ topdecl_implies_DATA_btype_DARROW_btype_constrs_opt_DERIVING_dclass actions (case snd (pop !! 6) of { StackValue_DATA value -> value; _ -> undefined }) (case snd (pop !! 5) of { StackValue_btype value -> value; _ -> undefined }) (case snd (pop !! 4) of { StackValue_DARROW value -> value; _ -> undefined }) (case snd (pop !! 3) of { StackValue_btype value -> value; _ -> undefined }) (case snd (pop !! 2) of { StackValue_constrs_opt value -> value; _ -> undefined }) (case snd (pop !! 1) of { StackValue_DERIVING value -> value; _ -> undefined }) (case snd (pop !! 0) of { StackValue_dclass value -> value; _ -> undefined })
-                    43 ->
+                    39 ->
                       Monad.liftM StackValue_topdecl $ topdecl_implies_DATA_btype_DARROW_btype_constrs_opt_DERIVING_LPAREN_RPAREN actions (case snd (pop !! 7) of { StackValue_DATA value -> value; _ -> undefined }) (case snd (pop !! 6) of { StackValue_btype value -> value; _ -> undefined }) (case snd (pop !! 5) of { StackValue_DARROW value -> value; _ -> undefined }) (case snd (pop !! 4) of { StackValue_btype value -> value; _ -> undefined }) (case snd (pop !! 3) of { StackValue_constrs_opt value -> value; _ -> undefined }) (case snd (pop !! 2) of { StackValue_DERIVING value -> value; _ -> undefined }) (case snd (pop !! 1) of { StackValue_LPAREN value -> value; _ -> undefined }) (case snd (pop !! 0) of { StackValue_RPAREN value -> value; _ -> undefined })
-                    44 ->
+                    40 ->
                       Monad.liftM StackValue_topdecl $ topdecl_implies_DATA_btype_DARROW_btype_constrs_opt_DERIVING_LPAREN_dclass_seq_RPAREN actions (case snd (pop !! 8) of { StackValue_DATA value -> value; _ -> undefined }) (case snd (pop !! 7) of { StackValue_btype value -> value; _ -> undefined }) (case snd (pop !! 6) of { StackValue_DARROW value -> value; _ -> undefined }) (case snd (pop !! 5) of { StackValue_btype value -> value; _ -> undefined }) (case snd (pop !! 4) of { StackValue_constrs_opt value -> value; _ -> undefined }) (case snd (pop !! 3) of { StackValue_DERIVING value -> value; _ -> undefined }) (case snd (pop !! 2) of { StackValue_LPAREN value -> value; _ -> undefined }) (case snd (pop !! 1) of { StackValue_dclass_seq value -> value; _ -> undefined }) (case snd (pop !! 0) of { StackValue_RPAREN value -> value; _ -> undefined })
-                    45 ->
+                    41 ->
                       Monad.liftM StackValue_topdecl $ topdecl_implies_NEWTYPE_btype_newconstr actions (case snd (pop !! 2) of { StackValue_NEWTYPE value -> value; _ -> undefined }) (case snd (pop !! 1) of { StackValue_btype value -> value; _ -> undefined }) (case snd (pop !! 0) of { StackValue_newconstr value -> value; _ -> undefined })
-                    46 ->
+                    42 ->
                       Monad.liftM StackValue_topdecl $ topdecl_implies_NEWTYPE_btype_newconstr_DERIVING_dclass actions (case snd (pop !! 4) of { StackValue_NEWTYPE value -> value; _ -> undefined }) (case snd (pop !! 3) of { StackValue_btype value -> value; _ -> undefined }) (case snd (pop !! 2) of { StackValue_newconstr value -> value; _ -> undefined }) (case snd (pop !! 1) of { StackValue_DERIVING value -> value; _ -> undefined }) (case snd (pop !! 0) of { StackValue_dclass value -> value; _ -> undefined })
-                    47 ->
+                    43 ->
                       Monad.liftM StackValue_topdecl $ topdecl_implies_NEWTYPE_btype_newconstr_DERIVING_LPAREN_RPAREN actions (case snd (pop !! 5) of { StackValue_NEWTYPE value -> value; _ -> undefined }) (case snd (pop !! 4) of { StackValue_btype value -> value; _ -> undefined }) (case snd (pop !! 3) of { StackValue_newconstr value -> value; _ -> undefined }) (case snd (pop !! 2) of { StackValue_DERIVING value -> value; _ -> undefined }) (case snd (pop !! 1) of { StackValue_LPAREN value -> value; _ -> undefined }) (case snd (pop !! 0) of { StackValue_RPAREN value -> value; _ -> undefined })
-                    48 ->
+                    44 ->
                       Monad.liftM StackValue_topdecl $ topdecl_implies_NEWTYPE_btype_newconstr_DERIVING_LPAREN_dclass_seq_RPAREN actions (case snd (pop !! 6) of { StackValue_NEWTYPE value -> value; _ -> undefined }) (case snd (pop !! 5) of { StackValue_btype value -> value; _ -> undefined }) (case snd (pop !! 4) of { StackValue_newconstr value -> value; _ -> undefined }) (case snd (pop !! 3) of { StackValue_DERIVING value -> value; _ -> undefined }) (case snd (pop !! 2) of { StackValue_LPAREN value -> value; _ -> undefined }) (case snd (pop !! 1) of { StackValue_dclass_seq value -> value; _ -> undefined }) (case snd (pop !! 0) of { StackValue_RPAREN value -> value; _ -> undefined })
-                    49 ->
+                    45 ->
                       Monad.liftM StackValue_topdecl $ topdecl_implies_NEWTYPE_btype_DARROW_btype_newconstr actions (case snd (pop !! 4) of { StackValue_NEWTYPE value -> value; _ -> undefined }) (case snd (pop !! 3) of { StackValue_btype value -> value; _ -> undefined }) (case snd (pop !! 2) of { StackValue_DARROW value -> value; _ -> undefined }) (case snd (pop !! 1) of { StackValue_btype value -> value; _ -> undefined }) (case snd (pop !! 0) of { StackValue_newconstr value -> value; _ -> undefined })
-                    50 ->
+                    46 ->
                       Monad.liftM StackValue_topdecl $ topdecl_implies_NEWTYPE_btype_DARROW_btype_newconstr_DERIVING_dclass actions (case snd (pop !! 6) of { StackValue_NEWTYPE value -> value; _ -> undefined }) (case snd (pop !! 5) of { StackValue_btype value -> value; _ -> undefined }) (case snd (pop !! 4) of { StackValue_DARROW value -> value; _ -> undefined }) (case snd (pop !! 3) of { StackValue_btype value -> value; _ -> undefined }) (case snd (pop !! 2) of { StackValue_newconstr value -> value; _ -> undefined }) (case snd (pop !! 1) of { StackValue_DERIVING value -> value; _ -> undefined }) (case snd (pop !! 0) of { StackValue_dclass value -> value; _ -> undefined })
-                    51 ->
+                    47 ->
                       Monad.liftM StackValue_topdecl $ topdecl_implies_NEWTYPE_btype_DARROW_btype_newconstr_DERIVING_LPAREN_RPAREN actions (case snd (pop !! 7) of { StackValue_NEWTYPE value -> value; _ -> undefined }) (case snd (pop !! 6) of { StackValue_btype value -> value; _ -> undefined }) (case snd (pop !! 5) of { StackValue_DARROW value -> value; _ -> undefined }) (case snd (pop !! 4) of { StackValue_btype value -> value; _ -> undefined }) (case snd (pop !! 3) of { StackValue_newconstr value -> value; _ -> undefined }) (case snd (pop !! 2) of { StackValue_DERIVING value -> value; _ -> undefined }) (case snd (pop !! 1) of { StackValue_LPAREN value -> value; _ -> undefined }) (case snd (pop !! 0) of { StackValue_RPAREN value -> value; _ -> undefined })
-                    52 ->
+                    48 ->
                       Monad.liftM StackValue_topdecl $ topdecl_implies_NEWTYPE_btype_DARROW_btype_newconstr_DERIVING_LPAREN_dclass_seq_RPAREN actions (case snd (pop !! 8) of { StackValue_NEWTYPE value -> value; _ -> undefined }) (case snd (pop !! 7) of { StackValue_btype value -> value; _ -> undefined }) (case snd (pop !! 6) of { StackValue_DARROW value -> value; _ -> undefined }) (case snd (pop !! 5) of { StackValue_btype value -> value; _ -> undefined }) (case snd (pop !! 4) of { StackValue_newconstr value -> value; _ -> undefined }) (case snd (pop !! 3) of { StackValue_DERIVING value -> value; _ -> undefined }) (case snd (pop !! 2) of { StackValue_LPAREN value -> value; _ -> undefined }) (case snd (pop !! 1) of { StackValue_dclass_seq value -> value; _ -> undefined }) (case snd (pop !! 0) of { StackValue_RPAREN value -> value; _ -> undefined })
-                    53 ->
+                    49 ->
                       Monad.liftM StackValue_topdecl $ topdecl_implies_CLASS_btype_cdecls_opt actions (case snd (pop !! 2) of { StackValue_CLASS value -> value; _ -> undefined }) (case snd (pop !! 1) of { StackValue_btype value -> value; _ -> undefined }) (case snd (pop !! 0) of { StackValue_cdecls_opt value -> value; _ -> undefined })
-                    54 ->
+                    50 ->
                       Monad.liftM StackValue_topdecl $ topdecl_implies_CLASS_btype_DARROW_btype_cdecls_opt actions (case snd (pop !! 4) of { StackValue_CLASS value -> value; _ -> undefined }) (case snd (pop !! 3) of { StackValue_btype value -> value; _ -> undefined }) (case snd (pop !! 2) of { StackValue_DARROW value -> value; _ -> undefined }) (case snd (pop !! 1) of { StackValue_btype value -> value; _ -> undefined }) (case snd (pop !! 0) of { StackValue_cdecls_opt value -> value; _ -> undefined })
-                    55 ->
+                    51 ->
                       Monad.liftM StackValue_topdecl $ topdecl_implies_INSTANCE_btype_idecls_opt actions (case snd (pop !! 2) of { StackValue_INSTANCE value -> value; _ -> undefined }) (case snd (pop !! 1) of { StackValue_btype value -> value; _ -> undefined }) (case snd (pop !! 0) of { StackValue_idecls_opt value -> value; _ -> undefined })
-                    56 ->
+                    52 ->
                       Monad.liftM StackValue_topdecl $ topdecl_implies_INSTANCE_btype_DARROW_btype_idecls_opt actions (case snd (pop !! 4) of { StackValue_INSTANCE value -> value; _ -> undefined }) (case snd (pop !! 3) of { StackValue_btype value -> value; _ -> undefined }) (case snd (pop !! 2) of { StackValue_DARROW value -> value; _ -> undefined }) (case snd (pop !! 1) of { StackValue_btype value -> value; _ -> undefined }) (case snd (pop !! 0) of { StackValue_idecls_opt value -> value; _ -> undefined })
-                    57 ->
+                    53 ->
                       Monad.liftM StackValue_topdecl $ topdecl_implies_DEFAULT_LPAREN_RPAREN actions (case snd (pop !! 2) of { StackValue_DEFAULT value -> value; _ -> undefined }) (case snd (pop !! 1) of { StackValue_LPAREN value -> value; _ -> undefined }) (case snd (pop !! 0) of { StackValue_RPAREN value -> value; _ -> undefined })
-                    58 ->
+                    54 ->
                       Monad.liftM StackValue_topdecl $ topdecl_implies_DEFAULT_LPAREN_type_seq_RPAREN actions (case snd (pop !! 3) of { StackValue_DEFAULT value -> value; _ -> undefined }) (case snd (pop !! 2) of { StackValue_LPAREN value -> value; _ -> undefined }) (case snd (pop !! 1) of { StackValue_type_seq value -> value; _ -> undefined }) (case snd (pop !! 0) of { StackValue_RPAREN value -> value; _ -> undefined })
-                    59 ->
+                    55 ->
                       Monad.liftM StackValue_topdecl $ topdecl_implies_FOREIGN_fdecl actions (case snd (pop !! 1) of { StackValue_FOREIGN value -> value; _ -> undefined }) (case snd (pop !! 0) of { StackValue_fdecl value -> value; _ -> undefined })
-                    60 ->
+                    56 ->
                       Monad.liftM StackValue_topdecl $ topdecl_implies_decl actions (case snd (pop !! 0) of { StackValue_decl value -> value; _ -> undefined })
-                    61 ->
+                    57 ->
                       Monad.liftM StackValue_decls $ decls_implies_LBRACE_decl_seq_RBRACE actions (case snd (pop !! 2) of { StackValue_LBRACE value -> value; _ -> undefined }) (case snd (pop !! 1) of { StackValue_decl_seq value -> value; _ -> undefined }) (case snd (pop !! 0) of { StackValue_RBRACE value -> value; _ -> undefined })
-                    62 ->
+                    58 ->
                       Monad.liftM StackValue_decl_seq $ decl_seq_implies_decl actions (case snd (pop !! 0) of { StackValue_decl value -> value; _ -> undefined })
-                    63 ->
+                    59 ->
                       Monad.liftM StackValue_decl_seq $ decl_seq_implies_decl_SEMICOLON_decl_seq actions (case snd (pop !! 2) of { StackValue_decl value -> value; _ -> undefined }) (case snd (pop !! 1) of { StackValue_SEMICOLON value -> value; _ -> undefined }) (case snd (pop !! 0) of { StackValue_decl_seq value -> value; _ -> undefined })
-                    64 ->
+                    60 ->
                       Monad.liftM StackValue_decl $ decl_implies_gendecl actions (case snd (pop !! 0) of { StackValue_gendecl value -> value; _ -> undefined })
-                    65 ->
+                    61 ->
                       Monad.liftM StackValue_decl $ decl_implies_funlhs_rhs actions (case snd (pop !! 1) of { StackValue_funlhs value -> value; _ -> undefined }) (case snd (pop !! 0) of { StackValue_rhs value -> value; _ -> undefined })
-                    66 ->
+                    62 ->
                       Monad.liftM StackValue_decl $ decl_implies_var_rhs actions (case snd (pop !! 1) of { StackValue_var value -> value; _ -> undefined }) (case snd (pop !! 0) of { StackValue_rhs value -> value; _ -> undefined })
-                    67 ->
+                    63 ->
                       Monad.liftM StackValue_cdecls_opt $ cdecls_opt_implies actions
-                    68 ->
+                    64 ->
                       Monad.liftM StackValue_cdecls_opt $ cdecls_opt_implies_WHERE_cdecls actions (case snd (pop !! 1) of { StackValue_WHERE value -> value; _ -> undefined }) (case snd (pop !! 0) of { StackValue_cdecls value -> value; _ -> undefined })
-                    69 ->
+                    65 ->
                       Monad.liftM StackValue_cdecls $ cdecls_implies_LBRACE_cdecl_seq_RBRACE actions (case snd (pop !! 2) of { StackValue_LBRACE value -> value; _ -> undefined }) (case snd (pop !! 1) of { StackValue_cdecl_seq value -> value; _ -> undefined }) (case snd (pop !! 0) of { StackValue_RBRACE value -> value; _ -> undefined })
-                    70 ->
+                    66 ->
                       Monad.liftM StackValue_cdecl_seq $ cdecl_seq_implies_cdecl actions (case snd (pop !! 0) of { StackValue_cdecl value -> value; _ -> undefined })
-                    71 ->
+                    67 ->
                       Monad.liftM StackValue_cdecl_seq $ cdecl_seq_implies_cdecl_SEMICOLON_cdecl_seq actions (case snd (pop !! 2) of { StackValue_cdecl value -> value; _ -> undefined }) (case snd (pop !! 1) of { StackValue_SEMICOLON value -> value; _ -> undefined }) (case snd (pop !! 0) of { StackValue_cdecl_seq value -> value; _ -> undefined })
-                    72 ->
+                    68 ->
                       Monad.liftM StackValue_cdecl $ cdecl_implies_gendecl actions (case snd (pop !! 0) of { StackValue_gendecl value -> value; _ -> undefined })
-                    73 ->
+                    69 ->
                       Monad.liftM StackValue_cdecl $ cdecl_implies_funlhs_rhs actions (case snd (pop !! 1) of { StackValue_funlhs value -> value; _ -> undefined }) (case snd (pop !! 0) of { StackValue_rhs value -> value; _ -> undefined })
-                    74 ->
+                    70 ->
                       Monad.liftM StackValue_cdecl $ cdecl_implies_var_rhs actions (case snd (pop !! 1) of { StackValue_var value -> value; _ -> undefined }) (case snd (pop !! 0) of { StackValue_rhs value -> value; _ -> undefined })
-                    75 ->
+                    71 ->
                       Monad.liftM StackValue_idecls_opt $ idecls_opt_implies actions
-                    76 ->
+                    72 ->
                       Monad.liftM StackValue_idecls_opt $ idecls_opt_implies_WHERE_idecls actions (case snd (pop !! 1) of { StackValue_WHERE value -> value; _ -> undefined }) (case snd (pop !! 0) of { StackValue_idecls value -> value; _ -> undefined })
-                    77 ->
+                    73 ->
                       Monad.liftM StackValue_idecls $ idecls_implies_LBRACE_idecl_seq_RBRACE actions (case snd (pop !! 2) of { StackValue_LBRACE value -> value; _ -> undefined }) (case snd (pop !! 1) of { StackValue_idecl_seq value -> value; _ -> undefined }) (case snd (pop !! 0) of { StackValue_RBRACE value -> value; _ -> undefined })
-                    78 ->
+                    74 ->
                       Monad.liftM StackValue_idecl_seq $ idecl_seq_implies_idecl actions (case snd (pop !! 0) of { StackValue_idecl value -> value; _ -> undefined })
-                    79 ->
+                    75 ->
                       Monad.liftM StackValue_idecl_seq $ idecl_seq_implies_idecl_SEMICOLON_idecl_seq actions (case snd (pop !! 2) of { StackValue_idecl value -> value; _ -> undefined }) (case snd (pop !! 1) of { StackValue_SEMICOLON value -> value; _ -> undefined }) (case snd (pop !! 0) of { StackValue_idecl_seq value -> value; _ -> undefined })
-                    80 ->
+                    76 ->
                       Monad.liftM StackValue_idecl $ idecl_implies actions
-                    81 ->
+                    77 ->
                       Monad.liftM StackValue_idecl $ idecl_implies_funlhs_rhs actions (case snd (pop !! 1) of { StackValue_funlhs value -> value; _ -> undefined }) (case snd (pop !! 0) of { StackValue_rhs value -> value; _ -> undefined })
-                    82 ->
+                    78 ->
                       Monad.liftM StackValue_idecl $ idecl_implies_var_rhs actions (case snd (pop !! 1) of { StackValue_var value -> value; _ -> undefined }) (case snd (pop !! 0) of { StackValue_rhs value -> value; _ -> undefined })
-                    83 ->
+                    79 ->
                       Monad.liftM StackValue_gendecl $ gendecl_implies actions
-                    84 ->
+                    80 ->
                       Monad.liftM StackValue_gendecl $ gendecl_implies_vars_COLON_COLON_type' actions (case snd (pop !! 2) of { StackValue_vars value -> value; _ -> undefined }) (case snd (pop !! 1) of { StackValue_COLON_COLON value -> value; _ -> undefined }) (case snd (pop !! 0) of { StackValue_type' value -> value; _ -> undefined })
-                    85 ->
+                    81 ->
                       Monad.liftM StackValue_gendecl $ gendecl_implies_vars_COLON_COLON_btype_DARROW_type' actions (case snd (pop !! 4) of { StackValue_vars value -> value; _ -> undefined }) (case snd (pop !! 3) of { StackValue_COLON_COLON value -> value; _ -> undefined }) (case snd (pop !! 2) of { StackValue_btype value -> value; _ -> undefined }) (case snd (pop !! 1) of { StackValue_DARROW value -> value; _ -> undefined }) (case snd (pop !! 0) of { StackValue_type' value -> value; _ -> undefined })
-                    86 ->
+                    82 ->
                       Monad.liftM StackValue_gendecl $ gendecl_implies_fixity_integer_opt_ops actions (case snd (pop !! 2) of { StackValue_fixity value -> value; _ -> undefined }) (case snd (pop !! 1) of { StackValue_integer_opt value -> value; _ -> undefined }) (case snd (pop !! 0) of { StackValue_ops value -> value; _ -> undefined })
-                    87 ->
+                    83 ->
                       Monad.liftM StackValue_ops $ ops_implies_op actions (case snd (pop !! 0) of { StackValue_op value -> value; _ -> undefined })
-                    88 ->
+                    84 ->
                       Monad.liftM StackValue_ops $ ops_implies_op_COMMA_ops actions (case snd (pop !! 2) of { StackValue_op value -> value; _ -> undefined }) (case snd (pop !! 1) of { StackValue_COMMA value -> value; _ -> undefined }) (case snd (pop !! 0) of { StackValue_ops value -> value; _ -> undefined })
-                    89 ->
+                    85 ->
                       Monad.liftM StackValue_vars $ vars_implies_var actions (case snd (pop !! 0) of { StackValue_var value -> value; _ -> undefined })
-                    90 ->
+                    86 ->
                       Monad.liftM StackValue_vars $ vars_implies_var_COMMA_vars actions (case snd (pop !! 2) of { StackValue_var value -> value; _ -> undefined }) (case snd (pop !! 1) of { StackValue_COMMA value -> value; _ -> undefined }) (case snd (pop !! 0) of { StackValue_vars value -> value; _ -> undefined })
-                    91 ->
+                    87 ->
                       Monad.liftM StackValue_fixity $ fixity_implies_INFIXL actions (case snd (pop !! 0) of { StackValue_INFIXL value -> value; _ -> undefined })
-                    92 ->
+                    88 ->
                       Monad.liftM StackValue_fixity $ fixity_implies_INFIXR actions (case snd (pop !! 0) of { StackValue_INFIXR value -> value; _ -> undefined })
-                    93 ->
+                    89 ->
                       Monad.liftM StackValue_fixity $ fixity_implies_INFIX actions (case snd (pop !! 0) of { StackValue_INFIX value -> value; _ -> undefined })
-                    94 ->
+                    90 ->
                       Monad.liftM StackValue_type_seq $ type_seq_implies_type' actions (case snd (pop !! 0) of { StackValue_type' value -> value; _ -> undefined })
-                    95 ->
+                    91 ->
                       Monad.liftM StackValue_type_seq $ type_seq_implies_type'_COMMA_type_seq actions (case snd (pop !! 2) of { StackValue_type' value -> value; _ -> undefined }) (case snd (pop !! 1) of { StackValue_COMMA value -> value; _ -> undefined }) (case snd (pop !! 0) of { StackValue_type_seq value -> value; _ -> undefined })
-                    96 ->
+                    92 ->
                       Monad.liftM StackValue_type' $ type'_implies_btype actions (case snd (pop !! 0) of { StackValue_btype value -> value; _ -> undefined })
-                    97 ->
+                    93 ->
                       Monad.liftM StackValue_type' $ type'_implies_btype_ARROW_type' actions (case snd (pop !! 2) of { StackValue_btype value -> value; _ -> undefined }) (case snd (pop !! 1) of { StackValue_ARROW value -> value; _ -> undefined }) (case snd (pop !! 0) of { StackValue_type' value -> value; _ -> undefined })
-                    98 ->
+                    94 ->
                       Monad.liftM StackValue_btype $ btype_implies_atype actions (case snd (pop !! 0) of { StackValue_atype value -> value; _ -> undefined })
-                    99 ->
+                    95 ->
                       Monad.liftM StackValue_btype $ btype_implies_btype_atype actions (case snd (pop !! 1) of { StackValue_btype value -> value; _ -> undefined }) (case snd (pop !! 0) of { StackValue_atype value -> value; _ -> undefined })
-                    100 ->
+                    96 ->
                       Monad.liftM StackValue_atype $ atype_implies_gtycon actions (case snd (pop !! 0) of { StackValue_gtycon value -> value; _ -> undefined })
-                    101 ->
+                    97 ->
                       Monad.liftM StackValue_atype $ atype_implies_tyvar actions (case snd (pop !! 0) of { StackValue_tyvar value -> value; _ -> undefined })
-                    102 ->
+                    98 ->
                       Monad.liftM StackValue_atype $ atype_implies_LPAREN_type_seq2_RPAREN actions (case snd (pop !! 2) of { StackValue_LPAREN value -> value; _ -> undefined }) (case snd (pop !! 1) of { StackValue_type_seq2 value -> value; _ -> undefined }) (case snd (pop !! 0) of { StackValue_RPAREN value -> value; _ -> undefined })
-                    103 ->
+                    99 ->
                       Monad.liftM StackValue_atype $ atype_implies_LBRACKET_type'_RBRACKET actions (case snd (pop !! 2) of { StackValue_LBRACKET value -> value; _ -> undefined }) (case snd (pop !! 1) of { StackValue_type' value -> value; _ -> undefined }) (case snd (pop !! 0) of { StackValue_RBRACKET value -> value; _ -> undefined })
-                    104 ->
+                    100 ->
                       Monad.liftM StackValue_atype $ atype_implies_LPAREN_type'_RPAREN actions (case snd (pop !! 2) of { StackValue_LPAREN value -> value; _ -> undefined }) (case snd (pop !! 1) of { StackValue_type' value -> value; _ -> undefined }) (case snd (pop !! 0) of { StackValue_RPAREN value -> value; _ -> undefined })
-                    105 ->
+                    101 ->
                       Monad.liftM StackValue_atype $ atype_implies_EXCL_atype actions (case snd (pop !! 1) of { StackValue_EXCL value -> value; _ -> undefined }) (case snd (pop !! 0) of { StackValue_atype value -> value; _ -> undefined })
-                    106 ->
+                    102 ->
                       Monad.liftM StackValue_type_seq2 $ type_seq2_implies_type'_COMMA_type' actions (case snd (pop !! 2) of { StackValue_type' value -> value; _ -> undefined }) (case snd (pop !! 1) of { StackValue_COMMA value -> value; _ -> undefined }) (case snd (pop !! 0) of { StackValue_type' value -> value; _ -> undefined })
-                    107 ->
+                    103 ->
                       Monad.liftM StackValue_type_seq2 $ type_seq2_implies_type'_COMMA_type_seq2 actions (case snd (pop !! 2) of { StackValue_type' value -> value; _ -> undefined }) (case snd (pop !! 1) of { StackValue_COMMA value -> value; _ -> undefined }) (case snd (pop !! 0) of { StackValue_type_seq2 value -> value; _ -> undefined })
-                    108 ->
+                    104 ->
                       Monad.liftM StackValue_gtycon $ gtycon_implies_con actions (case snd (pop !! 0) of { StackValue_con value -> value; _ -> undefined })
-                    109 ->
+                    105 ->
                       Monad.liftM StackValue_gtycon $ gtycon_implies_LPAREN_RPAREN actions (case snd (pop !! 1) of { StackValue_LPAREN value -> value; _ -> undefined }) (case snd (pop !! 0) of { StackValue_RPAREN value -> value; _ -> undefined })
-                    110 ->
+                    106 ->
                       Monad.liftM StackValue_gtycon $ gtycon_implies_LBRACKET_RBRACKET actions (case snd (pop !! 1) of { StackValue_LBRACKET value -> value; _ -> undefined }) (case snd (pop !! 0) of { StackValue_RBRACKET value -> value; _ -> undefined })
-                    111 ->
+                    107 ->
                       Monad.liftM StackValue_gtycon $ gtycon_implies_LPAREN_ARROW_RPAREN actions (case snd (pop !! 2) of { StackValue_LPAREN value -> value; _ -> undefined }) (case snd (pop !! 1) of { StackValue_ARROW value -> value; _ -> undefined }) (case snd (pop !! 0) of { StackValue_RPAREN value -> value; _ -> undefined })
-                    112 ->
+                    108 ->
                       Monad.liftM StackValue_gtycon $ gtycon_implies_LPAREN_comma_list_RPAREN actions (case snd (pop !! 2) of { StackValue_LPAREN value -> value; _ -> undefined }) (case snd (pop !! 1) of { StackValue_comma_list value -> value; _ -> undefined }) (case snd (pop !! 0) of { StackValue_RPAREN value -> value; _ -> undefined })
-                    113 ->
+                    109 ->
                       Monad.liftM StackValue_comma_list $ comma_list_implies_COMMA actions (case snd (pop !! 0) of { StackValue_COMMA value -> value; _ -> undefined })
-                    114 ->
+                    110 ->
                       Monad.liftM StackValue_comma_list $ comma_list_implies_COMMA_comma_list actions (case snd (pop !! 1) of { StackValue_COMMA value -> value; _ -> undefined }) (case snd (pop !! 0) of { StackValue_comma_list value -> value; _ -> undefined })
-                    115 ->
+                    111 ->
                       Monad.liftM StackValue_constrs_opt $ constrs_opt_implies actions
-                    116 ->
+                    112 ->
                       Monad.liftM StackValue_constrs_opt $ constrs_opt_implies_EQUAL_constrs actions (case snd (pop !! 1) of { StackValue_EQUAL value -> value; _ -> undefined }) (case snd (pop !! 0) of { StackValue_constrs value -> value; _ -> undefined })
-                    117 ->
+                    113 ->
                       Monad.liftM StackValue_constrs $ constrs_implies_constr actions (case snd (pop !! 0) of { StackValue_constr value -> value; _ -> undefined })
-                    118 ->
+                    114 ->
                       Monad.liftM StackValue_constrs $ constrs_implies_constr_PIPE_constrs actions (case snd (pop !! 2) of { StackValue_constr value -> value; _ -> undefined }) (case snd (pop !! 1) of { StackValue_PIPE value -> value; _ -> undefined }) (case snd (pop !! 0) of { StackValue_constrs value -> value; _ -> undefined })
-                    119 ->
+                    115 ->
                       Monad.liftM StackValue_constr $ constr_implies_btype actions (case snd (pop !! 0) of { StackValue_btype value -> value; _ -> undefined })
-                    120 ->
+                    116 ->
                       Monad.liftM StackValue_constr $ constr_implies_btype_conop_btype actions (case snd (pop !! 2) of { StackValue_btype value -> value; _ -> undefined }) (case snd (pop !! 1) of { StackValue_conop value -> value; _ -> undefined }) (case snd (pop !! 0) of { StackValue_btype value -> value; _ -> undefined })
-                    121 ->
+                    117 ->
                       Monad.liftM StackValue_constr $ constr_implies_con_LBRACE_RBRACE actions (case snd (pop !! 2) of { StackValue_con value -> value; _ -> undefined }) (case snd (pop !! 1) of { StackValue_LBRACE value -> value; _ -> undefined }) (case snd (pop !! 0) of { StackValue_RBRACE value -> value; _ -> undefined })
-                    122 ->
+                    118 ->
                       Monad.liftM StackValue_constr $ constr_implies_con_LBRACE_fielddecl_seq_RBRACE actions (case snd (pop !! 3) of { StackValue_con value -> value; _ -> undefined }) (case snd (pop !! 2) of { StackValue_LBRACE value -> value; _ -> undefined }) (case snd (pop !! 1) of { StackValue_fielddecl_seq value -> value; _ -> undefined }) (case snd (pop !! 0) of { StackValue_RBRACE value -> value; _ -> undefined })
-                    123 ->
+                    119 ->
                       Monad.liftM StackValue_newconstr $ newconstr_implies_EQUAL_con_atype actions (case snd (pop !! 2) of { StackValue_EQUAL value -> value; _ -> undefined }) (case snd (pop !! 1) of { StackValue_con value -> value; _ -> undefined }) (case snd (pop !! 0) of { StackValue_atype value -> value; _ -> undefined })
-                    124 ->
+                    120 ->
                       Monad.liftM StackValue_newconstr $ newconstr_implies_EQUAL_con_LBRACE_var_COLON_COLON_type'_RBRACE actions (case snd (pop !! 6) of { StackValue_EQUAL value -> value; _ -> undefined }) (case snd (pop !! 5) of { StackValue_con value -> value; _ -> undefined }) (case snd (pop !! 4) of { StackValue_LBRACE value -> value; _ -> undefined }) (case snd (pop !! 3) of { StackValue_var value -> value; _ -> undefined }) (case snd (pop !! 2) of { StackValue_COLON_COLON value -> value; _ -> undefined }) (case snd (pop !! 1) of { StackValue_type' value -> value; _ -> undefined }) (case snd (pop !! 0) of { StackValue_RBRACE value -> value; _ -> undefined })
-                    125 ->
+                    121 ->
                       Monad.liftM StackValue_fielddecl_seq $ fielddecl_seq_implies_fielddecl actions (case snd (pop !! 0) of { StackValue_fielddecl value -> value; _ -> undefined })
-                    126 ->
+                    122 ->
                       Monad.liftM StackValue_fielddecl_seq $ fielddecl_seq_implies_fielddecl_COMMA_fielddecl_seq actions (case snd (pop !! 2) of { StackValue_fielddecl value -> value; _ -> undefined }) (case snd (pop !! 1) of { StackValue_COMMA value -> value; _ -> undefined }) (case snd (pop !! 0) of { StackValue_fielddecl_seq value -> value; _ -> undefined })
-                    127 ->
+                    123 ->
                       Monad.liftM StackValue_fielddecl $ fielddecl_implies_vars_COLON_COLON_type' actions (case snd (pop !! 2) of { StackValue_vars value -> value; _ -> undefined }) (case snd (pop !! 1) of { StackValue_COLON_COLON value -> value; _ -> undefined }) (case snd (pop !! 0) of { StackValue_type' value -> value; _ -> undefined })
-                    128 ->
+                    124 ->
                       Monad.liftM StackValue_dclass_seq $ dclass_seq_implies_dclass actions (case snd (pop !! 0) of { StackValue_dclass value -> value; _ -> undefined })
-                    129 ->
+                    125 ->
                       Monad.liftM StackValue_dclass_seq $ dclass_seq_implies_dclass_COMMA_dclass_seq actions (case snd (pop !! 2) of { StackValue_dclass value -> value; _ -> undefined }) (case snd (pop !! 1) of { StackValue_COMMA value -> value; _ -> undefined }) (case snd (pop !! 0) of { StackValue_dclass_seq value -> value; _ -> undefined })
-                    130 ->
+                    126 ->
                       Monad.liftM StackValue_dclass $ dclass_implies_QCONID actions (case snd (pop !! 0) of { StackValue_QCONID value -> value; _ -> undefined })
-                    131 ->
+                    127 ->
                       Monad.liftM StackValue_inst $ inst_implies_TODO_INST actions (case snd (pop !! 0) of { StackValue_TODO_INST value -> value; _ -> undefined })
-                    132 ->
+                    128 ->
                       Monad.liftM StackValue_fdecl $ fdecl_implies_IMPORT_callconv_impent_var_COLON_COLON_type' actions (case snd (pop !! 5) of { StackValue_IMPORT value -> value; _ -> undefined }) (case snd (pop !! 4) of { StackValue_callconv value -> value; _ -> undefined }) (case snd (pop !! 3) of { StackValue_impent value -> value; _ -> undefined }) (case snd (pop !! 2) of { StackValue_var value -> value; _ -> undefined }) (case snd (pop !! 1) of { StackValue_COLON_COLON value -> value; _ -> undefined }) (case snd (pop !! 0) of { StackValue_type' value -> value; _ -> undefined })
-                    133 ->
+                    129 ->
                       Monad.liftM StackValue_fdecl $ fdecl_implies_IMPORT_callconv_safety_impent_var_COLON_COLON_type' actions (case snd (pop !! 6) of { StackValue_IMPORT value -> value; _ -> undefined }) (case snd (pop !! 5) of { StackValue_callconv value -> value; _ -> undefined }) (case snd (pop !! 4) of { StackValue_safety value -> value; _ -> undefined }) (case snd (pop !! 3) of { StackValue_impent value -> value; _ -> undefined }) (case snd (pop !! 2) of { StackValue_var value -> value; _ -> undefined }) (case snd (pop !! 1) of { StackValue_COLON_COLON value -> value; _ -> undefined }) (case snd (pop !! 0) of { StackValue_type' value -> value; _ -> undefined })
-                    134 ->
+                    130 ->
                       Monad.liftM StackValue_fdecl $ fdecl_implies_EXPORT_callconv_expent_var_COLON_COLON_type' actions (case snd (pop !! 5) of { StackValue_EXPORT value -> value; _ -> undefined }) (case snd (pop !! 4) of { StackValue_callconv value -> value; _ -> undefined }) (case snd (pop !! 3) of { StackValue_expent value -> value; _ -> undefined }) (case snd (pop !! 2) of { StackValue_var value -> value; _ -> undefined }) (case snd (pop !! 1) of { StackValue_COLON_COLON value -> value; _ -> undefined }) (case snd (pop !! 0) of { StackValue_type' value -> value; _ -> undefined })
-                    135 ->
+                    131 ->
                       Monad.liftM StackValue_callconv $ callconv_implies_AS actions (case snd (pop !! 0) of { StackValue_AS value -> value; _ -> undefined })
-                    136 ->
+                    132 ->
                       Monad.liftM StackValue_callconv $ callconv_implies_EXPORT actions (case snd (pop !! 0) of { StackValue_EXPORT value -> value; _ -> undefined })
-                    137 ->
+                    133 ->
                       Monad.liftM StackValue_callconv $ callconv_implies_QVARID actions (case snd (pop !! 0) of { StackValue_QVARID value -> value; _ -> undefined })
-                    138 ->
+                    134 ->
                       Monad.liftM StackValue_impent $ impent_implies_STRING actions (case snd (pop !! 0) of { StackValue_STRING value -> value; _ -> undefined })
-                    139 ->
+                    135 ->
                       Monad.liftM StackValue_expent $ expent_implies_STRING actions (case snd (pop !! 0) of { StackValue_STRING value -> value; _ -> undefined })
-                    140 ->
+                    136 ->
                       Monad.liftM StackValue_safety $ safety_implies_AS actions (case snd (pop !! 0) of { StackValue_AS value -> value; _ -> undefined })
-                    141 ->
+                    137 ->
                       Monad.liftM StackValue_safety $ safety_implies_EXPORT actions (case snd (pop !! 0) of { StackValue_EXPORT value -> value; _ -> undefined })
-                    142 ->
+                    138 ->
                       Monad.liftM StackValue_safety $ safety_implies_QVARID actions (case snd (pop !! 0) of { StackValue_QVARID value -> value; _ -> undefined })
-                    143 ->
+                    139 ->
                       Monad.liftM StackValue_funlhs $ funlhs_implies_TODO_FUNLHS actions (case snd (pop !! 0) of { StackValue_TODO_FUNLHS value -> value; _ -> undefined })
-                    144 ->
+                    140 ->
                       Monad.liftM StackValue_rhs $ rhs_implies_EQUAL_exp actions (case snd (pop !! 1) of { StackValue_EQUAL value -> value; _ -> undefined }) (case snd (pop !! 0) of { StackValue_exp value -> value; _ -> undefined })
-                    145 ->
+                    141 ->
                       Monad.liftM StackValue_rhs $ rhs_implies_EQUAL_exp_WHERE_decls actions (case snd (pop !! 3) of { StackValue_EQUAL value -> value; _ -> undefined }) (case snd (pop !! 2) of { StackValue_exp value -> value; _ -> undefined }) (case snd (pop !! 1) of { StackValue_WHERE value -> value; _ -> undefined }) (case snd (pop !! 0) of { StackValue_decls value -> value; _ -> undefined })
-                    146 ->
+                    142 ->
                       Monad.liftM StackValue_exp $ exp_implies_infixexp actions (case snd (pop !! 0) of { StackValue_infixexp value -> value; _ -> undefined })
-                    147 ->
+                    143 ->
                       Monad.liftM StackValue_infixexp $ infixexp_implies_lexp actions (case snd (pop !! 0) of { StackValue_lexp value -> value; _ -> undefined })
-                    148 ->
+                    144 ->
                       Monad.liftM StackValue_lexp $ lexp_implies_fexp actions (case snd (pop !! 0) of { StackValue_fexp value -> value; _ -> undefined })
-                    149 ->
+                    145 ->
                       Monad.liftM StackValue_fexp $ fexp_implies_aexp actions (case snd (pop !! 0) of { StackValue_aexp value -> value; _ -> undefined })
-                    150 ->
+                    146 ->
                       Monad.liftM StackValue_fexp $ fexp_implies_fexp_aexp actions (case snd (pop !! 1) of { StackValue_fexp value -> value; _ -> undefined }) (case snd (pop !! 0) of { StackValue_aexp value -> value; _ -> undefined })
-                    151 ->
+                    147 ->
                       Monad.liftM StackValue_fexp $ fexp_implies_fexp_op_aexp actions (case snd (pop !! 2) of { StackValue_fexp value -> value; _ -> undefined }) (case snd (pop !! 1) of { StackValue_op value -> value; _ -> undefined }) (case snd (pop !! 0) of { StackValue_aexp value -> value; _ -> undefined })
-                    152 ->
+                    148 ->
                       Monad.liftM StackValue_aexp $ aexp_implies_var actions (case snd (pop !! 0) of { StackValue_var value -> value; _ -> undefined })
-                    153 ->
+                    149 ->
                       Monad.liftM StackValue_aexp $ aexp_implies_INTEGER actions (case snd (pop !! 0) of { StackValue_INTEGER value -> value; _ -> undefined })
-                    154 ->
+                    150 ->
                       Monad.liftM StackValue_var $ var_implies_AS actions (case snd (pop !! 0) of { StackValue_AS value -> value; _ -> undefined })
-                    155 ->
+                    151 ->
                       Monad.liftM StackValue_var $ var_implies_EXPORT actions (case snd (pop !! 0) of { StackValue_EXPORT value -> value; _ -> undefined })
-                    156 ->
+                    152 ->
                       Monad.liftM StackValue_var $ var_implies_QVARID actions (case snd (pop !! 0) of { StackValue_QVARID value -> value; _ -> undefined })
-                    157 ->
+                    153 ->
                       Monad.liftM StackValue_var $ var_implies_LPAREN_QVARSYM_RPAREN actions (case snd (pop !! 2) of { StackValue_LPAREN value -> value; _ -> undefined }) (case snd (pop !! 1) of { StackValue_QVARSYM value -> value; _ -> undefined }) (case snd (pop !! 0) of { StackValue_RPAREN value -> value; _ -> undefined })
-                    158 ->
+                    154 ->
                       Monad.liftM StackValue_con $ con_implies_QCONID actions (case snd (pop !! 0) of { StackValue_QCONID value -> value; _ -> undefined })
-                    159 ->
+                    155 ->
                       Monad.liftM StackValue_con $ con_implies_LPAREN_QCONSYM_RPAREN actions (case snd (pop !! 2) of { StackValue_LPAREN value -> value; _ -> undefined }) (case snd (pop !! 1) of { StackValue_QCONSYM value -> value; _ -> undefined }) (case snd (pop !! 0) of { StackValue_RPAREN value -> value; _ -> undefined })
-                    160 ->
+                    156 ->
                       Monad.liftM StackValue_varop $ varop_implies_QVARSYM actions (case snd (pop !! 0) of { StackValue_QVARSYM value -> value; _ -> undefined })
-                    161 ->
+                    157 ->
                       Monad.liftM StackValue_varop $ varop_implies_BACKQUOTE_AS_BACKQUOTE actions (case snd (pop !! 2) of { StackValue_BACKQUOTE value -> value; _ -> undefined }) (case snd (pop !! 1) of { StackValue_AS value -> value; _ -> undefined }) (case snd (pop !! 0) of { StackValue_BACKQUOTE value -> value; _ -> undefined })
-                    162 ->
+                    158 ->
                       Monad.liftM StackValue_varop $ varop_implies_BACKQUOTE_EXPORT_BACKQUOTE actions (case snd (pop !! 2) of { StackValue_BACKQUOTE value -> value; _ -> undefined }) (case snd (pop !! 1) of { StackValue_EXPORT value -> value; _ -> undefined }) (case snd (pop !! 0) of { StackValue_BACKQUOTE value -> value; _ -> undefined })
-                    163 ->
+                    159 ->
                       Monad.liftM StackValue_varop $ varop_implies_BACKQUOTE_QVARID_BACKQUOTE actions (case snd (pop !! 2) of { StackValue_BACKQUOTE value -> value; _ -> undefined }) (case snd (pop !! 1) of { StackValue_QVARID value -> value; _ -> undefined }) (case snd (pop !! 0) of { StackValue_BACKQUOTE value -> value; _ -> undefined })
-                    164 ->
+                    160 ->
                       Monad.liftM StackValue_conop $ conop_implies_QCONSYM actions (case snd (pop !! 0) of { StackValue_QCONSYM value -> value; _ -> undefined })
-                    165 ->
+                    161 ->
                       Monad.liftM StackValue_conop $ conop_implies_BACKQUOTE_QCONID_BACKQUOTE actions (case snd (pop !! 2) of { StackValue_BACKQUOTE value -> value; _ -> undefined }) (case snd (pop !! 1) of { StackValue_QCONID value -> value; _ -> undefined }) (case snd (pop !! 0) of { StackValue_BACKQUOTE value -> value; _ -> undefined })
-                    166 ->
+                    162 ->
                       Monad.liftM StackValue_op $ op_implies_varop actions (case snd (pop !! 0) of { StackValue_varop value -> value; _ -> undefined })
-                    167 ->
+                    163 ->
                       Monad.liftM StackValue_op $ op_implies_conop actions (case snd (pop !! 0) of { StackValue_conop value -> value; _ -> undefined })
-                    168 ->
+                    164 ->
                       Monad.liftM StackValue_as_opt $ as_opt_implies actions
-                    169 ->
+                    165 ->
                       Monad.liftM StackValue_as_opt $ as_opt_implies_AS_modid actions (case snd (pop !! 1) of { StackValue_AS value -> value; _ -> undefined }) (case snd (pop !! 0) of { StackValue_modid value -> value; _ -> undefined })
-                    170 ->
+                    166 ->
                       Monad.liftM StackValue_qualified_opt $ qualified_opt_implies actions
-                    171 ->
+                    167 ->
                       Monad.liftM StackValue_qualified_opt $ qualified_opt_implies_QUALIFIED actions (case snd (pop !! 0) of { StackValue_QUALIFIED value -> value; _ -> undefined })
-                    172 ->
+                    168 ->
                       Monad.liftM StackValue_tyvar $ tyvar_implies_AS actions (case snd (pop !! 0) of { StackValue_AS value -> value; _ -> undefined })
-                    173 ->
+                    169 ->
                       Monad.liftM StackValue_tyvar $ tyvar_implies_EXPORT actions (case snd (pop !! 0) of { StackValue_EXPORT value -> value; _ -> undefined })
-                    174 ->
+                    170 ->
                       Monad.liftM StackValue_tyvar $ tyvar_implies_QVARID actions (case snd (pop !! 0) of { StackValue_QVARID value -> value; _ -> undefined })
-                    175 ->
+                    171 ->
                       Monad.liftM StackValue_tycls $ tycls_implies_QCONID actions (case snd (pop !! 0) of { StackValue_QCONID value -> value; _ -> undefined })
-                    176 ->
+                    172 ->
                       Monad.liftM StackValue_modid $ modid_implies_QCONID actions (case snd (pop !! 0) of { StackValue_QCONID value -> value; _ -> undefined })
-                    177 ->
+                    173 ->
                       Monad.liftM StackValue_integer_opt $ integer_opt_implies actions
-                    178 ->
+                    174 ->
                       Monad.liftM StackValue_integer_opt $ integer_opt_implies_INTEGER actions (case snd (pop !! 0) of { StackValue_INTEGER value -> value; _ -> undefined })
                 parse' ((q, value) : stack') tokens
         Just Accept ->
@@ -3569,14 +3541,6 @@ semanticActions = SemanticActions
       return $ Export_implies_con_LPAREN_cname_seq_RPAREN con0 lPAREN1 cname_seq2 rPAREN3
   , export_implies_MODULE_modid = \mODULE0 modid1 ->
       return $ Export_implies_MODULE_modid mODULE0 modid1
-  , impspec_opt_implies =
-      return $ Impspec_opt_implies
-  , impspec_opt_implies_impspec = \impspec0 ->
-      return $ Impspec_opt_implies_impspec impspec0
-  , impspec_implies_LPAREN_import_seq_RPAREN = \lPAREN0 import_seq1 rPAREN2 ->
-      return $ Impspec_implies_LPAREN_import_seq_RPAREN lPAREN0 import_seq1 rPAREN2
-  , impspec_implies_HIDING_LPAREN_import_seq_RPAREN = \hIDING0 lPAREN1 import_seq2 rPAREN3 ->
-      return $ Impspec_implies_HIDING_LPAREN_import_seq_RPAREN hIDING0 lPAREN1 import_seq2 rPAREN3
   , import_seq_implies =
       return $ Import_seq_implies
   , import_seq_implies_import' = \import'0 ->

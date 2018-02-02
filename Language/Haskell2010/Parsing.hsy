@@ -79,13 +79,6 @@ def rule export :=
 | con LPAREN cname_seq RPAREN
 | MODULE modid
 
-def rule impspec_opt :=
-| impspec
-
-def rule impspec :=
-  LPAREN import_seq RPAREN
-| HIDING LPAREN import_seq RPAREN
-
 def rule import_seq :=
 | import'
 | import' COMMA import_seq
