@@ -24,6 +24,12 @@
 module Main where {
   import qualified Control.Monad as Monad;
 
+  fib :: Int -> Int;
+  fib n
+    | n == 0 = 0
+    | n == 1 = 1
+    | otherwise = fib (n - 2) + fib (n - 1);
+
   as :: Int;
   as = 1;
 
@@ -32,5 +38,5 @@ module Main where {
 
   -- main function
   main :: IO ();
-  main = print 42;
+  main = putStrLn "hello world";
 }

@@ -315,6 +315,8 @@ def rule fexp :=
 def rule aexp :=
   var
 | INTEGER
+| STRING
+| LPAREN exp RPAREN
 
 def rule pat :=
   apat
