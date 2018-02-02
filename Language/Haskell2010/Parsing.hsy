@@ -5,7 +5,6 @@
 
 %{
 type Pos = (Int, Int)
-type RARROW = Pos
 type AS = Pos
 type BACKQUOTE = Pos
 type CLASS = Pos
@@ -27,8 +26,10 @@ type INFIXL = Pos
 type INFIXR = Pos
 type INSTANCE = Pos
 type INTEGER = (Pos, Integer)
+type LARROW = Pos
 type LBRACE = Pos
 type LBRACKET = Pos
+type LET = Pos
 type LPAREN = Pos
 type MODULE = Pos
 type NEWTYPE = Pos
@@ -40,6 +41,7 @@ type QVARID = (Pos, String)
 type QVARSYM = (Pos, String)
 type RBRACE = Pos
 type RBRACKET = Pos
+type RARROW = Pos
 type RPAREN = Pos
 type SEMICOLON = Pos
 type STRING = (Pos, String)
@@ -141,7 +143,11 @@ def rule decl_seq :=
 
 def rule decl :=
   gendecl
-| pat rhs
+| pat EQUAL exp
+| pat EQUAL exp WHERE decls
+| pat PIPE gdrhs
+| pat PIPE gdrhs WHERE decls
+
 
 def rule cdecls_opt :=
 | WHERE cdecls
@@ -155,7 +161,10 @@ def rule cdecl_seq :=
 
 def rule cdecl :=
   gendecl
-| pat rhs
+| pat EQUAL exp
+| pat EQUAL exp WHERE decls
+| pat PIPE gdrhs
+| pat PIPE gdrhs WHERE decls
 
 def rule idecls_opt :=
 | WHERE idecls
@@ -168,7 +177,10 @@ def rule idecl_seq :=
 | idecl SEMICOLON idecl_seq
 
 def rule idecl :=
-| pat rhs
+| pat EQUAL exp
+| pat EQUAL exp WHERE decls
+| pat PIPE gdrhs
+| pat PIPE gdrhs WHERE decls
 
 def rule gendecl :=
 | vars COLON_COLON type'
@@ -275,12 +287,16 @@ def rule safety :=
 | EXPORT
 | QVARID
 
-def rule lhs :=
-  pat
+def rule gdrhs :=
+  guards EQUAL exp
+| guards EQUAL exp PIPE gdrhs
 
-def rule rhs :=
-  EQUAL exp
-| EQUAL exp WHERE decls
+def rule guards :=
+  guard
+| guard COMMA guards
+
+def rule guard :=
+  infixexp
 
 def rule exp :=
   infixexp
