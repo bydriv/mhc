@@ -171,8 +171,8 @@ firstSet (N n : ss) sets @ (nullable, first, _) =
 goto :: (Ord t, Ord n) => RBSet.RBSet (Item t n) -> Symbol t n -> Sets t n -> Grammar t n -> RBSet.RBSet (Item t n)
 goto items symbol sets grm =
   let items' =
-        foldl
-          (\items'' (left, middle, right, lookahead) ->
+        RBSet.foldl
+          (\(left, middle, right, lookahead) items'' ->
             case right of
               [] ->
                 items''
@@ -182,7 +182,7 @@ goto items symbol sets grm =
                 else
                   items'')
           RBSet.empty
-          (RBSet.toList items) in
+          items in
     closure items' sets grm
 
 closure :: (Ord t, Ord n) => RBSet.RBSet (Item t n) -> Sets t n -> Grammar t n -> RBSet.RBSet (Item t n)
