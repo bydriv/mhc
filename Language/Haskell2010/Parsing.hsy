@@ -5,7 +5,7 @@
 
 %{
 type Pos = (Int, Int)
-type ARROW = Pos
+type RARROW = Pos
 type AS = Pos
 type BACKQUOTE = Pos
 type CLASS = Pos
@@ -141,8 +141,7 @@ def rule decl_seq :=
 
 def rule decl :=
   gendecl
-| funlhs rhs
-| var rhs
+| pat rhs
 
 def rule cdecls_opt :=
 | WHERE cdecls
@@ -156,8 +155,7 @@ def rule cdecl_seq :=
 
 def rule cdecl :=
   gendecl
-| funlhs rhs
-| var rhs
+| pat rhs
 
 def rule idecls_opt :=
 | WHERE idecls
@@ -170,8 +168,7 @@ def rule idecl_seq :=
 | idecl SEMICOLON idecl_seq
 
 def rule idecl :=
-| funlhs rhs
-| var rhs
+| pat rhs
 
 def rule gendecl :=
 | vars COLON_COLON type'
@@ -197,7 +194,7 @@ def rule type_seq :=
 
 def rule type' :=
   btype
-| btype ARROW type'
+| btype RARROW type'
 
 def rule btype :=
   atype
@@ -219,7 +216,7 @@ def rule gtycon :=
   con
 | LPAREN RPAREN
 | LBRACKET RBRACKET
-| LPAREN ARROW RPAREN
+| LPAREN RARROW RPAREN
 | LPAREN comma_list RPAREN
 
 def rule comma_list :=
@@ -257,9 +254,6 @@ def rule dclass_seq :=
 def rule dclass :=
   QCONID
 
-def rule inst :=
-  TODO_INST
-
 def rule fdecl :=
   IMPORT callconv impent var COLON_COLON type'
 | IMPORT callconv safety impent var COLON_COLON type'
@@ -281,8 +275,8 @@ def rule safety :=
 | EXPORT
 | QVARID
 
-def rule funlhs :=
-  TODO_FUNLHS
+def rule lhs :=
+  pat
 
 def rule rhs :=
   EQUAL exp
@@ -305,6 +299,13 @@ def rule fexp :=
 def rule aexp :=
   var
 | INTEGER
+
+def rule pat :=
+  apat
+| pat apat
+
+def rule apat :=
+  var
 
 def rule var :=
   AS

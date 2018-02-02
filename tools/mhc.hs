@@ -24,7 +24,6 @@ import qualified Language.Haskell2010.Parsing as Parsing
 type AST = Parsing.Module'
 
 posOf :: Parsing.Token -> Parsing.Pos
-posOf (Parsing.ARROW pos) = pos
 posOf (Parsing.AS pos) = pos
 posOf (Parsing.BACKQUOTE pos) = pos
 posOf (Parsing.CLASS pos) = pos
@@ -57,6 +56,7 @@ posOf (Parsing.QCONSYM (pos, _)) = pos
 posOf (Parsing.QUALIFIED pos) = pos
 posOf (Parsing.QVARID (pos, _)) = pos
 posOf (Parsing.QVARSYM (pos, _)) = pos
+posOf (Parsing.RARROW pos) = pos
 posOf (Parsing.RBRACE pos) = pos
 posOf (Parsing.RBRACKET pos) = pos
 posOf (Parsing.RPAREN pos) = pos

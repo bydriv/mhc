@@ -11,7 +11,6 @@ import qualified Language.Haskell2010.Parsing as Parsing
 case (Initial, "\r\n" | '\r' | '\n' | '\f' | '\v' | ' ' | '\t' | Zs) => saWhitechar
 case (Initial, "--" '-'*) => saOpenDashes
 case (Initial, "{-") => saOpenNested
-case (Initial, "->") => saArrow
 case (Initial, "as") => saAs
 case (Initial, '`') => saBackquote
 case (Initial, "class") => saClass
@@ -40,6 +39,7 @@ case (Initial, "module") => saModule
 case (Initial, "newtype") => saNewtype
 case (Initial, '|') => saPipe
 case (Initial, "qualified") => saQualified
+case (Initial, "->") => saRArrow
 case (Initial, '}') => saRBrace
 case (Initial, ']') => saRBracket
 case (Initial, ')') => saRParen
@@ -95,8 +95,6 @@ semanticActions = SemanticActions
 
       return Nothing
 
-  , saArrow = withPosition $ \pos n _ ->
-      return $ Just $ Parsing.ARROW (pos, n)
   , saAs = withPosition $ \pos n _ ->
       return $ Just $ Parsing.AS (pos, n)
   , saBackquote = withPosition $ \pos n _ ->
@@ -153,6 +151,8 @@ semanticActions = SemanticActions
       return $ Just $ Parsing.PIPE (pos, n)
   , saQualified = withPosition $ \pos n _ ->
       return $ Just $ Parsing.QUALIFIED (pos, n)
+  , saRArrow = withPosition $ \pos n _ ->
+      return $ Just $ Parsing.RARROW (pos, n)
   , saRBrace = withPosition $ \pos n _ ->
       return $ Just $ Parsing.RBRACE (pos, n)
   , saRBracket = withPosition $ \pos n _ ->
