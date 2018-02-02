@@ -168,30 +168,6 @@ firstSet (N n : ss) sets @ (nullable, first, _) =
   else
     maybe RBSet.empty id $ RBMap.lookup (N n) first
 
-closure :: (Ord t, Ord n) => RBSet.RBSet (Item t n) -> Sets t n -> Grammar t n -> RBSet.RBSet (Item t n)
-closure items sets @ (_, first, _) grm =
-  let items' =
-        RBSet.union
-          items
-          (RBSet.fromList
-            (concatMap
-              (\(left, middle, right, lookahead) ->
-                case right of
-                  [] ->
-                    []
-                  T _ : _ ->
-                    []
-                  N n : ss ->
-                    concatMap
-                      (\(left', right') ->
-                        map (\t -> (left', [], right', t)) (RBSet.toList (firstSet (ss ++ [T lookahead]) sets)))
-                      (filter (\(left', _) -> left' == n) grm))
-              (RBSet.toList items))) in
-  if items' == items then
-    items'
-  else
-    closure items' sets grm
-
 goto :: (Ord t, Ord n) => RBSet.RBSet (Item t n) -> Symbol t n -> Sets t n -> Grammar t n -> RBSet.RBSet (Item t n)
 goto items symbol sets grm =
   let items' =
@@ -208,6 +184,32 @@ goto items symbol sets grm =
           RBSet.empty
           (RBSet.toList items) in
     closure items' sets grm
+
+closure :: (Ord t, Ord n) => RBSet.RBSet (Item t n) -> Sets t n -> Grammar t n -> RBSet.RBSet (Item t n)
+closure items sets @ (_, first, _) grm =
+    closure' items RBSet.empty
+  where
+    closure' items1 items2 =
+      let items3 =
+            RBSet.fromList
+              (concatMap
+                (\(left, middle, right, lookahead) ->
+                  case right of
+                    [] ->
+                      []
+                    T _ : _ ->
+                      []
+                    N n : ss ->
+                      concatMap
+                        (\(left', right') ->
+                          map (\t -> (left', [], right', t)) (RBSet.toList (firstSet (ss ++ [T lookahead]) sets)))
+                        (filter (\(left', _) -> left' == n) grm))
+                (RBSet.toList items1)) in
+      let items4 = RBSet.union items1 items2 in
+        if RBSet.subset items3 items4 then
+          items4
+        else
+          closure' items3 items4
 
 makeTable :: (Ord t, Ord n) => n -> Grammar t n -> Maybe (ActionTable t n, GotoTable t n)
 makeTable start grm0 =
