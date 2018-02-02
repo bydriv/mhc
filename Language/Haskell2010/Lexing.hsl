@@ -32,8 +32,10 @@ case (Initial, "infixl") => saInfixL
 case (Initial, "infixr") => saInfixR
 case (Initial, "instance") => saInstance
 case (Initial, Nd+ | ("0o"| "0O") ['0'-'7']+ | ("0x" | "0X") (Nd | ['a'-'f'] | ['A'-'F'])+) => saInteger
+case (Initial, "<-") => saLArrow
 case (Initial, '{') => saLBrace
 case (Initial, '[') => saLBracket
+case (Initial, "let") => saLet
 case (Initial, '(') => saLParen
 case (Initial, "module") => saModule
 case (Initial, "newtype") => saNewtype
@@ -137,10 +139,14 @@ semanticActions = SemanticActions
       return $ Just $ Parsing.INSTANCE (pos, n)
   , saInteger = withPosition $ \pos n yytext ->
       return $ Just $ Parsing.INTEGER ((pos, n), read yytext)
+  , saLArrow = withPosition $ \pos n _ ->
+      return $ Just $ Parsing.LARROW (pos, n)
   , saLBrace = withPosition $ \pos n _ ->
       return $ Just $ Parsing.LBRACE (pos, n)
   , saLBracket = withPosition $ \pos n _ ->
       return $ Just $ Parsing.LBRACKET (pos, n)
+  , saLet = withPosition $ \pos n _ ->
+      return $ Just $ Parsing.LET (pos, n)
   , saLParen = withPosition $ \pos n _ ->
       return $ Just $ Parsing.LPAREN (pos, n)
   , saModule = withPosition $ \pos n _ ->

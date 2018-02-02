@@ -296,7 +296,9 @@ def rule guards :=
 | guard COMMA guards
 
 def rule guard :=
-  infixexp
+  infixexp LARROW exp
+| LET decls
+| infixexp
 
 def rule exp :=
   infixexp

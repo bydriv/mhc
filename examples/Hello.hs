@@ -26,8 +26,8 @@ module Main where {
 
   fib :: Int -> Int;
   fib n
-    | n == 0 = 0
-    | n == 1 = 1
+    | n == 0, m <- n = 0
+    | n == 1, let {m = n} = 1
     | otherwise = fib (n - 2) + fib (n - 1);
 
   as :: Int;
