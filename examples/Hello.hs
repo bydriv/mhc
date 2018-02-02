@@ -22,6 +22,11 @@
 -}
 
 module Main where {
+  import qualified Control.Monad as Monad;
+
+  as :: Int;
+  as = 1;
+
   foreign import ccall safe "static stdio.h puts"
     puts :: Foreign.C.CString -> IO ();
 

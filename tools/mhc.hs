@@ -37,6 +37,7 @@ posOf (Parsing.DERIVING pos) = pos
 posOf (Parsing.DOT_DOT pos) = pos
 posOf (Parsing.EQUAL pos) = pos
 posOf (Parsing.EXCL pos) = pos
+posOf (Parsing.EXPORT pos) = pos
 posOf (Parsing.FOREIGN pos) = pos
 posOf (Parsing.HIDING pos) = pos
 posOf (Parsing.IMPORT pos) = pos
@@ -60,6 +61,7 @@ posOf (Parsing.RBRACE pos) = pos
 posOf (Parsing.RBRACKET pos) = pos
 posOf (Parsing.RPAREN pos) = pos
 posOf (Parsing.SEMICOLON pos) = pos
+posOf (Parsing.STRING (pos, _)) = pos
 posOf (Parsing.TYPE pos) = pos
 posOf (Parsing.WHERE pos) = pos
 

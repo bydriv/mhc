@@ -37,6 +37,7 @@ data SemanticActions m a = SemanticActions
   , saDotDot :: String -> Lexing m a
   , saEqual :: String -> Lexing m a
   , saExcl :: String -> Lexing m a
+  , saExport :: String -> Lexing m a
   , saForeign :: String -> Lexing m a
   , saHiding :: String -> Lexing m a
   , saImport :: String -> Lexing m a
@@ -443,10 +444,38 @@ dfa16InitialState :: Int
 dfa16InitialState = 1
 
 dfa16FinalStates :: [Int]
-dfa16FinalStates = [8]
+dfa16FinalStates = [7]
 
 dfa16Transition :: Int -> Char -> Int
 dfa16Transition q c =
+  let c' :: Int
+      c' =
+        case Char.ord c of
+          101 -> 1
+          111 -> 2
+          112 -> 3
+          114 -> 4
+          116 -> 5
+          120 -> 6
+          c'' ->
+            0 in
+    case (q, c') of
+      (1, 1) -> 2
+      (2, 6) -> 3
+      (3, 3) -> 4
+      (4, 2) -> 5
+      (5, 4) -> 6
+      (6, 5) -> 7
+      _ -> 0
+
+dfa17InitialState :: Int
+dfa17InitialState = 1
+
+dfa17FinalStates :: [Int]
+dfa17FinalStates = [8]
+
+dfa17Transition :: Int -> Char -> Int
+dfa17Transition q c =
   let c' :: Int
       c' =
         case Char.ord c of
@@ -469,14 +498,14 @@ dfa16Transition q c =
       (7, 5) -> 8
       _ -> 0
 
-dfa17InitialState :: Int
-dfa17InitialState = 1
+dfa18InitialState :: Int
+dfa18InitialState = 1
 
-dfa17FinalStates :: [Int]
-dfa17FinalStates = [7]
+dfa18FinalStates :: [Int]
+dfa18FinalStates = [7]
 
-dfa17Transition :: Int -> Char -> Int
-dfa17Transition q c =
+dfa18Transition :: Int -> Char -> Int
+dfa18Transition q c =
   let c' :: Int
       c' =
         case Char.ord c of
@@ -496,14 +525,14 @@ dfa17Transition q c =
       (6, 2) -> 7
       _ -> 0
 
-dfa18InitialState :: Int
-dfa18InitialState = 1
+dfa19InitialState :: Int
+dfa19InitialState = 1
 
-dfa18FinalStates :: [Int]
-dfa18FinalStates = [7]
+dfa19FinalStates :: [Int]
+dfa19FinalStates = [7]
 
-dfa18Transition :: Int -> Char -> Int
-dfa18Transition q c =
+dfa19Transition :: Int -> Char -> Int
+dfa19Transition q c =
   let c' :: Int
       c' =
         case Char.ord c of
@@ -524,14 +553,14 @@ dfa18Transition q c =
       (6, 6) -> 7
       _ -> 0
 
-dfa19InitialState :: Int
-dfa19InitialState = 1
+dfa20InitialState :: Int
+dfa20InitialState = 1
 
-dfa19FinalStates :: [Int]
-dfa19FinalStates = [6]
+dfa20FinalStates :: [Int]
+dfa20FinalStates = [6]
 
-dfa19Transition :: Int -> Char -> Int
-dfa19Transition q c =
+dfa20Transition :: Int -> Char -> Int
+dfa20Transition q c =
   let c' :: Int
       c' =
         case Char.ord c of
@@ -549,14 +578,14 @@ dfa19Transition q c =
       (5, 4) -> 6
       _ -> 0
 
-dfa20InitialState :: Int
-dfa20InitialState = 1
+dfa21InitialState :: Int
+dfa21InitialState = 1
 
-dfa20FinalStates :: [Int]
-dfa20FinalStates = [7]
+dfa21FinalStates :: [Int]
+dfa21FinalStates = [7]
 
-dfa20Transition :: Int -> Char -> Int
-dfa20Transition q c =
+dfa21Transition :: Int -> Char -> Int
+dfa21Transition q c =
   let c' :: Int
       c' =
         case Char.ord c of
@@ -576,14 +605,14 @@ dfa20Transition q c =
       (6, 3) -> 7
       _ -> 0
 
-dfa21InitialState :: Int
-dfa21InitialState = 1
+dfa22InitialState :: Int
+dfa22InitialState = 1
 
-dfa21FinalStates :: [Int]
-dfa21FinalStates = [7]
+dfa22FinalStates :: [Int]
+dfa22FinalStates = [7]
 
-dfa21Transition :: Int -> Char -> Int
-dfa21Transition q c =
+dfa22Transition :: Int -> Char -> Int
+dfa22Transition q c =
   let c' :: Int
       c' =
         case Char.ord c of
@@ -603,14 +632,14 @@ dfa21Transition q c =
       (6, 4) -> 7
       _ -> 0
 
-dfa22InitialState :: Int
-dfa22InitialState = 1
+dfa23InitialState :: Int
+dfa23InitialState = 1
 
-dfa22FinalStates :: [Int]
-dfa22FinalStates = [9]
+dfa23FinalStates :: [Int]
+dfa23FinalStates = [9]
 
-dfa22Transition :: Int -> Char -> Int
-dfa22Transition q c =
+dfa23Transition :: Int -> Char -> Int
+dfa23Transition q c =
   let c' :: Int
       c' =
         case Char.ord c of
@@ -634,14 +663,14 @@ dfa22Transition q c =
       (8, 3) -> 9
       _ -> 0
 
-dfa23InitialState :: Int
-dfa23InitialState = 1
+dfa24InitialState :: Int
+dfa24InitialState = 1
 
-dfa23FinalStates :: [Int]
-dfa23FinalStates = [2,3,6,7]
+dfa24FinalStates :: [Int]
+dfa24FinalStates = [2,3,6,7]
 
-dfa23Transition :: Int -> Char -> Int
-dfa23Transition q c =
+dfa24Transition :: Int -> Char -> Int
+dfa24Transition q c =
   let c' :: Int
       c' =
         case Char.ord c of
@@ -686,24 +715,6 @@ dfa23Transition q c =
       (7, 7) -> 7
       _ -> 0
 
-dfa24InitialState :: Int
-dfa24InitialState = 1
-
-dfa24FinalStates :: [Int]
-dfa24FinalStates = [2]
-
-dfa24Transition :: Int -> Char -> Int
-dfa24Transition q c =
-  let c' :: Int
-      c' =
-        case Char.ord c of
-          123 -> 1
-          c'' ->
-            0 in
-    case (q, c') of
-      (1, 1) -> 2
-      _ -> 0
-
 dfa25InitialState :: Int
 dfa25InitialState = 1
 
@@ -715,7 +726,7 @@ dfa25Transition q c =
   let c' :: Int
       c' =
         case Char.ord c of
-          91 -> 1
+          123 -> 1
           c'' ->
             0 in
     case (q, c') of
@@ -733,7 +744,7 @@ dfa26Transition q c =
   let c' :: Int
       c' =
         case Char.ord c of
-          40 -> 1
+          91 -> 1
           c'' ->
             0 in
     case (q, c') of
@@ -744,10 +755,28 @@ dfa27InitialState :: Int
 dfa27InitialState = 1
 
 dfa27FinalStates :: [Int]
-dfa27FinalStates = [7]
+dfa27FinalStates = [2]
 
 dfa27Transition :: Int -> Char -> Int
 dfa27Transition q c =
+  let c' :: Int
+      c' =
+        case Char.ord c of
+          40 -> 1
+          c'' ->
+            0 in
+    case (q, c') of
+      (1, 1) -> 2
+      _ -> 0
+
+dfa28InitialState :: Int
+dfa28InitialState = 1
+
+dfa28FinalStates :: [Int]
+dfa28FinalStates = [7]
+
+dfa28Transition :: Int -> Char -> Int
+dfa28Transition q c =
   let c' :: Int
       c' =
         case Char.ord c of
@@ -768,14 +797,14 @@ dfa27Transition q c =
       (6, 2) -> 7
       _ -> 0
 
-dfa28InitialState :: Int
-dfa28InitialState = 1
+dfa29InitialState :: Int
+dfa29InitialState = 1
 
-dfa28FinalStates :: [Int]
-dfa28FinalStates = [8]
+dfa29FinalStates :: [Int]
+dfa29FinalStates = [8]
 
-dfa28Transition :: Int -> Char -> Int
-dfa28Transition q c =
+dfa29Transition :: Int -> Char -> Int
+dfa29Transition q c =
   let c' :: Int
       c' =
         case Char.ord c of
@@ -797,14 +826,14 @@ dfa28Transition q c =
       (7, 1) -> 8
       _ -> 0
 
-dfa29InitialState :: Int
-dfa29InitialState = 1
+dfa30InitialState :: Int
+dfa30InitialState = 1
 
-dfa29FinalStates :: [Int]
-dfa29FinalStates = [2]
+dfa30FinalStates :: [Int]
+dfa30FinalStates = [2]
 
-dfa29Transition :: Int -> Char -> Int
-dfa29Transition q c =
+dfa30Transition :: Int -> Char -> Int
+dfa30Transition q c =
   let c' :: Int
       c' =
         case Char.ord c of
@@ -815,14 +844,14 @@ dfa29Transition q c =
       (1, 1) -> 2
       _ -> 0
 
-dfa30InitialState :: Int
-dfa30InitialState = 1
+dfa31InitialState :: Int
+dfa31InitialState = 1
 
-dfa30FinalStates :: [Int]
-dfa30FinalStates = [10]
+dfa31FinalStates :: [Int]
+dfa31FinalStates = [10]
 
-dfa30Transition :: Int -> Char -> Int
-dfa30Transition q c =
+dfa31Transition :: Int -> Char -> Int
+dfa31Transition q c =
   let c' :: Int
       c' =
         case Char.ord c of
@@ -848,24 +877,6 @@ dfa30Transition q c =
       (9, 2) -> 10
       _ -> 0
 
-dfa31InitialState :: Int
-dfa31InitialState = 1
-
-dfa31FinalStates :: [Int]
-dfa31FinalStates = [2]
-
-dfa31Transition :: Int -> Char -> Int
-dfa31Transition q c =
-  let c' :: Int
-      c' =
-        case Char.ord c of
-          125 -> 1
-          c'' ->
-            0 in
-    case (q, c') of
-      (1, 1) -> 2
-      _ -> 0
-
 dfa32InitialState :: Int
 dfa32InitialState = 1
 
@@ -877,7 +888,7 @@ dfa32Transition q c =
   let c' :: Int
       c' =
         case Char.ord c of
-          93 -> 1
+          125 -> 1
           c'' ->
             0 in
     case (q, c') of
@@ -895,7 +906,7 @@ dfa33Transition q c =
   let c' :: Int
       c' =
         case Char.ord c of
-          41 -> 1
+          93 -> 1
           c'' ->
             0 in
     case (q, c') of
@@ -913,7 +924,7 @@ dfa34Transition q c =
   let c' :: Int
       c' =
         case Char.ord c of
-          59 -> 1
+          41 -> 1
           c'' ->
             0 in
     case (q, c') of
@@ -924,10 +935,28 @@ dfa35InitialState :: Int
 dfa35InitialState = 1
 
 dfa35FinalStates :: [Int]
-dfa35FinalStates = [3,4,8]
+dfa35FinalStates = [2]
 
 dfa35Transition :: Int -> Char -> Int
 dfa35Transition q c =
+  let c' :: Int
+      c' =
+        case Char.ord c of
+          59 -> 1
+          c'' ->
+            0 in
+    case (q, c') of
+      (1, 1) -> 2
+      _ -> 0
+
+dfa36InitialState :: Int
+dfa36InitialState = 1
+
+dfa36FinalStates :: [Int]
+dfa36FinalStates = [3,4,8]
+
+dfa36Transition :: Int -> Char -> Int
+dfa36Transition q c =
   let c' :: Int
       c' =
         case Char.ord c of
@@ -1429,14 +1458,14 @@ dfa35Transition q c =
       (34, 18) -> 2
       _ -> 0
 
-dfa36InitialState :: Int
-dfa36InitialState = 1
+dfa37InitialState :: Int
+dfa37InitialState = 1
 
-dfa36FinalStates :: [Int]
-dfa36FinalStates = [5]
+dfa37FinalStates :: [Int]
+dfa37FinalStates = [5]
 
-dfa36Transition :: Int -> Char -> Int
-dfa36Transition q c =
+dfa37Transition :: Int -> Char -> Int
+dfa37Transition q c =
   let c' :: Int
       c' =
         case Char.ord c of
@@ -1453,14 +1482,14 @@ dfa36Transition q c =
       (4, 1) -> 5
       _ -> 0
 
-dfa37InitialState :: Int
-dfa37InitialState = 1
+dfa38InitialState :: Int
+dfa38InitialState = 1
 
-dfa37FinalStates :: [Int]
-dfa37FinalStates = [6]
+dfa38FinalStates :: [Int]
+dfa38FinalStates = [6]
 
-dfa37Transition :: Int -> Char -> Int
-dfa37Transition q c =
+dfa38Transition :: Int -> Char -> Int
+dfa38Transition q c =
   let c' :: Int
       c' =
         case Char.ord c of
@@ -1478,14 +1507,14 @@ dfa37Transition q c =
       (5, 1) -> 6
       _ -> 0
 
-dfa38InitialState :: Int
-dfa38InitialState = 1
+dfa39InitialState :: Int
+dfa39InitialState = 1
 
-dfa38FinalStates :: [Int]
-dfa38FinalStates = [3]
+dfa39FinalStates :: [Int]
+dfa39FinalStates = [3]
 
-dfa38Transition :: Int -> Char -> Int
-dfa38Transition q c =
+dfa39Transition :: Int -> Char -> Int
+dfa39Transition q c =
   let c' :: Int
       c' =
         case Char.ord c of
@@ -1518,14 +1547,14 @@ dfa38Transition q c =
       (3, 7) -> 3
       _ -> 0
 
-dfa39InitialState :: Int
-dfa39InitialState = 1
+dfa40InitialState :: Int
+dfa40InitialState = 1
 
-dfa39FinalStates :: [Int]
-dfa39FinalStates = [2]
+dfa40FinalStates :: [Int]
+dfa40FinalStates = [2]
 
-dfa39Transition :: Int -> Char -> Int
-dfa39Transition q c =
+dfa40Transition :: Int -> Char -> Int
+dfa40Transition q c =
   let c' :: Int
       c' =
         case Char.ord c of
@@ -1550,14 +1579,14 @@ dfa39Transition q c =
       (2, 7) -> 2
       _ -> 0
 
-dfa40InitialState :: Int
-dfa40InitialState = 1
+dfa41InitialState :: Int
+dfa41InitialState = 1
 
-dfa40FinalStates :: [Int]
-dfa40FinalStates = [2]
+dfa41FinalStates :: [Int]
+dfa41FinalStates = [2]
 
-dfa40Transition :: Int -> Char -> Int
-dfa40Transition q c =
+dfa41Transition :: Int -> Char -> Int
+dfa41Transition q c =
   let c' :: Int
       c' =
         case Char.ord c of
@@ -1640,14 +1669,14 @@ dfa40Transition q c =
       (3, 26) -> 3
       _ -> 0
 
-dfa41InitialState :: Int
-dfa41InitialState = 1
+dfa42InitialState :: Int
+dfa42InitialState = 1
 
-dfa41FinalStates :: [Int]
-dfa41FinalStates = [2]
+dfa42FinalStates :: [Int]
+dfa42FinalStates = [2]
 
-dfa41Transition :: Int -> Char -> Int
-dfa41Transition q c =
+dfa42Transition :: Int -> Char -> Int
+dfa42Transition q c =
   let c' :: Int
       c' =
         case Char.ord c of
@@ -1712,14 +1741,14 @@ dfa41Transition q c =
       (3, 26) -> 3
       _ -> 0
 
-dfa42InitialState :: Int
-dfa42InitialState = 1
+dfa43InitialState :: Int
+dfa43InitialState = 1
 
-dfa42FinalStates :: [Int]
-dfa42FinalStates = [2,3]
+dfa43FinalStates :: [Int]
+dfa43FinalStates = [2,3]
 
-dfa42Transition :: Int -> Char -> Int
-dfa42Transition q c =
+dfa43Transition :: Int -> Char -> Int
+dfa43Transition q c =
   let c' :: Int
       c' =
         case Char.ord c of
@@ -1735,14 +1764,14 @@ dfa42Transition q c =
       (3, 1) -> 2
       _ -> 0
 
-dfa43InitialState :: Int
-dfa43InitialState = 1
+dfa44InitialState :: Int
+dfa44InitialState = 1
 
-dfa43FinalStates :: [Int]
-dfa43FinalStates = [2]
+dfa44FinalStates :: [Int]
+dfa44FinalStates = [2]
 
-dfa43Transition :: Int -> Char -> Int
-dfa43Transition q c =
+dfa44Transition :: Int -> Char -> Int
+dfa44Transition q c =
   let c' :: Int
       c' =
         case Char.ord c of
@@ -1750,26 +1779,6 @@ dfa43Transition q c =
             0 in
     case (q, c') of
       (1, 0) -> 2
-      _ -> 0
-
-dfa44InitialState :: Int
-dfa44InitialState = 1
-
-dfa44FinalStates :: [Int]
-dfa44FinalStates = [3]
-
-dfa44Transition :: Int -> Char -> Int
-dfa44Transition q c =
-  let c' :: Int
-      c' =
-        case Char.ord c of
-          45 -> 1
-          123 -> 2
-          c'' ->
-            0 in
-    case (q, c') of
-      (1, 2) -> 2
-      (2, 1) -> 3
       _ -> 0
 
 dfa45InitialState :: Int
@@ -1784,6 +1793,26 @@ dfa45Transition q c =
       c' =
         case Char.ord c of
           45 -> 1
+          123 -> 2
+          c'' ->
+            0 in
+    case (q, c') of
+      (1, 2) -> 2
+      (2, 1) -> 3
+      _ -> 0
+
+dfa46InitialState :: Int
+dfa46InitialState = 1
+
+dfa46FinalStates :: [Int]
+dfa46FinalStates = [3]
+
+dfa46Transition :: Int -> Char -> Int
+dfa46Transition q c =
+  let c' :: Int
+      c' =
+        case Char.ord c of
+          45 -> 1
           125 -> 2
           c'' ->
             0 in
@@ -1792,14 +1821,14 @@ dfa45Transition q c =
       (2, 2) -> 3
       _ -> 0
 
-dfa46InitialState :: Int
-dfa46InitialState = 1
+dfa47InitialState :: Int
+dfa47InitialState = 1
 
-dfa46FinalStates :: [Int]
-dfa46FinalStates = [2]
+dfa47FinalStates :: [Int]
+dfa47FinalStates = [2]
 
-dfa46Transition :: Int -> Char -> Int
-dfa46Transition q c =
+dfa47Transition :: Int -> Char -> Int
+dfa47Transition q c =
   let c' :: Int
       c' =
         case Char.ord c of
@@ -1831,7 +1860,7 @@ lex actions = lex' where
   lex' s = do
     p <- Lexing $ \p -> return (p, p)
     if p == Initial then
-      case max (match dfa0InitialState dfa0FinalStates dfa0Transition s) $ max (match dfa1InitialState dfa1FinalStates dfa1Transition s) $ max (match dfa2InitialState dfa2FinalStates dfa2Transition s) $ max (match dfa3InitialState dfa3FinalStates dfa3Transition s) $ max (match dfa4InitialState dfa4FinalStates dfa4Transition s) $ max (match dfa5InitialState dfa5FinalStates dfa5Transition s) $ max (match dfa6InitialState dfa6FinalStates dfa6Transition s) $ max (match dfa7InitialState dfa7FinalStates dfa7Transition s) $ max (match dfa8InitialState dfa8FinalStates dfa8Transition s) $ max (match dfa9InitialState dfa9FinalStates dfa9Transition s) $ max (match dfa10InitialState dfa10FinalStates dfa10Transition s) $ max (match dfa11InitialState dfa11FinalStates dfa11Transition s) $ max (match dfa12InitialState dfa12FinalStates dfa12Transition s) $ max (match dfa13InitialState dfa13FinalStates dfa13Transition s) $ max (match dfa14InitialState dfa14FinalStates dfa14Transition s) $ max (match dfa15InitialState dfa15FinalStates dfa15Transition s) $ max (match dfa16InitialState dfa16FinalStates dfa16Transition s) $ max (match dfa17InitialState dfa17FinalStates dfa17Transition s) $ max (match dfa18InitialState dfa18FinalStates dfa18Transition s) $ max (match dfa19InitialState dfa19FinalStates dfa19Transition s) $ max (match dfa20InitialState dfa20FinalStates dfa20Transition s) $ max (match dfa21InitialState dfa21FinalStates dfa21Transition s) $ max (match dfa22InitialState dfa22FinalStates dfa22Transition s) $ max (match dfa23InitialState dfa23FinalStates dfa23Transition s) $ max (match dfa24InitialState dfa24FinalStates dfa24Transition s) $ max (match dfa25InitialState dfa25FinalStates dfa25Transition s) $ max (match dfa26InitialState dfa26FinalStates dfa26Transition s) $ max (match dfa27InitialState dfa27FinalStates dfa27Transition s) $ max (match dfa28InitialState dfa28FinalStates dfa28Transition s) $ max (match dfa29InitialState dfa29FinalStates dfa29Transition s) $ max (match dfa30InitialState dfa30FinalStates dfa30Transition s) $ max (match dfa31InitialState dfa31FinalStates dfa31Transition s) $ max (match dfa32InitialState dfa32FinalStates dfa32Transition s) $ max (match dfa33InitialState dfa33FinalStates dfa33Transition s) $ max (match dfa34InitialState dfa34FinalStates dfa34Transition s) $ max (match dfa35InitialState dfa35FinalStates dfa35Transition s) $ max (match dfa36InitialState dfa36FinalStates dfa36Transition s) $ max (match dfa37InitialState dfa37FinalStates dfa37Transition s) $ max (match dfa38InitialState dfa38FinalStates dfa38Transition s) $ max (match dfa39InitialState dfa39FinalStates dfa39Transition s) $ max (match dfa40InitialState dfa40FinalStates dfa40Transition s) $ max (match dfa41InitialState dfa41FinalStates dfa41Transition s) $ Nothing of
+      case max (match dfa0InitialState dfa0FinalStates dfa0Transition s) $ max (match dfa1InitialState dfa1FinalStates dfa1Transition s) $ max (match dfa2InitialState dfa2FinalStates dfa2Transition s) $ max (match dfa3InitialState dfa3FinalStates dfa3Transition s) $ max (match dfa4InitialState dfa4FinalStates dfa4Transition s) $ max (match dfa5InitialState dfa5FinalStates dfa5Transition s) $ max (match dfa6InitialState dfa6FinalStates dfa6Transition s) $ max (match dfa7InitialState dfa7FinalStates dfa7Transition s) $ max (match dfa8InitialState dfa8FinalStates dfa8Transition s) $ max (match dfa9InitialState dfa9FinalStates dfa9Transition s) $ max (match dfa10InitialState dfa10FinalStates dfa10Transition s) $ max (match dfa11InitialState dfa11FinalStates dfa11Transition s) $ max (match dfa12InitialState dfa12FinalStates dfa12Transition s) $ max (match dfa13InitialState dfa13FinalStates dfa13Transition s) $ max (match dfa14InitialState dfa14FinalStates dfa14Transition s) $ max (match dfa15InitialState dfa15FinalStates dfa15Transition s) $ max (match dfa16InitialState dfa16FinalStates dfa16Transition s) $ max (match dfa17InitialState dfa17FinalStates dfa17Transition s) $ max (match dfa18InitialState dfa18FinalStates dfa18Transition s) $ max (match dfa19InitialState dfa19FinalStates dfa19Transition s) $ max (match dfa20InitialState dfa20FinalStates dfa20Transition s) $ max (match dfa21InitialState dfa21FinalStates dfa21Transition s) $ max (match dfa22InitialState dfa22FinalStates dfa22Transition s) $ max (match dfa23InitialState dfa23FinalStates dfa23Transition s) $ max (match dfa24InitialState dfa24FinalStates dfa24Transition s) $ max (match dfa25InitialState dfa25FinalStates dfa25Transition s) $ max (match dfa26InitialState dfa26FinalStates dfa26Transition s) $ max (match dfa27InitialState dfa27FinalStates dfa27Transition s) $ max (match dfa28InitialState dfa28FinalStates dfa28Transition s) $ max (match dfa29InitialState dfa29FinalStates dfa29Transition s) $ max (match dfa30InitialState dfa30FinalStates dfa30Transition s) $ max (match dfa31InitialState dfa31FinalStates dfa31Transition s) $ max (match dfa32InitialState dfa32FinalStates dfa32Transition s) $ max (match dfa33InitialState dfa33FinalStates dfa33Transition s) $ max (match dfa34InitialState dfa34FinalStates dfa34Transition s) $ max (match dfa35InitialState dfa35FinalStates dfa35Transition s) $ max (match dfa36InitialState dfa36FinalStates dfa36Transition s) $ max (match dfa37InitialState dfa37FinalStates dfa37Transition s) $ max (match dfa38InitialState dfa38FinalStates dfa38Transition s) $ max (match dfa39InitialState dfa39FinalStates dfa39Transition s) $ max (match dfa40InitialState dfa40FinalStates dfa40Transition s) $ max (match dfa41InitialState dfa41FinalStates dfa41Transition s) $ max (match dfa42InitialState dfa42FinalStates dfa42Transition s) $ Nothing of
         Nothing ->
           return ([], s)
         Just 0 ->
@@ -1903,146 +1932,150 @@ lex actions = lex' where
               (xs, s'') <- lex' s'
               return (x : xs, s'')
             else if match dfa16InitialState dfa16FinalStates dfa16Transition s == Just i then do
-              x <- saForeign actions yytext
+              x <- saExport actions yytext
               (xs, s'') <- lex' s'
               return (x : xs, s'')
             else if match dfa17InitialState dfa17FinalStates dfa17Transition s == Just i then do
-              x <- saHiding actions yytext
+              x <- saForeign actions yytext
               (xs, s'') <- lex' s'
               return (x : xs, s'')
             else if match dfa18InitialState dfa18FinalStates dfa18Transition s == Just i then do
-              x <- saImport actions yytext
+              x <- saHiding actions yytext
               (xs, s'') <- lex' s'
               return (x : xs, s'')
             else if match dfa19InitialState dfa19FinalStates dfa19Transition s == Just i then do
-              x <- saInfix actions yytext
+              x <- saImport actions yytext
               (xs, s'') <- lex' s'
               return (x : xs, s'')
             else if match dfa20InitialState dfa20FinalStates dfa20Transition s == Just i then do
-              x <- saInfixL actions yytext
+              x <- saInfix actions yytext
               (xs, s'') <- lex' s'
               return (x : xs, s'')
             else if match dfa21InitialState dfa21FinalStates dfa21Transition s == Just i then do
-              x <- saInfixR actions yytext
+              x <- saInfixL actions yytext
               (xs, s'') <- lex' s'
               return (x : xs, s'')
             else if match dfa22InitialState dfa22FinalStates dfa22Transition s == Just i then do
-              x <- saInstance actions yytext
+              x <- saInfixR actions yytext
               (xs, s'') <- lex' s'
               return (x : xs, s'')
             else if match dfa23InitialState dfa23FinalStates dfa23Transition s == Just i then do
-              x <- saInteger actions yytext
+              x <- saInstance actions yytext
               (xs, s'') <- lex' s'
               return (x : xs, s'')
             else if match dfa24InitialState dfa24FinalStates dfa24Transition s == Just i then do
-              x <- saLBrace actions yytext
+              x <- saInteger actions yytext
               (xs, s'') <- lex' s'
               return (x : xs, s'')
             else if match dfa25InitialState dfa25FinalStates dfa25Transition s == Just i then do
-              x <- saLBracket actions yytext
+              x <- saLBrace actions yytext
               (xs, s'') <- lex' s'
               return (x : xs, s'')
             else if match dfa26InitialState dfa26FinalStates dfa26Transition s == Just i then do
-              x <- saLParen actions yytext
+              x <- saLBracket actions yytext
               (xs, s'') <- lex' s'
               return (x : xs, s'')
             else if match dfa27InitialState dfa27FinalStates dfa27Transition s == Just i then do
-              x <- saModule actions yytext
+              x <- saLParen actions yytext
               (xs, s'') <- lex' s'
               return (x : xs, s'')
             else if match dfa28InitialState dfa28FinalStates dfa28Transition s == Just i then do
-              x <- saNewtype actions yytext
+              x <- saModule actions yytext
               (xs, s'') <- lex' s'
               return (x : xs, s'')
             else if match dfa29InitialState dfa29FinalStates dfa29Transition s == Just i then do
-              x <- saPipe actions yytext
+              x <- saNewtype actions yytext
               (xs, s'') <- lex' s'
               return (x : xs, s'')
             else if match dfa30InitialState dfa30FinalStates dfa30Transition s == Just i then do
-              x <- saQualified actions yytext
+              x <- saPipe actions yytext
               (xs, s'') <- lex' s'
               return (x : xs, s'')
             else if match dfa31InitialState dfa31FinalStates dfa31Transition s == Just i then do
-              x <- saRBrace actions yytext
+              x <- saQualified actions yytext
               (xs, s'') <- lex' s'
               return (x : xs, s'')
             else if match dfa32InitialState dfa32FinalStates dfa32Transition s == Just i then do
-              x <- saRBracket actions yytext
+              x <- saRBrace actions yytext
               (xs, s'') <- lex' s'
               return (x : xs, s'')
             else if match dfa33InitialState dfa33FinalStates dfa33Transition s == Just i then do
-              x <- saRParen actions yytext
+              x <- saRBracket actions yytext
               (xs, s'') <- lex' s'
               return (x : xs, s'')
             else if match dfa34InitialState dfa34FinalStates dfa34Transition s == Just i then do
-              x <- saSemicolon actions yytext
+              x <- saRParen actions yytext
               (xs, s'') <- lex' s'
               return (x : xs, s'')
             else if match dfa35InitialState dfa35FinalStates dfa35Transition s == Just i then do
-              x <- saString actions yytext
+              x <- saSemicolon actions yytext
               (xs, s'') <- lex' s'
               return (x : xs, s'')
             else if match dfa36InitialState dfa36FinalStates dfa36Transition s == Just i then do
-              x <- saType actions yytext
+              x <- saString actions yytext
               (xs, s'') <- lex' s'
               return (x : xs, s'')
             else if match dfa37InitialState dfa37FinalStates dfa37Transition s == Just i then do
-              x <- saWhere actions yytext
+              x <- saType actions yytext
               (xs, s'') <- lex' s'
               return (x : xs, s'')
             else if match dfa38InitialState dfa38FinalStates dfa38Transition s == Just i then do
-              x <- saVarId actions yytext
+              x <- saWhere actions yytext
               (xs, s'') <- lex' s'
               return (x : xs, s'')
             else if match dfa39InitialState dfa39FinalStates dfa39Transition s == Just i then do
-              x <- saConId actions yytext
+              x <- saVarId actions yytext
               (xs, s'') <- lex' s'
               return (x : xs, s'')
             else if match dfa40InitialState dfa40FinalStates dfa40Transition s == Just i then do
-              x <- saVarSym actions yytext
+              x <- saConId actions yytext
               (xs, s'') <- lex' s'
               return (x : xs, s'')
             else if match dfa41InitialState dfa41FinalStates dfa41Transition s == Just i then do
+              x <- saVarSym actions yytext
+              (xs, s'') <- lex' s'
+              return (x : xs, s'')
+            else if match dfa42InitialState dfa42FinalStates dfa42Transition s == Just i then do
               x <- saConSym actions yytext
               (xs, s'') <- lex' s'
               return (x : xs, s'')
             else
               return ([], s)
     else if p == Dashes then
-      case max (match dfa42InitialState dfa42FinalStates dfa42Transition s) $ max (match dfa43InitialState dfa43FinalStates dfa43Transition s) $ Nothing of
+      case max (match dfa43InitialState dfa43FinalStates dfa43Transition s) $ max (match dfa44InitialState dfa44FinalStates dfa44Transition s) $ Nothing of
         Nothing ->
           return ([], s)
         Just 0 ->
           return ([], s)
         Just i ->
           let (yytext, s') = splitAt i s in
-            if match dfa42InitialState dfa42FinalStates dfa42Transition s == Just i then do
+            if match dfa43InitialState dfa43FinalStates dfa43Transition s == Just i then do
               x <- saCloseDashes actions yytext
               (xs, s'') <- lex' s'
               return (x : xs, s'')
-            else if match dfa43InitialState dfa43FinalStates dfa43Transition s == Just i then do
+            else if match dfa44InitialState dfa44FinalStates dfa44Transition s == Just i then do
               x <- saComment actions yytext
               (xs, s'') <- lex' s'
               return (x : xs, s'')
             else
               return ([], s)
     else if p == Nested then
-      case max (match dfa44InitialState dfa44FinalStates dfa44Transition s) $ max (match dfa45InitialState dfa45FinalStates dfa45Transition s) $ max (match dfa46InitialState dfa46FinalStates dfa46Transition s) $ Nothing of
+      case max (match dfa45InitialState dfa45FinalStates dfa45Transition s) $ max (match dfa46InitialState dfa46FinalStates dfa46Transition s) $ max (match dfa47InitialState dfa47FinalStates dfa47Transition s) $ Nothing of
         Nothing ->
           return ([], s)
         Just 0 ->
           return ([], s)
         Just i ->
           let (yytext, s') = splitAt i s in
-            if match dfa44InitialState dfa44FinalStates dfa44Transition s == Just i then do
+            if match dfa45InitialState dfa45FinalStates dfa45Transition s == Just i then do
               x <- saOpenNested actions yytext
               (xs, s'') <- lex' s'
               return (x : xs, s'')
-            else if match dfa45InitialState dfa45FinalStates dfa45Transition s == Just i then do
+            else if match dfa46InitialState dfa46FinalStates dfa46Transition s == Just i then do
               x <- saCloseNested actions yytext
               (xs, s'') <- lex' s'
               return (x : xs, s'')
-            else if match dfa46InitialState dfa46FinalStates dfa46Transition s == Just i then do
+            else if match dfa47InitialState dfa47FinalStates dfa47Transition s == Just i then do
               x <- saComment actions yytext
               (xs, s'') <- lex' s'
               return (x : xs, s'')
@@ -2113,6 +2146,8 @@ semanticActions = SemanticActions
       return $ Just $ Parsing.EQUAL (pos, n)
   , saExcl = withPosition $ \pos n _ ->
       return $ Just $ Parsing.EXCL (pos, n)
+  , saExport = withPosition $ \pos n _ ->
+      return $ Just $ Parsing.EXPORT (pos, n)
   , saForeign = withPosition $ \pos n _ ->
       return $ Just $ Parsing.FOREIGN (pos, n)
   , saHiding = withPosition $ \pos n _ ->

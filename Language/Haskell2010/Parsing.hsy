@@ -58,18 +58,61 @@ def rule module' :=
   MODULE modid exports_opt WHERE body
 | body
 
-def rule modid :=
-  QCONID
-
 def rule body :=
   LBRACE topdecls RBRACE
+
+def rule exports_opt :=
+| exports
+
+def rule exports :=
+  LPAREN export_seq RPAREN
+
+def rule export_seq :=
+| export
+| export COMMA export_seq
+
+def rule export :=
+  var
+| con
+| con LPAREN RPAREN
+| con LPAREN DOT_DOT RPAREN
+| con LPAREN cname_seq RPAREN
+| MODULE modid
+
+def rule impspec_opt :=
+| impspec
+
+def rule impspec :=
+  LPAREN import_seq RPAREN
+| HIDING LPAREN import_seq RPAREN
+
+def rule import_seq :=
+| import'
+| import' COMMA import_seq
+
+def rule import' :=
+  var
+| con
+| con LPAREN RPAREN
+| con LPAREN DOT_DOT RPAREN
+| con LPAREN cname_seq RPAREN
+
+def rule cname_seq :=
+  cname
+| cname COMMA cname_seq
+
+def rule cname :=
+  var
+| con
 
 def rule topdecls :=
   topdecl
 | topdecl SEMICOLON topdecls
 
 def rule topdecl :=
-  IMPORT qualified_opt modid as_opt impspec_opt
+  IMPORT qualified_opt modid as_opt
+| IMPORT qualified_opt modid as_opt LPAREN import_seq RPAREN
+| IMPORT qualified_opt modid as_opt HIDING LPAREN import_seq RPAREN
 | TYPE btype EQUAL type'
 | DATA btype constrs_opt
 | DATA btype constrs_opt DERIVING dclass
@@ -95,23 +138,6 @@ def rule topdecl :=
 | DEFAULT LPAREN type_seq RPAREN
 | FOREIGN fdecl
 | decl
-
-def rule fdecl :=
-  IMPORT callconv impent var COLON_COLON type'
-| IMPORT callconv safety impent var COLON_COLON type'
-| QVARID callconv expent var COLON_COLON type'
-
-def rule callconv :=
-  QVARID
-
-def rule safety :=
-  QVARID
-
-def rule impent :=
-  STRING
-
-def rule expent :=
-  STRING
 
 def rule decls :=
   LBRACE decl_seq RBRACE
@@ -159,8 +185,108 @@ def rule gendecl :=
 | vars COLON_COLON btype DARROW type'
 | fixity integer_opt ops
 
-def rule integer_opt :=
-| INTEGER
+def rule ops :=
+  op
+| op COMMA ops
+
+def rule vars :=
+  var
+| var COMMA vars
+
+def rule fixity :=
+  INFIXL
+| INFIXR
+| INFIX
+
+def rule type_seq :=
+  type'
+| type' COMMA type_seq
+
+def rule type' :=
+  btype
+| btype ARROW type'
+
+def rule btype :=
+  atype
+| btype atype
+
+def rule atype :=
+  gtycon
+| tyvar
+| LPAREN type_seq2 RPAREN
+| LBRACKET type' RBRACKET
+| LPAREN type' RPAREN
+| EXCL atype
+
+def rule type_seq2 :=
+  type' COMMA type'
+| type' COMMA type_seq2
+
+def rule gtycon :=
+  con
+| LPAREN RPAREN
+| LBRACKET RBRACKET
+| LPAREN ARROW RPAREN
+| LPAREN comma_list RPAREN
+
+def rule comma_list :=
+  COMMA
+| COMMA comma_list
+
+def rule constrs_opt :=
+| EQUAL constrs
+
+def rule constrs :=
+  constr
+| constr PIPE constrs
+
+def rule constr :=
+  btype
+| btype conop btype
+| con LBRACE RBRACE
+| con LBRACE fielddecl_seq RBRACE
+
+def rule newconstr :=
+  EQUAL con atype
+| EQUAL con LBRACE var COLON_COLON type' RBRACE
+
+def rule fielddecl_seq :=
+  fielddecl
+| fielddecl COMMA fielddecl_seq
+
+def rule fielddecl :=
+  vars COLON_COLON type'
+
+def rule dclass_seq :=
+  dclass
+| dclass COMMA dclass_seq
+
+def rule dclass :=
+  QCONID
+
+def rule inst :=
+  TODO_INST
+
+def rule fdecl :=
+  IMPORT callconv impent var COLON_COLON type'
+| IMPORT callconv safety impent var COLON_COLON type'
+| EXPORT callconv expent var COLON_COLON type'
+
+def rule callconv :=
+  AS
+| EXPORT
+| QVARID
+
+def rule impent :=
+  STRING
+
+def rule expent :=
+  STRING
+
+def rule safety :=
+  AS
+| EXPORT
+| QVARID
 
 def rule funlhs :=
   TODO_FUNLHS
@@ -187,142 +313,47 @@ def rule aexp :=
   var
 | INTEGER
 
-def rule inst :=
-  TODO_INST
+def rule var :=
+  AS
+| EXPORT
+| QVARID
+| LPAREN QVARSYM RPAREN
 
-def rule tycls :=
+def rule con :=
   QCONID
+| LPAREN QCONSYM RPAREN
 
-def rule tyvar :=
-  QVARID
+def rule varop :=
+  QVARSYM
+| BACKQUOTE AS BACKQUOTE
+| BACKQUOTE EXPORT BACKQUOTE
+| BACKQUOTE QVARID BACKQUOTE
 
-def rule qualified_opt :=
-| QUALIFIED
+def rule conop :=
+  QCONSYM
+| BACKQUOTE QCONID BACKQUOTE
+
+def rule op :=
+  varop
+| conop
 
 def rule as_opt :=
 | AS modid
 
-def rule impspec_opt :=
-| impspec
+def rule qualified_opt :=
+| QUALIFIED
 
-def rule impspec :=
-  LPAREN import_seq RPAREN
-| HIDING LPAREN import_seq RPAREN
+def rule tyvar :=
+  AS
+| EXPORT
+| QVARID
 
-def rule import_seq :=
-| import'
-| import' COMMA import_seq
-
-def rule import' :=
-  var
-| con
-| con LPAREN RPAREN
-| con LPAREN DOT_DOT RPAREN
-| con LPAREN cname_seq RPAREN
-
-def rule exports_opt :=
-| exports
-
-def rule exports :=
-  LPAREN export_seq RPAREN
-
-def rule export_seq :=
-| export
-| export COMMA export_seq
-
-def rule export :=
-  var
-| con
-| con LPAREN RPAREN
-| con LPAREN DOT_DOT RPAREN
-| con LPAREN cname_seq RPAREN
-| MODULE modid
-
-def rule cname_seq :=
-  cname
-| cname COMMA cname_seq
-
-def rule cname :=
-  var
-| con
-
-def rule type_seq :=
-  type'
-| type' COMMA type_seq
-def rule type' :=
-  btype
-| btype ARROW type'
-def rule btype :=
-  atype
-| btype atype
-def rule atype :=
-  gtycon
-| tyvar
-| LPAREN type_seq2 RPAREN
-| LBRACKET type' RBRACKET
-| LPAREN type' RPAREN
-| EXCL atype
-def rule type_seq2 :=
-  type' COMMA type'
-| type' COMMA type_seq2
-def rule gtycon :=
-  con
-| LPAREN RPAREN
-| LBRACKET RBRACKET
-| LPAREN ARROW RPAREN
-| LPAREN comma_list RPAREN
-def rule comma_list :=
-  COMMA
-| COMMA comma_list
-def rule constrs_opt :=
-| EQUAL constrs
-def rule constrs :=
-  constr
-| constr PIPE constrs
-def rule constr :=
-  btype
-| btype conop btype
-| con LBRACE RBRACE
-| con LBRACE fielddecl_seq RBRACE
-def rule fielddecl_seq :=
-  fielddecl
-| fielddecl COMMA fielddecl_seq
-def rule fielddecl :=
-  vars COLON_COLON type'
-def rule atypes :=
-| atype atypes
-| EXCL atype atypes
-def rule newconstr :=
-  EQUAL con atype
-| EQUAL con LBRACE var COLON_COLON type' RBRACE
-def rule ops :=
-  op
-| op COMMA ops
-def rule vars :=
-  var
-| var COMMA vars
-def rule var :=
-  QVARID
-| LPAREN QVARSYM RPAREN
-def rule con :=
+def rule tycls :=
   QCONID
-| LPAREN QCONSYM RPAREN
-def rule fixity :=
-  INFIXL
-| INFIXR
-| INFIX
-def rule varop :=
-  QVARSYM
-| BACKQUOTE QVARID BACKQUOTE
-def rule conop :=
-  QCONSYM
-| BACKQUOTE QCONID BACKQUOTE
-def rule op :=
-  varop
-| conop
-def rule dclass :=
+
+def rule modid :=
   QCONID
-def rule dclass_seq :=
-  dclass
-| dclass COMMA dclass_seq
+
+def rule integer_opt :=
+| INTEGER
 %%

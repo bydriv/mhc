@@ -24,6 +24,7 @@ case (Initial, "deriving") => saDeriving
 case (Initial, "..") => saDotDot
 case (Initial, '=') => saEqual
 case (Initial, '!') => saExcl
+case (Initial, "export") => saExport
 case (Initial, "foreign") => saForeign
 case (Initial, "hiding") => saHiding
 case (Initial, "import") => saImport
@@ -120,6 +121,8 @@ semanticActions = SemanticActions
       return $ Just $ Parsing.EQUAL (pos, n)
   , saExcl = withPosition $ \pos n _ ->
       return $ Just $ Parsing.EXCL (pos, n)
+  , saExport = withPosition $ \pos n _ ->
+      return $ Just $ Parsing.EXPORT (pos, n)
   , saForeign = withPosition $ \pos n _ ->
       return $ Just $ Parsing.FOREIGN (pos, n)
   , saHiding = withPosition $ \pos n _ ->
