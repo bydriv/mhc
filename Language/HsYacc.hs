@@ -56,9 +56,30 @@ data Action =
 type ActionTable t n = RBMap.RBMap (State, InternalTerminalSymbol t) Action
 type GotoTable t n = RBMap.RBMap (State, InternalNonterminalSymbol n) State
 
-makeSets :: (Ord t, Ord n) => Grammar t n -> Sets t n
-makeSets grm =
+makeNullableSet :: (Ord t, Ord n) => Grammar t n -> NullableSet t n
+makeNullableSet grm =
   let nullable0 = RBSet.empty in
+    go nullable0
+  where
+    go nullable0 =
+      let nullable =
+            foldl
+              (\nullable1 (left, right) ->
+                let nullable2 =
+                      if length right == 0 || all (isNullable nullable1) right then
+                        RBSet.insert left nullable1
+                      else
+                        nullable1 in
+                  nullable2)
+              nullable0
+              grm in
+      if nullable == nullable0 then
+        nullable
+      else
+        go nullable
+
+makeFirstSet :: (Ord t, Ord n) => NullableSet t n -> Grammar t n -> FirstSet t n
+makeFirstSet nullable grm =
   let first0 =
         RBMap.fromList $ map (\t -> (T t, RBSet.singleton t)) $ concatMap
           (\(_, right) ->
@@ -69,57 +90,74 @@ makeSets grm =
                   N _ -> Nothing)
               right)
           grm in
-  let follow0 = RBMap.empty in
-    go nullable0 first0 follow0
+    go first0
   where
-    go nullable0 first0 follow0 =
-      let nullable' =
+    go first0 =
+      let first =
             foldl
-              (\nullable1 (left, right) ->
-                let nullable1' =
-                      if length right == 0 || all (isNullable nullable1) right then
-                        RBSet.insert left nullable1
-                      else
-                        nullable1 in
-                  nullable1')
-              nullable0
-              grm in
-      let (nullable, first, follow) =
-            foldl
-              (\(nullable1, first1, follow1) (left, right) ->
+              (\first1 (left, right) ->
                 foldl
-                  (\(nullable2, first2, follow2) i ->
-                    let first2' =
-                          if i == 0 || all (isNullable nullable2) (take (i - 1) right) then
+                  (\first2 i ->
+                    let first3 =
+                          if i == 0 || all (isNullable nullable) (take (i - 1) right) then
                             RBMap.insert (N left) (RBSet.union (maybe RBSet.empty id (RBMap.lookup (N left) first2)) (maybe RBSet.empty id (RBMap.lookup (right !! i) first2))) first2
                           else
                             first2 in
-                    let follow2' =
-                          if i + 1 == length right || all (isNullable nullable2) (drop (i + 1) right) then
+                      first3)
+                  first1
+                  [0 .. length right - 1])
+              first0
+              grm in
+      if first == first0 then
+        first
+      else
+        go first
+
+makeFollowSet :: (Ord t, Ord n) => NullableSet t n -> FirstSet t n -> Grammar t n -> FollowSet t n
+makeFollowSet nullable first grm =
+  let follow0 = RBMap.empty in
+    go follow0
+  where
+    go follow0 =
+      let follow =
+            foldl
+              (\follow1 (left, right) ->
+                foldl
+                  (\follow2 i ->
+                    let follow3 =
+                          if i + 1 == length right || all (isNullable nullable) (drop (i + 1) right) then
                             RBMap.insert (right !! i) (RBSet.union (maybe RBSet.empty id (RBMap.lookup (N left) follow2)) (maybe RBSet.empty id (RBMap.lookup (right !! i) follow2))) follow2
                           else
                             follow2 in
                     foldl
-                      (\(nullable3, first3, follow3) j ->
-                        let follow4 =
-                              if i + 1 == j || all (isNullable nullable3) (take (j - i - 1) (drop (i + 1) right)) then
-                                RBMap.insert (right !! i) (RBSet.union (maybe RBSet.empty id (RBMap.lookup (right !! i) follow3)) (maybe RBSet.empty (RBSet.map T) (RBMap.lookup (right !! j) first3))) follow3
+                      (\follow4 j ->
+                        let follow5 =
+                              if i + 1 == j || all (isNullable nullable) (take (j - i - 1) (drop (i + 1) right)) then
+                                RBMap.insert (right !! i) (RBSet.union (maybe RBSet.empty id (RBMap.lookup (right !! i) follow4)) (maybe RBSet.empty (RBSet.map T) (RBMap.lookup (right !! j) first))) follow4
                               else
-                                follow3 in
-                          (nullable3, first3, follow4))
-                      (nullable2, first2', follow2')
+                                follow4 in
+                          follow5)
+                      follow3
                       [i + 1 .. length right - 1])
-                  (nullable1, first1, follow1)
+                  follow1
                   [0 .. length right - 1])
-              (nullable', first0, follow0)
+              follow0
               grm in
-      if nullable == nullable0 && first == first0 && follow == follow0 then
-        (nullable, first, follow)
+      if follow == follow0 then
+        follow
       else
-        go nullable first follow
+        go follow
 
-    isNullable _ (T _) = False
-    isNullable nullable (N n) = RBSet.member n nullable
+makeSets :: (Ord t, Ord n) => Grammar t n -> Sets t n
+makeSets grm =
+  let nullable = makeNullableSet grm in
+  let first = makeFirstSet nullable grm in
+  let follow = makeFollowSet nullable first grm in
+    (nullable, first, follow)
+
+isNullable :: (Ord t, Ord n) => NullableSet t n -> Symbol t n -> Bool
+isNullable _ (T _) = False
+isNullable nullable (N n) = RBSet.member n nullable
 
 firstSet :: (Ord t, Ord n) => [Symbol t n] -> Sets t n -> RBSet.RBSet t
 firstSet [] _ = RBSet.empty
