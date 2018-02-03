@@ -244,7 +244,7 @@ closure sets @ (_, first, _) grm = memo $ \items ->
         if RBSet.subset items3 items4 then
           items4
         else
-          closure' items3 items4
+          closure' (RBSet.diff items3 items4) items4
 
 makeTable :: (Ord t, Ord n) => n -> Grammar t n -> Maybe (ActionTable t n, GotoTable t n)
 makeTable start grm0 =
