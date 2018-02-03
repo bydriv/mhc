@@ -16,6 +16,9 @@
 module Language.HsYacc where
 
 import qualified Control.Monad                as Monad
+import qualified Control.Monad.Identity       as Identity
+import qualified Control.Monad.Trans          as MonadTrans
+import qualified Control.Monad.Trans.State    as StateT
 import qualified Control.Monad.CodeGenerating as CodeGenerating
 import qualified Data.Char                    as Char
 import qualified Data.List                    as List
@@ -55,6 +58,20 @@ data Action =
 
 type ActionTable t n = RBMap.RBMap (State, InternalTerminalSymbol t) Action
 type GotoTable t n = RBMap.RBMap (State, InternalNonterminalSymbol n) State
+
+type MemoT k v m = StateT.StateT (RBMap.RBMap k v) m
+
+memo :: (Ord s, Monad m) => (s -> m a) -> s -> MemoT s a m a
+memo f s = do
+  m <- StateT.get
+  case RBMap.lookup s m of
+    Nothing -> do
+      x <- MonadTrans.lift $ f s
+      let m' = RBMap.insert s x m
+      StateT.put m'
+      return x
+    Just x ->
+      return x
 
 makeNullableSet :: (Ord t, Ord n) => Grammar t n -> NullableSet t n
 makeNullableSet grm =
@@ -168,8 +185,15 @@ firstSet (N n : ss) sets @ (nullable, first, _) =
   else
     maybe RBSet.empty id $ RBMap.lookup (N n) first
 
-goto :: (Ord t, Ord n) => RBSet.RBSet (Item t n) -> Symbol t n -> Sets t n -> Grammar t n -> RBSet.RBSet (Item t n)
-goto items symbol sets grm =
+goto
+  :: (Ord t, Ord n, Monad m)
+  => (RBSet.RBSet (Item t n), Symbol t n, Sets t n, Grammar t n)
+  -> MemoT
+      (RBSet.RBSet (Item t n), Symbol t n, Sets t n, Grammar t n)
+      (RBSet.RBSet (Item t n))
+      (MemoT (RBSet.RBSet (Item t n), Sets t n, Grammar t n) (RBSet.RBSet (Item t n)) m)
+      (RBSet.RBSet (Item t n))
+goto = memo $ \(items, symbol, sets, grm) ->
   let items' =
         RBSet.foldl
           (\(left, middle, right, lookahead) items'' ->
@@ -183,13 +207,20 @@ goto items symbol sets grm =
                   items'')
           RBSet.empty
           items in
-    closure items' sets grm
+    closure (items', sets, grm)
 
-closure :: (Ord t, Ord n) => RBSet.RBSet (Item t n) -> Sets t n -> Grammar t n -> RBSet.RBSet (Item t n)
-closure items sets @ (_, first, _) grm =
-    closure' items RBSet.empty
+closure
+  :: (Ord t, Ord n, Monad m)
+  => (RBSet.RBSet (Item t n), Sets t n, Grammar t n)
+  -> MemoT
+      (RBSet.RBSet (Item t n), Sets t n, Grammar t n)
+      (RBSet.RBSet (Item t n))
+      m
+      (RBSet.RBSet (Item t n))
+closure = memo $ \(items, sets, grm) ->
+    return $ closure' items RBSet.empty sets grm
   where
-    closure' items1 items2 =
+    closure' items1 items2 sets @ (_, first, _) grm =
       let items3 =
             RBSet.fromList
               (concatMap
@@ -209,7 +240,7 @@ closure items sets @ (_, first, _) grm =
         if RBSet.subset items3 items4 then
           items4
         else
-          closure' items3 items4
+          closure' items3 items4 sets grm
 
 makeTable :: (Ord t, Ord n) => n -> Grammar t n -> Maybe (ActionTable t n, GotoTable t n)
 makeTable start grm0 =
@@ -225,9 +256,9 @@ makeTable start grm0 =
                 right ))
           grm0 in
   let sets = makeSets grm in
-  let states0 = RBSet.fromList [closure (RBSet.fromList [(Start, [], [N (UserNonterminal start), T Dollar], Question)]) sets grm] in
+  let states0 = RBSet.fromList [Identity.runIdentity (StateT.evalStateT (closure (RBSet.fromList [(Start, [], [N (UserNonterminal start), T Dollar], Question)], sets, grm)) RBMap.empty)] in
   let edges0 = RBSet.empty in
-  let (states1, edges1) = makeStatesAndEdges states0 RBSet.empty edges0 RBSet.empty sets grm in
+  let (states1, edges1) = makeStatesAndEdges states0 RBSet.empty edges0 RBSet.empty sets grm (RBMap.empty, RBMap.empty) in
   let (states, edges) = makeLALR1 states1 edges1 in
   let reduces0 = RBSet.empty in
   let reduces = makeReduces reduces0 states in
@@ -282,34 +313,40 @@ makeTable start grm0 =
     else
       Nothing -- shift/reduce or reduce/reduce conflict.
   where
-    makeStatesAndEdges states accStates edges accEdges sets grm =
-      let (states', edges') =
+    makeStatesAndEdges states accStates edges accEdges sets grm mem =
+      let (states', edges', mem') =
             RBSet.foldl
-              (\items (states0, edges0) ->
+              (\items (states0, edges0, mem0) ->
                 RBSet.foldl
-                  (\(left, middle, right, lookahead) (states1, edges1) ->
+                  (\(left, middle, right, lookahead) (states1, edges1, mem1) ->
                     case right of
                       [] ->
-                        (states1, edges1)
+                        (states1, edges1, mem1)
                       symbol : ss ->
                         case symbol of
                           T Dollar ->
-                            (states1, edges1)
+                            (states1, edges1, mem1)
                           _ ->
-                            let items' = goto items symbol sets grm in
+                            let ((items', closmem), gotomem) =
+                                  Identity.runIdentity
+                                    (StateT.runStateT
+                                      (StateT.runStateT
+                                        (goto (items, symbol, sets, grm))
+                                        (fst mem1))
+                                      (snd mem1)) in
                             let states2 = RBSet.insert items' states1 in
                             let edges2 = RBSet.insert (items, symbol, items') edges1 in
-                              (states2, edges2))
-                  (states0, edges0)
+                              (states2, edges2, (closmem, gotomem)))
+                  (states0, edges0, mem0)
                   items)
-              (RBSet.empty, RBSet.empty)
+              (RBSet.empty, RBSet.empty, mem)
               states in
         let states'' = RBSet.union states accStates in
         let edges'' = RBSet.union edges accEdges in
           if RBSet.subset states' states'' && RBSet.subset edges' edges'' then
             (states'', edges'')
           else
-            makeStatesAndEdges states' states'' edges' edges'' sets grm
+            makeStatesAndEdges states' states'' edges' edges'' sets grm mem'
 
     makeLALR1 states0 edges0 =
       let states = RBSet.fromList $ makeLALR1States $ RBSet.toList states0 in
