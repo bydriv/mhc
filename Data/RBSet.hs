@@ -17,6 +17,8 @@ module Data.RBSet
   ( RBSet
   , empty
   , singleton
+  , blackHeight
+  , length
   , foldr
   , foldl
   , foldTree
@@ -45,6 +47,7 @@ import           Prelude
     , concatMap
     , foldl
     , foldr
+    , length
     , map
     , maximum
     , minimum
@@ -77,6 +80,14 @@ empty = RBSet RBMap.empty
 {-# INLINE singleton #-}
 singleton :: a -> RBSet a
 singleton = RBSet . flip RBMap.singleton ()
+
+{-# INLINE blackHeight #-}
+blackHeight :: RBSet a -> Int
+blackHeight = RBMap.blackHeight . unRBSet
+
+{-# INLINE length #-}
+length :: RBSet a -> Int
+length = RBMap.length . unRBSet
 
 {-# INLINE foldr #-}
 foldr :: (a -> b -> b) -> b -> RBSet a -> b
@@ -116,7 +127,11 @@ member x = RBMap.member x . unRBSet
 
 {-# INLINE subset #-}
 subset :: Ord a => RBSet a -> RBSet a -> Bool
-subset = flip $ all . flip member
+subset l r =
+  if blackHeight l > blackHeight r then
+    False
+  else
+    (flip $ all . flip member) l r
 
 {-# INLINE insert #-}
 insert :: Ord a => a -> RBSet a -> RBSet a

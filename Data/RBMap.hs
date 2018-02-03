@@ -17,6 +17,8 @@ module Data.RBMap
   ( RBMap
   , empty
   , singleton
+  , blackHeight
+  , length
   , foldri
   , foldr
   , foldli
@@ -66,6 +68,7 @@ import           Prelude
     , filter
     , foldl
     , foldr
+    , length
     , lookup
     , map
     , maximum
@@ -85,7 +88,11 @@ data RBMap k a =
   | Node Color (RBMap k a) (RBMap k a) k a
 
 instance (Eq k, Eq a) => Eq (RBMap k a) where
-  lhs == rhs = toList lhs == toList rhs
+  lhs == rhs =
+    if blackHeight lhs /= blackHeight rhs then
+      False
+    else
+      toList lhs == toList rhs
 
 instance (Ord k, Ord a) => Ord (RBMap k a) where
   compare lhs rhs = compare (toList lhs) (toList rhs)
@@ -130,6 +137,17 @@ empty = Empty
 {-# INLINE singleton #-}
 singleton :: k -> a -> RBMap k a
 singleton = Node Black Empty Empty
+
+{-# INLINE blackHeight #-}
+blackHeight :: RBMap k a -> Int
+blackHeight Empty = 0
+blackHeight (Node Red l _ _ _) = blackHeight l
+blackHeight (Node Black l _ _ _) = blackHeight l + 1
+
+{-# INLINE length #-}
+length :: RBMap k a -> Int
+length Empty = 0
+length (Node _ l r _ _) = length l + length r + 1
 
 {-# INLINE foldri #-}
 foldri :: (k -> a -> b -> b) -> b -> RBMap k a -> b
@@ -423,7 +441,7 @@ fromList =
     . List.nubBy (\(k1, _) (k2, _) -> k1 == k2)
   where
     fromSortedList alist =
-      let n = length alist in
+      let n = Prelude.length alist in
         if even n then
           blackFromEvenSortedList n alist
         else
