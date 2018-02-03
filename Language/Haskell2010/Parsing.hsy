@@ -15,17 +15,21 @@ type DATA = Pos
 type DEFAULT = Pos
 type DERIVING = Pos
 type DOT_DOT = Pos
+type ELSE = Pos
 type EQUAL = Pos
 type EXCL = Pos
 type EXPORT = Pos
 type FOREIGN = Pos
 type HIDING = Pos
 type IMPORT = Pos
+type IF = Pos
+type IN = Pos
 type INFIX = Pos
 type INFIXL = Pos
 type INFIXR = Pos
 type INSTANCE = Pos
 type INTEGER = (Pos, Integer)
+type LAMBDA = Pos
 type LARROW = Pos
 type LBRACE = Pos
 type LBRACKET = Pos
@@ -46,6 +50,7 @@ type RARROW = Pos
 type RPAREN = Pos
 type SEMICOLON = Pos
 type STRING = (Pos, String)
+type THEN = Pos
 type TYPE = Pos
 type WHERE = Pos
 %}
@@ -298,7 +303,10 @@ def rule guard :=
 | infixexp
 
 def rule exp :=
-  infixexp COLON_COLON type'
+  LAMBDA pat RARROW exp
+| LET decls IN exp
+| IF exp semicolon_opt THEN exp semicolon_opt ELSE exp
+| infixexp COLON_COLON type'
 | infixexp COLON_COLON btype DARROW type'
 | infixexp
 
@@ -375,4 +383,7 @@ def rule modid :=
 
 def rule integer_opt :=
 | INTEGER
+
+def rule semicolon_opt :=
+| SEMICOLON
 %%

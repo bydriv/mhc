@@ -24,6 +24,10 @@
 module Main where {
   import qualified Control.Monad as Monad;
 
+  s = \x y z -> x z (y z);
+  k = \x y -> x;
+  i = s k k;
+
   unary = -1;
   binary = 2 - 3;
 

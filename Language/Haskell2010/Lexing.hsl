@@ -21,17 +21,21 @@ case (Initial, "data") => saData
 case (Initial, "default") => saDefault
 case (Initial, "deriving") => saDeriving
 case (Initial, "..") => saDotDot
+case (Initial, "else") => saElse
 case (Initial, '=') => saEqual
 case (Initial, '!') => saExcl
 case (Initial, "export") => saExport
 case (Initial, "foreign") => saForeign
 case (Initial, "hiding") => saHiding
 case (Initial, "import") => saImport
+case (Initial, "if") => saIf
+case (Initial, "in") => saIn
 case (Initial, "infix") => saInfix
 case (Initial, "infixl") => saInfixL
 case (Initial, "infixr") => saInfixR
 case (Initial, "instance") => saInstance
 case (Initial, Nd+ | ("0o"| "0O") ['0'-'7']+ | ("0x" | "0X") (Nd | ['a'-'f'] | ['A'-'F'])+) => saInteger
+case (Initial, '\\') => saLambda
 case (Initial, "<-") => saLArrow
 case (Initial, '{') => saLBrace
 case (Initial, '[') => saLBracket
@@ -48,6 +52,7 @@ case (Initial, ']') => saRBracket
 case (Initial, ')') => saRParen
 case (Initial, ';') => saSemicolon
 case (Initial, '"' ([^ '"' '\'] | '\\' (['a'|'b'|'f'|'n'|'r'|'t'|'v'|'\\'|'"'|'\''|'&']|"NUL"|"SOH"|"STX"|"ETX"|"EOT"|"ENQ"|"ACK"|"BEL"|"BS"|"HT"|"LF"|"VT"|"FF"|"CR"|"SO"|"SI"|"DLE"|"DC1"|"DC2"|"DC3"|"DC4"|"NAK"|"SYN"|"ETB"|"CAN"|"EM"|"SUB"|"ESC"|"FS"|"GS"|"RS"|"US"|"SP"|"DEL"|Nd+|'o'['0'-'7']+""|'x'(Nd | ['a'-'f'] | ['A'-'F'])+) | '\'' ("\r\n" | '\r' | '\n' | '\f' | '\v' | ' ' | '\t' | Zs)+ '\\')* '"') => saString
+case (Initial, "then") => saThen
 case (Initial, "type") => saType
 case (Initial, "where") => saWhere
 case (Initial, ((Lu | Lt)((Ll | '_') | Lu | Lt | Nd | '\'')* '.')*(Ll | '_')((Ll | '_') | Lu | Lt | Nd | '\'')*) => saVarId
@@ -118,6 +123,8 @@ semanticActions = SemanticActions
       return $ Just $ Parsing.DERIVING (pos, n)
   , saDotDot = withPosition $ \pos n _ ->
       return $ Just $ Parsing.DOT_DOT (pos, n)
+  , saElse = withPosition $ \pos n _ ->
+      return $ Just $ Parsing.ELSE (pos, n)
   , saEqual = withPosition $ \pos n _ ->
       return $ Just $ Parsing.EQUAL (pos, n)
   , saExcl = withPosition $ \pos n _ ->
@@ -130,6 +137,10 @@ semanticActions = SemanticActions
       return $ Just $ Parsing.HIDING (pos, n)
   , saImport = withPosition $ \pos n _ ->
       return $ Just $ Parsing.IMPORT (pos, n)
+  , saIf = withPosition $ \pos n _ ->
+      return $ Just $ Parsing.IF (pos, n)
+  , saIn = withPosition $ \pos n _ ->
+      return $ Just $ Parsing.IN (pos, n)
   , saInfix = withPosition $ \pos n _ ->
       return $ Just $ Parsing.INFIX (pos, n)
   , saInfixL = withPosition $ \pos n _ ->
@@ -140,6 +151,8 @@ semanticActions = SemanticActions
       return $ Just $ Parsing.INSTANCE (pos, n)
   , saInteger = withPosition $ \pos n yytext ->
       return $ Just $ Parsing.INTEGER ((pos, n), read yytext)
+  , saLambda = withPosition $ \pos n _ ->
+      return $ Just $ Parsing.LAMBDA (pos, n)
   , saLArrow = withPosition $ \pos n _ ->
       return $ Just $ Parsing.LARROW (pos, n)
   , saLBrace = withPosition $ \pos n _ ->
@@ -172,6 +185,8 @@ semanticActions = SemanticActions
       return $ Just $ Parsing.SEMICOLON (pos, n)
   , saString = withPosition $ \pos n yytext ->
       return $ Just $ Parsing.STRING ((pos, n), read yytext)
+  , saThen = withPosition $ \pos n _ ->
+      return $ Just $ Parsing.THEN (pos, n)
   , saType = withPosition $ \pos n _ ->
       return $ Just $ Parsing.TYPE (pos, n)
   , saWhere = withPosition $ \pos n _ ->
