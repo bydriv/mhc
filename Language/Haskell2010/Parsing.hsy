@@ -295,7 +295,9 @@ def rule guard :=
 | infixexp
 
 def rule exp :=
-  infixexp
+  infixexp COLON_COLON type'
+| infixexp COLON_COLON btype DARROW type'
+| infixexp
 
 def rule infixexp :=
   lexp
