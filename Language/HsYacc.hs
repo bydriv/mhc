@@ -350,7 +350,7 @@ makeTable start grm0 =
           if RBSet.subset states' states'' && RBSet.subset edges' edges'' then
             (states'', edges'')
           else
-            makeStatesAndEdges states' states'' edges' edges'' sets grm mem'
+            makeStatesAndEdges (RBSet.diff states' states'') states'' (RBSet.diff edges' edges'') edges'' sets grm mem'
 
     makeLALR1 states0 edges0 =
       let states = RBSet.fromList $ makeLALR1States $ RBSet.toList states0 in
