@@ -37,6 +37,7 @@ case (Initial, '{') => saLBrace
 case (Initial, '[') => saLBracket
 case (Initial, "let") => saLet
 case (Initial, '(') => saLParen
+case (Initial, "-") => saMinus
 case (Initial, "module") => saModule
 case (Initial, "newtype") => saNewtype
 case (Initial, '|') => saPipe
@@ -149,6 +150,8 @@ semanticActions = SemanticActions
       return $ Just $ Parsing.LET (pos, n)
   , saLParen = withPosition $ \pos n _ ->
       return $ Just $ Parsing.LPAREN (pos, n)
+  , saMinus = withPosition $ \pos n _ ->
+      return $ Just $ Parsing.MINUS (pos, n)
   , saModule = withPosition $ \pos n _ ->
       return $ Just $ Parsing.MODULE (pos, n)
   , saNewtype = withPosition $ \pos n _ ->

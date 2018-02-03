@@ -31,6 +31,7 @@ type LBRACE = Pos
 type LBRACKET = Pos
 type LET = Pos
 type LPAREN = Pos
+type MINUS = Pos
 type MODULE = Pos
 type NEWTYPE = Pos
 type PIPE = Pos
@@ -182,7 +183,9 @@ def rule gendecl :=
 | fixity integer_opt ops
 
 def rule ops :=
-  op
+  MINUS
+| op
+| MINUS COMMA ops
 | op COMMA ops
 
 def rule vars :=
@@ -303,11 +306,13 @@ def rule infixexp :=
   lexp
 
 def rule lexp :=
-  fexp
+  MINUS lexp
+| fexp
 
 def rule fexp :=
   aexp
 | fexp aexp
+| fexp MINUS aexp
 | fexp op aexp
 
 def rule aexp :=
@@ -319,6 +324,7 @@ def rule aexp :=
 def rule pat :=
   apat
 | pat apat
+| pat MINUS apat
 | pat op apat
 
 def rule apat :=
@@ -329,6 +335,7 @@ def rule var :=
   AS
 | EXPORT
 | QVARID
+| LPAREN MINUS RPAREN
 | LPAREN QVARSYM RPAREN
 
 def rule con :=

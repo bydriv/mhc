@@ -24,6 +24,9 @@
 module Main where {
   import qualified Control.Monad as Monad;
 
+  unary = -1;
+  binary = 2 - 3;
+
   fib :: Int -> Int;
   fib n
     | n == 0, m <- n = 0
