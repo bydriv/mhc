@@ -31,5 +31,6 @@ instance Monad Identity where
   return = Identity
   m >>= k = k $ runIdentity m
 
+{-# INLINE runIdentity #-}
 runIdentity :: Identity a -> a
 runIdentity (Identity x) = x

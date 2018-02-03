@@ -48,23 +48,30 @@ instance MonadTrans.MonadTrans (StateT s) where
     x <- m
     return (x, s)
 
+{-# INLINE runStateT #-}
 runStateT :: StateT s m a -> s -> m (a, s)
 runStateT (StateT f) = f
 
+{-# INLINE evalStateT #-}
 evalStateT :: Monad m => StateT s m a -> s -> m a
 evalStateT m = Monad.liftM fst . runStateT m
 
+{-# INLINE execStateT #-}
 execStateT :: Monad m => StateT s m a -> s -> m s
 execStateT m = Monad.liftM snd . runStateT m
 
+{-# INLINE get #-}
 get :: Monad m => StateT s m s
 get = StateT $ \s -> return (s, s)
 
+{-# INLINE put #-}
 put :: Monad m => s -> StateT s m ()
 put s = StateT $ const $ return ((), s)
 
+{-# INLINE gets #-}
 gets :: Monad m => (s -> a) -> StateT s m a
 gets = flip fmap get
 
+{-# INLINE modify #-}
 modify :: Monad m => (s -> s) -> StateT s m ()
 modify f = get >>= put . f
