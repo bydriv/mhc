@@ -187,13 +187,15 @@ firstSet (N n : ss) sets @ (nullable, first, _) =
 
 goto
   :: (Ord t, Ord n, Monad m)
-  => (RBSet.RBSet (Item t n), Symbol t n, Sets t n, Grammar t n)
+  => Sets t n
+  -> Grammar t n
+  -> (RBSet.RBSet (Item t n), Symbol t n)
   -> MemoT
-      (RBSet.RBSet (Item t n), Symbol t n, Sets t n, Grammar t n)
+      (RBSet.RBSet (Item t n), Symbol t n)
       (RBSet.RBSet (Item t n))
-      (MemoT (RBSet.RBSet (Item t n), Sets t n, Grammar t n) (RBSet.RBSet (Item t n)) m)
+      (MemoT (RBSet.RBSet (Item t n)) (RBSet.RBSet (Item t n)) m)
       (RBSet.RBSet (Item t n))
-goto = memo $ \(items, symbol, sets, grm) ->
+goto sets grm = memo $ \(items, symbol) ->
   let items' =
         RBSet.foldl
           (\(left, middle, right, lookahead) items'' ->
@@ -207,20 +209,22 @@ goto = memo $ \(items, symbol, sets, grm) ->
                   items'')
           RBSet.empty
           items in
-    closure (items', sets, grm)
+    closure sets grm items'
 
 closure
   :: (Ord t, Ord n, Monad m)
-  => (RBSet.RBSet (Item t n), Sets t n, Grammar t n)
+  => Sets t n
+  -> Grammar t n
+  -> RBSet.RBSet (Item t n)
   -> MemoT
-      (RBSet.RBSet (Item t n), Sets t n, Grammar t n)
+      (RBSet.RBSet (Item t n))
       (RBSet.RBSet (Item t n))
       m
       (RBSet.RBSet (Item t n))
-closure = memo $ \(items, sets, grm) ->
-    return $ closure' items RBSet.empty sets grm
+closure sets @ (_, first, _) grm = memo $ \items ->
+    return $ closure' items RBSet.empty
   where
-    closure' items1 items2 sets @ (_, first, _) grm =
+    closure' items1 items2 =
       let items3 =
             RBSet.fromList
               (concatMap
@@ -240,7 +244,7 @@ closure = memo $ \(items, sets, grm) ->
         if RBSet.subset items3 items4 then
           items4
         else
-          closure' items3 items4 sets grm
+          closure' items3 items4
 
 makeTable :: (Ord t, Ord n) => n -> Grammar t n -> Maybe (ActionTable t n, GotoTable t n)
 makeTable start grm0 =
@@ -256,7 +260,7 @@ makeTable start grm0 =
                 right ))
           grm0 in
   let sets = makeSets grm in
-  let states0 = RBSet.fromList [Identity.runIdentity (StateT.evalStateT (closure (RBSet.fromList [(Start, [], [N (UserNonterminal start), T Dollar], Question)], sets, grm)) RBMap.empty)] in
+  let states0 = RBSet.fromList [Identity.runIdentity (StateT.evalStateT (closure sets grm (RBSet.fromList [(Start, [], [N (UserNonterminal start), T Dollar], Question)])) RBMap.empty)] in
   let edges0 = RBSet.empty in
   let (states1, edges1) = makeStatesAndEdges states0 RBSet.empty edges0 RBSet.empty sets grm (RBMap.empty, RBMap.empty) in
   let (states, edges) = makeLALR1 states1 edges1 in
@@ -331,7 +335,7 @@ makeTable start grm0 =
                                   Identity.runIdentity
                                     (StateT.runStateT
                                       (StateT.runStateT
-                                        (goto (items, symbol, sets, grm))
+                                        (goto sets grm (items, symbol))
                                         (fst mem1))
                                       (snd mem1)) in
                             let states2 = RBSet.insert items' states1 in
