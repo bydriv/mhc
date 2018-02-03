@@ -30,6 +30,10 @@ module Main where {
     | n == 1, let {m = n} = 1
     | otherwise = fib (n - 2) + fib (n - 1);
 
+  instance Num Int where {
+    n + m = n + m
+  };
+
   as :: Int;
   as = 1;
 

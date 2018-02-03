@@ -317,9 +317,11 @@ def rule aexp :=
 def rule pat :=
   apat
 | pat apat
+| pat op apat
 
 def rule apat :=
   var
+| LPAREN pat RPAREN
 
 def rule var :=
   AS
