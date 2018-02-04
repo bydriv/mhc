@@ -323,6 +323,19 @@ def rule infixexp :=
 | lexp COLON_COLON btype DARROW type'
 | lexp
 
+def rule infixexp' :=
+  LAMBDA pat RARROW infixexp'
+| LET decls IN infixexp'
+| IF exp semicolon_opt THEN exp semicolon_opt ELSE infixexp'
+| lexp MINUS infixexp'
+| lexp QVARSYM infixexp'
+| lexp BACKQUOTE AS BACKQUOTE infixexp'
+| lexp BACKQUOTE EXPORT BACKQUOTE infixexp'
+| lexp BACKQUOTE QVARID BACKQUOTE infixexp'
+| lexp QCONSYM infixexp'
+| lexp BACKQUOTE QCONID BACKQUOTE infixexp'
+| lexp
+
 def rule lexp :=
   MINUS lexp
 | CASE exp OF LBRACE alts RBRACE
@@ -366,6 +379,8 @@ def rule alts :=
 def rule alt :=
 | pat RARROW exp
 | pat RARROW exp WHERE decls
+| pat PIPE gdpat
+| pat PIPE gdpat WHERE decls
 
 def rule gdpat :=
   patguards RARROW exp
@@ -376,9 +391,9 @@ def rule patguards :=
 | patguard COMMA patguards
 
 def rule patguard :=
-  infixexp LARROW infixexp
+  infixexp' LARROW infixexp'
 | LET decls
-| infixexp
+| infixexp'
 
 def rule stmts :=
   stmt

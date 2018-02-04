@@ -31,6 +31,13 @@ module Main where {
 
   l = [0,1..100];
 
+  z =
+    case x of {
+      y | n > m -> a
+        | n == m -> b
+        | otherwise -> c;
+    };
+
   s = \x y z -> x z (y z);
   k = \x y -> x;
   i = s k k;
