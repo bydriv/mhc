@@ -367,6 +367,13 @@ def rule patguard :=
 | infixexp
 
 def rule stmts :=
+  stmt
+| stmt SEMICOLON stmts
+
+def rule stmt :=
+  infixexp
+| infixexp LARROW infixexp
+| LET decls
 
 def rule pat :=
   apat

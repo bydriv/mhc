@@ -54,5 +54,8 @@ module Main where {
 
   -- main function
   main :: IO ();
-  main = putStrLn "hello world";
+  main = do {
+    s <- getContents;
+    putStr s
+  };
 }
