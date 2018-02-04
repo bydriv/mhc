@@ -27,6 +27,8 @@ module Main where {
   a = f $ \x -> g $ h x;
   b = let {x = 1 + let {y = 0} in y} in 3 + let {z = x + 1} in z * 2;
 
+  f = (+1);
+
   s = \x y z -> x z (y z);
   k = \x y -> x;
   i = s k k;
