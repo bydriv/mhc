@@ -350,7 +350,7 @@ def rule alts :=
 | alt SEMICOLON alts
 
 def rule alt :=
-  pat RARROW exp
+| pat RARROW exp
 | pat RARROW exp WHERE decls
 
 def rule gdpat :=
@@ -371,7 +371,7 @@ def rule stmts :=
 | stmt SEMICOLON stmts
 
 def rule stmt :=
-  infixexp
+| infixexp
 | infixexp LARROW infixexp
 | LET decls
 
