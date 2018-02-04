@@ -352,7 +352,11 @@ adjust f = update $ Just . f
 
 {-# INLINE unionBy #-}
 unionBy :: Ord k => (a -> a -> a) -> RBMap k a -> RBMap k a -> RBMap k a
-unionBy = foldri . insertBy . flip
+unionBy f l r =
+  if blackHeight l < blackHeight r then
+    (foldri . insertBy) f r l
+  else
+    (foldri . insertBy . flip) f l r
 
 {-# INLINE unionsBy #-}
 unionsBy :: Ord k => (a -> a -> a) -> [RBMap k a] -> RBMap k a
