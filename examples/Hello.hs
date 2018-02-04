@@ -29,6 +29,8 @@ module Main where {
 
   f = (+1);
 
+  l = [0,1..100];
+
   s = \x y z -> x z (y z);
   k = \x y -> x;
   i = s k k;

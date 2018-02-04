@@ -333,11 +333,25 @@ def rule fexp :=
   aexp
 | fexp aexp
 
+def rule exp_seq :=
+  exp
+| exp COMMA exp_seq
+
+def rule exp_seq2 :=
+  exp COMMA exp
+| exp COMMA exp_seq2
+
 def rule aexp :=
   var
 | INTEGER
 | STRING
 | LPAREN exp RPAREN
+| LPAREN exp_seq2 RPAREN
+| LBRACKET exp_seq RBRACKET
+| LBRACKET exp DOT_DOT RBRACKET
+| LBRACKET exp DOT_DOT exp RBRACKET
+| LBRACKET exp COMMA exp DOT_DOT RBRACKET
+| LBRACKET exp COMMA exp DOT_DOT exp RBRACKET
 | LPAREN QVARSYM infixexp RPAREN
 | LPAREN BACKQUOTE AS BACKQUOTE infixexp RPAREN
 | LPAREN BACKQUOTE EXPORT BACKQUOTE infixexp RPAREN
