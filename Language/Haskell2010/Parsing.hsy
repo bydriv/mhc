@@ -303,25 +303,30 @@ def rule guard :=
 | infixexp
 
 def rule exp :=
+  infixexp
+
+def rule infixexp :=
   LAMBDA pat RARROW exp
 | LET decls IN exp
 | IF exp semicolon_opt THEN exp semicolon_opt ELSE exp
-| infixexp COLON_COLON type'
-| infixexp COLON_COLON btype DARROW type'
-| infixexp
-
-def rule infixexp :=
-  lexp
+| lexp MINUS exp
+| lexp QVARSYM exp
+| lexp BACKQUOTE AS BACKQUOTE exp
+| lexp BACKQUOTE EXPORT BACKQUOTE exp
+| lexp BACKQUOTE QVARID BACKQUOTE exp
+| lexp QCONSYM exp
+| lexp BACKQUOTE QCONID BACKQUOTE exp
+| lexp COLON_COLON type'
+| lexp COLON_COLON btype DARROW type'
+| lexp
 
 def rule lexp :=
-  MINUS lexp
+  MINUS fexp
 | fexp
 
 def rule fexp :=
   aexp
 | fexp aexp
-| fexp MINUS aexp
-| fexp op aexp
 
 def rule aexp :=
   var
