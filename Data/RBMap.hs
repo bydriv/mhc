@@ -385,7 +385,23 @@ interr = interBy $ const id
 
 {-# INLINE diffBy #-}
 diffBy :: Ord k => (a -> a -> Maybe a) -> RBMap k a -> RBMap k a -> RBMap k a
-diffBy f = foldri $ flip $ update . flip f
+diffBy f l r =
+  if blackHeight l < blackHeight r then
+    fromList
+      (Maybe.mapMaybe
+        (\(k, x) ->
+          case lookup k r of
+            Nothing ->
+              Just (k, x)
+            Just y ->
+              case f x y of
+                Nothing ->
+                  Nothing
+                Just z ->
+                  Just (k, z))
+        (toList l))
+  else
+    (foldri $ flip $ update . flip f) l r
 
 {-# INLINE diff #-}
 diff :: Ord k => RBMap k a -> RBMap k a -> RBMap k a
