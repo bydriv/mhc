@@ -13,6 +13,7 @@ case (Initial, "--" '-'*) => saOpenDashes
 case (Initial, "{-") => saOpenNested
 case (Initial, "as") => saAs
 case (Initial, '`') => saBackquote
+case (Initial, "case") => saCase
 case (Initial, "class") => saClass
 case (Initial, ':' ':') => saColonColon
 case (Initial, ',') => saComma
@@ -20,6 +21,7 @@ case (Initial, "=>") => saDArrow
 case (Initial, "data") => saData
 case (Initial, "default") => saDefault
 case (Initial, "deriving") => saDeriving
+case (Initial, "do") => saDo
 case (Initial, "..") => saDotDot
 case (Initial, "else") => saElse
 case (Initial, '=') => saEqual
@@ -44,6 +46,7 @@ case (Initial, '(') => saLParen
 case (Initial, "-") => saMinus
 case (Initial, "module") => saModule
 case (Initial, "newtype") => saNewtype
+case (Initial, "of") => saOf
 case (Initial, '|') => saPipe
 case (Initial, "qualified") => saQualified
 case (Initial, "->") => saRArrow
@@ -107,6 +110,8 @@ semanticActions = SemanticActions
       return $ Just $ Parsing.AS (pos, n)
   , saBackquote = withPosition $ \pos n _ ->
       return $ Just $ Parsing.BACKQUOTE (pos, n)
+  , saCase = withPosition $ \pos n _ ->
+      return $ Just $ Parsing.CASE (pos, n)
   , saClass = withPosition $ \pos n _ ->
       return $ Just $ Parsing.CLASS (pos, n)
   , saColonColon = withPosition $ \pos n _ ->
@@ -121,6 +126,8 @@ semanticActions = SemanticActions
       return $ Just $ Parsing.DEFAULT (pos, n)
   , saDeriving = withPosition $ \pos n _ ->
       return $ Just $ Parsing.DERIVING (pos, n)
+  , saDo = withPosition $ \pos n _ ->
+      return $ Just $ Parsing.DO (pos, n)
   , saDotDot = withPosition $ \pos n _ ->
       return $ Just $ Parsing.DOT_DOT (pos, n)
   , saElse = withPosition $ \pos n _ ->
@@ -169,6 +176,8 @@ semanticActions = SemanticActions
       return $ Just $ Parsing.MODULE (pos, n)
   , saNewtype = withPosition $ \pos n _ ->
       return $ Just $ Parsing.NEWTYPE (pos, n)
+  , saOf = withPosition $ \pos n _ ->
+      return $ Just $ Parsing.OF (pos, n)
   , saPipe = withPosition $ \pos n _ ->
       return $ Just $ Parsing.PIPE (pos, n)
   , saQualified = withPosition $ \pos n _ ->

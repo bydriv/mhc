@@ -7,6 +7,7 @@
 type Pos = (Int, Int)
 type AS = Pos
 type BACKQUOTE = Pos
+type CASE = Pos
 type CLASS = Pos
 type COLON_COLON = Pos
 type COMMA = Pos
@@ -14,6 +15,7 @@ type DARROW = Pos
 type DATA = Pos
 type DEFAULT = Pos
 type DERIVING = Pos
+type DO = Pos
 type DOT_DOT = Pos
 type ELSE = Pos
 type EQUAL = Pos
@@ -38,6 +40,7 @@ type LPAREN = Pos
 type MINUS = Pos
 type MODULE = Pos
 type NEWTYPE = Pos
+type OF = Pos
 type PIPE = Pos
 type QCONID = (Pos, String)
 type QCONSYM = (Pos, String)
@@ -321,7 +324,9 @@ def rule infixexp :=
 | lexp
 
 def rule lexp :=
-  MINUS fexp
+  MINUS lexp
+| CASE exp OF LBRACE alts RBRACE
+| DO LBRACE stmts RBRACE
 | fexp
 
 def rule fexp :=
@@ -339,6 +344,29 @@ def rule aexp :=
 | LPAREN BACKQUOTE QVARID BACKQUOTE infixexp RPAREN
 | LPAREN QCONSYM infixexp RPAREN
 | LPAREN BACKQUOTE QCONID BACKQUOTE infixexp RPAREN
+
+def rule alts :=
+  alt
+| alt SEMICOLON alts
+
+def rule alt :=
+  pat RARROW exp
+| pat RARROW exp WHERE decls
+
+def rule gdpat :=
+  patguards RARROW exp
+| patguards RARROW exp PIPE gdpat
+
+def rule patguards :=
+  patguard
+| patguard COMMA patguards
+
+def rule patguard :=
+  infixexp LARROW infixexp
+| LET decls
+| infixexp
+
+def rule stmts :=
 
 def rule pat :=
   apat
