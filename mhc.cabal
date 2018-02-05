@@ -7,7 +7,7 @@ library
   hs-source-dirs: .
   default-language: Haskell2010
   build-depends: base
-  ghc-options: -Wall -Werror -O3 -Wno-unused-matches -Wno-incomplete-patterns
+  ghc-options: -Wall -Werror -O3 -Wno-unused-matches -Wno-incomplete-patterns -Wno-type-defaults
   default-extensions: Safe, Strict, StrictData
   exposed-modules:
       Control.Monad.CodeGenerating
@@ -51,7 +51,7 @@ executable hslex
   main-is: tools/hslex.hs
   default-language: Haskell2010
   build-depends: base, mhc
-  ghc-options: -Wall -Werror -O3 -Wno-unused-matches -Wno-incomplete-patterns
+  ghc-options: -Wall -Werror -O3 -Wno-unused-matches -Wno-incomplete-patterns -Wno-type-defaults
   default-extensions: Safe, Strict, StrictData
   other-modules:
       Control.Monad.CodeGenerating
@@ -72,7 +72,7 @@ executable hsyacc
   main-is: tools/hsyacc.hs
   default-language: Haskell2010
   build-depends: base, mhc
-  ghc-options: -Wall -Werror -O3 -Wno-unused-matches -Wno-incomplete-patterns
+  ghc-options: -Wall -Werror -O3 -Wno-unused-matches -Wno-incomplete-patterns -Wno-type-defaults
   default-extensions: Safe, Strict, StrictData
   other-modules:
       Control.Monad.CodeGenerating

@@ -27,9 +27,9 @@ main = do
   let (tokens, _) = Identity.runIdentity $ Lexing.runLexing $ Lexing.lex Lexing.semanticActions s
   let result = Identity.runIdentity $ Parsing.parse Parsing.semanticActions $ Maybe.catMaybes tokens
   case result of
-    Nothing ->
+    Left _ ->
       putStrLn "syntax error."
-    Just ((defns, ast, codes), _) ->
+    Right ((defns, ast, codes), _) ->
       let modid = takeModId defns in
       let header = takeCodes defns in
       let footer = codes in

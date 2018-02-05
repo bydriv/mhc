@@ -59,6 +59,7 @@ data Token =
 data Action = Shift Int | Reduce Int Int | Accept
 type ActionState = Int
 data ActionSymbol = Token Token | EOF
+  deriving (Eq, Ord, Read, Show)
 type GotoState = Int
 type GotoSymbol = Int
 
@@ -116,141 +117,956 @@ data SemanticActions m = SemanticActions
 
 dfaActionTransition :: ActionState -> ActionSymbol -> Maybe Action
 dfaActionTransition q s =
-  case (q, s) of
-    (0, Token (PP _)) -> Just (Reduce 0 1)
-    (0, Token (PSTART _)) -> Just (Shift 15)
-    (0, Token (PTRIVIAL _)) -> Just (Shift 16)
-    (0, Token (PMODULE _)) -> Just (Shift 12)
-    (0, Token (PLBRACE _)) -> Just (Shift 13)
-    (1, EOF) -> Just (Accept)
-    (2, Token (PP _)) -> Just (Reduce 0 7)
-    (2, Token (DEF _)) -> Just (Shift 27)
-    (3, EOF) -> Just (Reduce 0 18)
-    (3, Token (CODE _)) -> Just (Shift 36)
-    (4, Token (PP _)) -> Just (Shift 2)
-    (5, Token (PP _)) -> Just (Shift 3)
-    (6, EOF) -> Just (Reduce 5 0)
-    (7, Token (PP _)) -> Just (Reduce 0 1)
-    (7, Token (PSTART _)) -> Just (Shift 15)
-    (7, Token (PTRIVIAL _)) -> Just (Shift 16)
-    (7, Token (PMODULE _)) -> Just (Shift 12)
-    (7, Token (PLBRACE _)) -> Just (Shift 13)
-    (8, Token (PP _)) -> Just (Reduce 2 2)
-    (9, Token (PP _)) -> Just (Reduce 0 7)
-    (9, Token (DEF _)) -> Just (Shift 27)
-    (10, Token (PP _)) -> Just (Reduce 2 8)
-    (11, EOF) -> Just (Reduce 0 18)
-    (11, Token (PWHERE _)) -> Just (Reduce 0 18)
-    (11, Token (PRBRACE _)) -> Just (Reduce 0 18)
-    (11, Token (CODE _)) -> Just (Shift 36)
-    (12, Token (PWHERE _)) -> Just (Reduce 0 18)
-    (12, Token (CODE _)) -> Just (Shift 36)
-    (13, Token (PRBRACE _)) -> Just (Reduce 0 18)
-    (13, Token (CODE _)) -> Just (Shift 36)
-    (14, EOF) -> Just (Reduce 2 19)
-    (14, Token (PWHERE _)) -> Just (Reduce 2 19)
-    (14, Token (PRBRACE _)) -> Just (Reduce 2 19)
-    (15, Token (NONTERMINAL _)) -> Just (Shift 26)
-    (16, Token (PP _)) -> Just (Reduce 1 4)
-    (16, Token (PSTART _)) -> Just (Reduce 1 4)
-    (16, Token (PTRIVIAL _)) -> Just (Reduce 1 4)
-    (16, Token (PMODULE _)) -> Just (Reduce 1 4)
-    (16, Token (PLBRACE _)) -> Just (Reduce 1 4)
-    (16, Token (NONTERMINAL _)) -> Just (Reduce 1 4)
-    (16, Token (CODE _)) -> Just (Reduce 1 4)
-    (17, Token (PP _)) -> Just (Reduce 3 5)
-    (17, Token (PSTART _)) -> Just (Reduce 3 5)
-    (17, Token (PTRIVIAL _)) -> Just (Reduce 3 5)
-    (17, Token (PMODULE _)) -> Just (Reduce 3 5)
-    (17, Token (PLBRACE _)) -> Just (Reduce 3 5)
-    (17, Token (NONTERMINAL _)) -> Just (Reduce 3 5)
-    (17, Token (CODE _)) -> Just (Reduce 3 5)
-    (18, Token (PP _)) -> Just (Reduce 3 6)
-    (18, Token (PSTART _)) -> Just (Reduce 3 6)
-    (18, Token (PTRIVIAL _)) -> Just (Reduce 3 6)
-    (18, Token (PMODULE _)) -> Just (Reduce 3 6)
-    (18, Token (PLBRACE _)) -> Just (Reduce 3 6)
-    (18, Token (NONTERMINAL _)) -> Just (Reduce 3 6)
-    (18, Token (CODE _)) -> Just (Reduce 3 6)
-    (19, Token (PWHERE _)) -> Just (Shift 17)
-    (20, Token (PRBRACE _)) -> Just (Shift 18)
-    (21, Token (PP _)) -> Just (Reduce 2 3)
-    (21, Token (PSTART _)) -> Just (Reduce 2 3)
-    (21, Token (PTRIVIAL _)) -> Just (Reduce 2 3)
-    (21, Token (PMODULE _)) -> Just (Reduce 2 3)
-    (21, Token (PLBRACE _)) -> Just (Reduce 2 3)
-    (21, Token (NONTERMINAL _)) -> Just (Reduce 2 3)
-    (21, Token (CODE _)) -> Just (Reduce 2 3)
-    (22, Token (PP _)) -> Just (Reduce 0 12)
-    (22, Token (DEF _)) -> Just (Reduce 0 12)
-    (22, Token (RULE _)) -> Just (Reduce 0 12)
-    (22, Token (PIPE _)) -> Just (Reduce 0 12)
-    (22, Token (TERMINAL _)) -> Just (Shift 35)
-    (22, Token (NONTERMINAL _)) -> Just (Shift 26)
-    (23, Token (PP _)) -> Just (Reduce 0 12)
-    (23, Token (DEF _)) -> Just (Reduce 0 12)
-    (23, Token (RULE _)) -> Just (Reduce 0 12)
-    (23, Token (PIPE _)) -> Just (Reduce 0 12)
-    (23, Token (TERMINAL _)) -> Just (Shift 35)
-    (23, Token (NONTERMINAL _)) -> Just (Shift 26)
-    (24, Token (PP _)) -> Just (Reduce 0 12)
-    (24, Token (DEF _)) -> Just (Reduce 0 12)
-    (24, Token (RULE _)) -> Just (Reduce 0 12)
-    (24, Token (PIPE _)) -> Just (Reduce 0 12)
-    (24, Token (TERMINAL _)) -> Just (Shift 35)
-    (24, Token (NONTERMINAL _)) -> Just (Shift 26)
-    (25, Token (NONTERMINAL _)) -> Just (Shift 26)
-    (26, Token (PP _)) -> Just (Reduce 1 15)
-    (26, Token (PSTART _)) -> Just (Reduce 1 15)
-    (26, Token (PTRIVIAL _)) -> Just (Reduce 1 15)
-    (26, Token (PMODULE _)) -> Just (Reduce 1 15)
-    (26, Token (PLBRACE _)) -> Just (Reduce 1 15)
-    (26, Token (DEF _)) -> Just (Reduce 1 15)
-    (26, Token (RULE _)) -> Just (Reduce 1 15)
-    (26, Token (COLONEQ _)) -> Just (Reduce 1 15)
-    (26, Token (PIPE _)) -> Just (Reduce 1 15)
-    (26, Token (TERMINAL _)) -> Just (Reduce 1 15)
-    (26, Token (NONTERMINAL _)) -> Just (Reduce 1 15)
-    (26, Token (CODE _)) -> Just (Reduce 1 15)
-    (27, Token (RULE _)) -> Just (Shift 25)
-    (28, Token (COLONEQ _)) -> Just (Shift 22)
-    (29, Token (PP _)) -> Just (Reduce 5 9)
-    (29, Token (DEF _)) -> Just (Reduce 5 9)
-    (29, Token (RULE _)) -> Just (Reduce 5 9)
-    (30, Token (PP _)) -> Just (Reduce 3 11)
-    (30, Token (DEF _)) -> Just (Reduce 3 11)
-    (30, Token (RULE _)) -> Just (Reduce 3 11)
-    (31, Token (PP _)) -> Just (Reduce 1 10)
-    (31, Token (DEF _)) -> Just (Reduce 1 10)
-    (31, Token (RULE _)) -> Just (Reduce 1 10)
-    (31, Token (PIPE _)) -> Just (Shift 23)
-    (32, Token (PP _)) -> Just (Reduce 2 13)
-    (32, Token (DEF _)) -> Just (Reduce 2 13)
-    (32, Token (RULE _)) -> Just (Reduce 2 13)
-    (32, Token (PIPE _)) -> Just (Reduce 2 13)
-    (33, Token (PP _)) -> Just (Reduce 1 17)
-    (33, Token (DEF _)) -> Just (Reduce 1 17)
-    (33, Token (RULE _)) -> Just (Reduce 1 17)
-    (33, Token (PIPE _)) -> Just (Reduce 1 17)
-    (33, Token (TERMINAL _)) -> Just (Reduce 1 17)
-    (33, Token (NONTERMINAL _)) -> Just (Reduce 1 17)
-    (34, Token (PP _)) -> Just (Reduce 1 16)
-    (34, Token (DEF _)) -> Just (Reduce 1 16)
-    (34, Token (RULE _)) -> Just (Reduce 1 16)
-    (34, Token (PIPE _)) -> Just (Reduce 1 16)
-    (34, Token (TERMINAL _)) -> Just (Reduce 1 16)
-    (34, Token (NONTERMINAL _)) -> Just (Reduce 1 16)
-    (35, Token (PP _)) -> Just (Reduce 1 14)
-    (35, Token (DEF _)) -> Just (Reduce 1 14)
-    (35, Token (RULE _)) -> Just (Reduce 1 14)
-    (35, Token (PIPE _)) -> Just (Reduce 1 14)
-    (35, Token (TERMINAL _)) -> Just (Reduce 1 14)
-    (35, Token (NONTERMINAL _)) -> Just (Reduce 1 14)
-    (36, EOF) -> Just (Reduce 1 20)
-    (36, Token (PWHERE _)) -> Just (Reduce 1 20)
-    (36, Token (PRBRACE _)) -> Just (Reduce 1 20)
-    (36, Token (CODE _)) -> Just (Reduce 1 20)
-    (_, _) -> Nothing
+  let s' =
+        case s of
+          EOF -> -1
+          Token (CODE _) -> 13
+          Token (COLONEQ _) -> 9
+          Token (DEF _) -> 7
+          Token (NONTERMINAL _) -> 12
+          Token (PIPE _) -> 10
+          Token (PLBRACE _) -> 5
+          Token (PMODULE _) -> 3
+          Token (PP _) -> 0
+          Token (PRBRACE _) -> 6
+          Token (PSTART _) -> 1
+          Token (PTRIVIAL _) -> 2
+          Token (PWHERE _) -> 4
+          Token (RULE _) -> 8
+          Token (TERMINAL _) -> 11
+  in
+    case compare (q, s') (22, 7) of {
+      LT ->
+    case compare (q, s') (12, 4) of {
+      LT ->
+    case compare (q, s') (7, 3) of {
+      LT ->
+    case compare (q, s') (4, 0) of {
+      LT ->
+    case compare (q, s') (0, 5) of {
+      LT ->
+    case compare (q, s') (0, 2) of {
+      LT ->
+    case compare (q, s') (0, 0) of {
+      LT ->
+        Nothing;
+      EQ ->
+        Just (Reduce 0 1);
+      GT ->
+    case compare (q, s') (0, 1) of {
+      LT ->
+        Nothing;
+      EQ ->
+        Just (Shift 15);
+      GT ->
+        Nothing
+    }
+    };
+      EQ ->
+        Just (Shift 16);
+      GT ->
+    case compare (q, s') (0, 3) of {
+      LT ->
+        Nothing;
+      EQ ->
+        Just (Shift 12);
+      GT ->
+        Nothing
+    }
+    };
+      EQ ->
+        Just (Shift 13);
+      GT ->
+    case compare (q, s') (2, 0) of {
+      LT ->
+    case compare (q, s') (1, -1) of {
+      LT ->
+        Nothing;
+      EQ ->
+        Just (Accept);
+      GT ->
+        Nothing
+    };
+      EQ ->
+        Just (Reduce 0 7);
+      GT ->
+    case compare (q, s') (3, -1) of {
+      LT ->
+    case compare (q, s') (2, 7) of {
+      LT ->
+        Nothing;
+      EQ ->
+        Just (Shift 27);
+      GT ->
+        Nothing
+    };
+      EQ ->
+        Just (Reduce 0 18);
+      GT ->
+    case compare (q, s') (3, 13) of {
+      LT ->
+        Nothing;
+      EQ ->
+        Just (Shift 36);
+      GT ->
+        Nothing
+    }
+    }
+    }
+    };
+      EQ ->
+        Just (Shift 2);
+      GT ->
+    case compare (q, s') (6, -1) of {
+      LT ->
+    case compare (q, s') (5, 0) of {
+      LT ->
+        Nothing;
+      EQ ->
+        Just (Shift 3);
+      GT ->
+        Nothing
+    };
+      EQ ->
+        Just (Reduce 5 0);
+      GT ->
+    case compare (q, s') (7, 1) of {
+      LT ->
+    case compare (q, s') (7, 0) of {
+      LT ->
+        Nothing;
+      EQ ->
+        Just (Reduce 0 1);
+      GT ->
+        Nothing
+    };
+      EQ ->
+        Just (Shift 15);
+      GT ->
+    case compare (q, s') (7, 2) of {
+      LT ->
+        Nothing;
+      EQ ->
+        Just (Shift 16);
+      GT ->
+        Nothing
+    }
+    }
+    }
+    };
+      EQ ->
+        Just (Shift 12);
+      GT ->
+    case compare (q, s') (9, 0) of {
+      LT ->
+    case compare (q, s') (8, 0) of {
+      LT ->
+    case compare (q, s') (7, 5) of {
+      LT ->
+        Nothing;
+      EQ ->
+        Just (Shift 13);
+      GT ->
+        Nothing
+    };
+      EQ ->
+        Just (Reduce 2 2);
+      GT ->
+        Nothing
+    };
+      EQ ->
+        Just (Reduce 0 7);
+      GT ->
+    case compare (q, s') (11, 4) of {
+      LT ->
+    case compare (q, s') (11, -1) of {
+      LT ->
+    case compare (q, s') (10, 0) of {
+      LT ->
+    case compare (q, s') (9, 7) of {
+      LT ->
+        Nothing;
+      EQ ->
+        Just (Shift 27);
+      GT ->
+        Nothing
+    };
+      EQ ->
+        Just (Reduce 2 8);
+      GT ->
+        Nothing
+    };
+      EQ ->
+        Just (Reduce 0 18);
+      GT ->
+        Nothing
+    };
+      EQ ->
+        Just (Reduce 0 18);
+      GT ->
+    case compare (q, s') (11, 6) of {
+      LT ->
+        Nothing;
+      EQ ->
+        Just (Reduce 0 18);
+      GT ->
+    case compare (q, s') (11, 13) of {
+      LT ->
+        Nothing;
+      EQ ->
+        Just (Shift 36);
+      GT ->
+        Nothing
+    }
+    }
+    }
+    }
+    };
+      EQ ->
+        Just (Reduce 0 18);
+      GT ->
+    case compare (q, s') (17, 2) of {
+      LT ->
+    case compare (q, s') (13, 6) of {
+      LT ->
+    case compare (q, s') (12, 13) of {
+      LT ->
+        Nothing;
+      EQ ->
+        Just (Shift 36);
+      GT ->
+        Nothing
+    };
+      EQ ->
+        Just (Reduce 0 18);
+      GT ->
+    case compare (q, s') (16, 3) of {
+      LT ->
+    case compare (q, s') (16, 0) of {
+      LT ->
+    case compare (q, s') (14, 4) of {
+      LT ->
+    case compare (q, s') (14, -1) of {
+      LT ->
+    case compare (q, s') (13, 13) of {
+      LT ->
+        Nothing;
+      EQ ->
+        Just (Shift 36);
+      GT ->
+        Nothing
+    };
+      EQ ->
+        Just (Reduce 2 19);
+      GT ->
+        Nothing
+    };
+      EQ ->
+        Just (Reduce 2 19);
+      GT ->
+    case compare (q, s') (14, 6) of {
+      LT ->
+        Nothing;
+      EQ ->
+        Just (Reduce 2 19);
+      GT ->
+    case compare (q, s') (15, 12) of {
+      LT ->
+        Nothing;
+      EQ ->
+        Just (Shift 26);
+      GT ->
+        Nothing
+    }
+    }
+    };
+      EQ ->
+        Just (Reduce 1 4);
+      GT ->
+    case compare (q, s') (16, 2) of {
+      LT ->
+    case compare (q, s') (16, 1) of {
+      LT ->
+        Nothing;
+      EQ ->
+        Just (Reduce 1 4);
+      GT ->
+        Nothing
+    };
+      EQ ->
+        Just (Reduce 1 4);
+      GT ->
+        Nothing
+    }
+    };
+      EQ ->
+        Just (Reduce 1 4);
+      GT ->
+    case compare (q, s') (16, 13) of {
+      LT ->
+    case compare (q, s') (16, 12) of {
+      LT ->
+    case compare (q, s') (16, 5) of {
+      LT ->
+        Nothing;
+      EQ ->
+        Just (Reduce 1 4);
+      GT ->
+        Nothing
+    };
+      EQ ->
+        Just (Reduce 1 4);
+      GT ->
+        Nothing
+    };
+      EQ ->
+        Just (Reduce 1 4);
+      GT ->
+    case compare (q, s') (17, 1) of {
+      LT ->
+    case compare (q, s') (17, 0) of {
+      LT ->
+        Nothing;
+      EQ ->
+        Just (Reduce 3 5);
+      GT ->
+        Nothing
+    };
+      EQ ->
+        Just (Reduce 3 5);
+      GT ->
+        Nothing
+    }
+    }
+    }
+    };
+      EQ ->
+        Just (Reduce 3 5);
+      GT ->
+    case compare (q, s') (19, 4) of {
+      LT ->
+    case compare (q, s') (18, 2) of {
+      LT ->
+    case compare (q, s') (17, 13) of {
+      LT ->
+    case compare (q, s') (17, 5) of {
+      LT ->
+    case compare (q, s') (17, 3) of {
+      LT ->
+        Nothing;
+      EQ ->
+        Just (Reduce 3 5);
+      GT ->
+        Nothing
+    };
+      EQ ->
+        Just (Reduce 3 5);
+      GT ->
+    case compare (q, s') (17, 12) of {
+      LT ->
+        Nothing;
+      EQ ->
+        Just (Reduce 3 5);
+      GT ->
+        Nothing
+    }
+    };
+      EQ ->
+        Just (Reduce 3 5);
+      GT ->
+    case compare (q, s') (18, 1) of {
+      LT ->
+    case compare (q, s') (18, 0) of {
+      LT ->
+        Nothing;
+      EQ ->
+        Just (Reduce 3 6);
+      GT ->
+        Nothing
+    };
+      EQ ->
+        Just (Reduce 3 6);
+      GT ->
+        Nothing
+    }
+    };
+      EQ ->
+        Just (Reduce 3 6);
+      GT ->
+    case compare (q, s') (18, 12) of {
+      LT ->
+    case compare (q, s') (18, 5) of {
+      LT ->
+    case compare (q, s') (18, 3) of {
+      LT ->
+        Nothing;
+      EQ ->
+        Just (Reduce 3 6);
+      GT ->
+        Nothing
+    };
+      EQ ->
+        Just (Reduce 3 6);
+      GT ->
+        Nothing
+    };
+      EQ ->
+        Just (Reduce 3 6);
+      GT ->
+    case compare (q, s') (18, 13) of {
+      LT ->
+        Nothing;
+      EQ ->
+        Just (Reduce 3 6);
+      GT ->
+        Nothing
+    }
+    }
+    };
+      EQ ->
+        Just (Shift 17);
+      GT ->
+    case compare (q, s') (21, 1) of {
+      LT ->
+    case compare (q, s') (21, 0) of {
+      LT ->
+    case compare (q, s') (20, 6) of {
+      LT ->
+        Nothing;
+      EQ ->
+        Just (Shift 18);
+      GT ->
+        Nothing
+    };
+      EQ ->
+        Just (Reduce 2 3);
+      GT ->
+        Nothing
+    };
+      EQ ->
+        Just (Reduce 2 3);
+      GT ->
+    case compare (q, s') (21, 12) of {
+      LT ->
+    case compare (q, s') (21, 3) of {
+      LT ->
+    case compare (q, s') (21, 2) of {
+      LT ->
+        Nothing;
+      EQ ->
+        Just (Reduce 2 3);
+      GT ->
+        Nothing
+    };
+      EQ ->
+        Just (Reduce 2 3);
+      GT ->
+    case compare (q, s') (21, 5) of {
+      LT ->
+        Nothing;
+      EQ ->
+        Just (Reduce 2 3);
+      GT ->
+        Nothing
+    }
+    };
+      EQ ->
+        Just (Reduce 2 3);
+      GT ->
+    case compare (q, s') (22, 0) of {
+      LT ->
+    case compare (q, s') (21, 13) of {
+      LT ->
+        Nothing;
+      EQ ->
+        Just (Reduce 2 3);
+      GT ->
+        Nothing
+    };
+      EQ ->
+        Just (Reduce 0 12);
+      GT ->
+        Nothing
+    }
+    }
+    }
+    }
+    }
+    };
+      EQ ->
+        Just (Reduce 0 12);
+      GT ->
+    case compare (q, s') (30, 0) of {
+      LT ->
+    case compare (q, s') (23, 10) of {
+      LT ->
+    case compare (q, s') (22, 12) of {
+      LT ->
+    case compare (q, s') (22, 10) of {
+      LT ->
+    case compare (q, s') (22, 8) of {
+      LT ->
+        Nothing;
+      EQ ->
+        Just (Reduce 0 12);
+      GT ->
+        Nothing
+    };
+      EQ ->
+        Just (Reduce 0 12);
+      GT ->
+    case compare (q, s') (22, 11) of {
+      LT ->
+        Nothing;
+      EQ ->
+        Just (Shift 35);
+      GT ->
+        Nothing
+    }
+    };
+      EQ ->
+        Just (Shift 26);
+      GT ->
+    case compare (q, s') (23, 0) of {
+      LT ->
+        Nothing;
+      EQ ->
+        Just (Reduce 0 12);
+      GT ->
+    case compare (q, s') (23, 8) of {
+      LT ->
+    case compare (q, s') (23, 7) of {
+      LT ->
+        Nothing;
+      EQ ->
+        Just (Reduce 0 12);
+      GT ->
+        Nothing
+    };
+      EQ ->
+        Just (Reduce 0 12);
+      GT ->
+        Nothing
+    }
+    }
+    };
+      EQ ->
+        Just (Reduce 0 12);
+      GT ->
+    case compare (q, s') (26, 2) of {
+      LT ->
+    case compare (q, s') (25, 12) of {
+      LT ->
+    case compare (q, s') (24, 7) of {
+      LT ->
+    case compare (q, s') (23, 12) of {
+      LT ->
+    case compare (q, s') (23, 11) of {
+      LT ->
+        Nothing;
+      EQ ->
+        Just (Shift 35);
+      GT ->
+        Nothing
+    };
+      EQ ->
+        Just (Shift 26);
+      GT ->
+    case compare (q, s') (24, 0) of {
+      LT ->
+        Nothing;
+      EQ ->
+        Just (Reduce 0 12);
+      GT ->
+        Nothing
+    }
+    };
+      EQ ->
+        Just (Reduce 0 12);
+      GT ->
+    case compare (q, s') (24, 10) of {
+      LT ->
+    case compare (q, s') (24, 8) of {
+      LT ->
+        Nothing;
+      EQ ->
+        Just (Reduce 0 12);
+      GT ->
+        Nothing
+    };
+      EQ ->
+        Just (Reduce 0 12);
+      GT ->
+    case compare (q, s') (24, 12) of {
+      LT ->
+    case compare (q, s') (24, 11) of {
+      LT ->
+        Nothing;
+      EQ ->
+        Just (Shift 35);
+      GT ->
+        Nothing
+    };
+      EQ ->
+        Just (Shift 26);
+      GT ->
+        Nothing
+    }
+    }
+    };
+      EQ ->
+        Just (Shift 26);
+      GT ->
+    case compare (q, s') (26, 1) of {
+      LT ->
+    case compare (q, s') (26, 0) of {
+      LT ->
+        Nothing;
+      EQ ->
+        Just (Reduce 1 15);
+      GT ->
+        Nothing
+    };
+      EQ ->
+        Just (Reduce 1 15);
+      GT ->
+        Nothing
+    }
+    };
+      EQ ->
+        Just (Reduce 1 15);
+      GT ->
+    case compare (q, s') (26, 10) of {
+      LT ->
+    case compare (q, s') (26, 7) of {
+      LT ->
+    case compare (q, s') (26, 5) of {
+      LT ->
+    case compare (q, s') (26, 3) of {
+      LT ->
+        Nothing;
+      EQ ->
+        Just (Reduce 1 15);
+      GT ->
+        Nothing
+    };
+      EQ ->
+        Just (Reduce 1 15);
+      GT ->
+        Nothing
+    };
+      EQ ->
+        Just (Reduce 1 15);
+      GT ->
+    case compare (q, s') (26, 9) of {
+      LT ->
+    case compare (q, s') (26, 8) of {
+      LT ->
+        Nothing;
+      EQ ->
+        Just (Reduce 1 15);
+      GT ->
+        Nothing
+    };
+      EQ ->
+        Just (Reduce 1 15);
+      GT ->
+        Nothing
+    }
+    };
+      EQ ->
+        Just (Reduce 1 15);
+      GT ->
+    case compare (q, s') (27, 8) of {
+      LT ->
+    case compare (q, s') (26, 12) of {
+      LT ->
+    case compare (q, s') (26, 11) of {
+      LT ->
+        Nothing;
+      EQ ->
+        Just (Reduce 1 15);
+      GT ->
+        Nothing
+    };
+      EQ ->
+        Just (Reduce 1 15);
+      GT ->
+    case compare (q, s') (26, 13) of {
+      LT ->
+        Nothing;
+      EQ ->
+        Just (Reduce 1 15);
+      GT ->
+        Nothing
+    }
+    };
+      EQ ->
+        Just (Shift 25);
+      GT ->
+    case compare (q, s') (29, 0) of {
+      LT ->
+    case compare (q, s') (28, 9) of {
+      LT ->
+        Nothing;
+      EQ ->
+        Just (Shift 22);
+      GT ->
+        Nothing
+    };
+      EQ ->
+        Just (Reduce 5 9);
+      GT ->
+    case compare (q, s') (29, 8) of {
+      LT ->
+    case compare (q, s') (29, 7) of {
+      LT ->
+        Nothing;
+      EQ ->
+        Just (Reduce 5 9);
+      GT ->
+        Nothing
+    };
+      EQ ->
+        Just (Reduce 5 9);
+      GT ->
+        Nothing
+    }
+    }
+    }
+    }
+    }
+    };
+      EQ ->
+        Just (Reduce 3 11);
+      GT ->
+    case compare (q, s') (32, 0) of {
+      LT ->
+    case compare (q, s') (31, 8) of {
+      LT ->
+    case compare (q, s') (31, 0) of {
+      LT ->
+    case compare (q, s') (30, 8) of {
+      LT ->
+    case compare (q, s') (30, 7) of {
+      LT ->
+        Nothing;
+      EQ ->
+        Just (Reduce 3 11);
+      GT ->
+        Nothing
+    };
+      EQ ->
+        Just (Reduce 3 11);
+      GT ->
+        Nothing
+    };
+      EQ ->
+        Just (Reduce 1 10);
+      GT ->
+    case compare (q, s') (31, 7) of {
+      LT ->
+        Nothing;
+      EQ ->
+        Just (Reduce 1 10);
+      GT ->
+        Nothing
+    }
+    };
+      EQ ->
+        Just (Reduce 1 10);
+      GT ->
+    case compare (q, s') (31, 10) of {
+      LT ->
+        Nothing;
+      EQ ->
+        Just (Shift 23);
+      GT ->
+        Nothing
+    }
+    };
+      EQ ->
+        Just (Reduce 2 13);
+      GT ->
+    case compare (q, s') (34, 10) of {
+      LT ->
+    case compare (q, s') (33, 10) of {
+      LT ->
+    case compare (q, s') (33, 0) of {
+      LT ->
+    case compare (q, s') (32, 8) of {
+      LT ->
+    case compare (q, s') (32, 7) of {
+      LT ->
+        Nothing;
+      EQ ->
+        Just (Reduce 2 13);
+      GT ->
+        Nothing
+    };
+      EQ ->
+        Just (Reduce 2 13);
+      GT ->
+    case compare (q, s') (32, 10) of {
+      LT ->
+        Nothing;
+      EQ ->
+        Just (Reduce 2 13);
+      GT ->
+        Nothing
+    }
+    };
+      EQ ->
+        Just (Reduce 1 17);
+      GT ->
+    case compare (q, s') (33, 8) of {
+      LT ->
+    case compare (q, s') (33, 7) of {
+      LT ->
+        Nothing;
+      EQ ->
+        Just (Reduce 1 17);
+      GT ->
+        Nothing
+    };
+      EQ ->
+        Just (Reduce 1 17);
+      GT ->
+        Nothing
+    }
+    };
+      EQ ->
+        Just (Reduce 1 17);
+      GT ->
+    case compare (q, s') (34, 0) of {
+      LT ->
+    case compare (q, s') (33, 12) of {
+      LT ->
+    case compare (q, s') (33, 11) of {
+      LT ->
+        Nothing;
+      EQ ->
+        Just (Reduce 1 17);
+      GT ->
+        Nothing
+    };
+      EQ ->
+        Just (Reduce 1 17);
+      GT ->
+        Nothing
+    };
+      EQ ->
+        Just (Reduce 1 16);
+      GT ->
+    case compare (q, s') (34, 8) of {
+      LT ->
+    case compare (q, s') (34, 7) of {
+      LT ->
+        Nothing;
+      EQ ->
+        Just (Reduce 1 16);
+      GT ->
+        Nothing
+    };
+      EQ ->
+        Just (Reduce 1 16);
+      GT ->
+        Nothing
+    }
+    }
+    };
+      EQ ->
+        Just (Reduce 1 16);
+      GT ->
+    case compare (q, s') (35, 11) of {
+      LT ->
+    case compare (q, s') (35, 7) of {
+      LT ->
+    case compare (q, s') (34, 12) of {
+      LT ->
+    case compare (q, s') (34, 11) of {
+      LT ->
+        Nothing;
+      EQ ->
+        Just (Reduce 1 16);
+      GT ->
+        Nothing
+    };
+      EQ ->
+        Just (Reduce 1 16);
+      GT ->
+    case compare (q, s') (35, 0) of {
+      LT ->
+        Nothing;
+      EQ ->
+        Just (Reduce 1 14);
+      GT ->
+        Nothing
+    }
+    };
+      EQ ->
+        Just (Reduce 1 14);
+      GT ->
+    case compare (q, s') (35, 10) of {
+      LT ->
+    case compare (q, s') (35, 8) of {
+      LT ->
+        Nothing;
+      EQ ->
+        Just (Reduce 1 14);
+      GT ->
+        Nothing
+    };
+      EQ ->
+        Just (Reduce 1 14);
+      GT ->
+        Nothing
+    }
+    };
+      EQ ->
+        Just (Reduce 1 14);
+      GT ->
+    case compare (q, s') (36, 4) of {
+      LT ->
+    case compare (q, s') (36, -1) of {
+      LT ->
+    case compare (q, s') (35, 12) of {
+      LT ->
+        Nothing;
+      EQ ->
+        Just (Reduce 1 14);
+      GT ->
+        Nothing
+    };
+      EQ ->
+        Just (Reduce 1 20);
+      GT ->
+        Nothing
+    };
+      EQ ->
+        Just (Reduce 1 20);
+      GT ->
+    case compare (q, s') (36, 13) of {
+      LT ->
+    case compare (q, s') (36, 6) of {
+      LT ->
+        Nothing;
+      EQ ->
+        Just (Reduce 1 20);
+      GT ->
+        Nothing
+    };
+      EQ ->
+        Just (Reduce 1 20);
+      GT ->
+        Nothing
+    }
+    }
+    }
+    }
+    }
+    }
+    }
 
 production :: Int -> Int
 production 0 = 0
@@ -277,41 +1093,239 @@ production 20 = 11
 
 dfaGotoTransition :: GotoState -> GotoSymbol -> Maybe GotoState
 dfaGotoTransition q s =
-  case (q, production s) of
-    (0, 0) -> Just 1
-    (0, 1) -> Just 4
-    (0, 4) -> Just 7
-    (2, 2) -> Just 5
-    (2, 6) -> Just 9
-    (3, 3) -> Just 6
-    (3, 11) -> Just 11
-    (7, 1) -> Just 8
-    (7, 4) -> Just 7
-    (9, 2) -> Just 10
-    (9, 6) -> Just 9
-    (11, 3) -> Just 14
-    (11, 11) -> Just 11
-    (12, 3) -> Just 19
-    (12, 11) -> Just 11
-    (13, 3) -> Just 20
-    (13, 11) -> Just 11
-    (15, 5) -> Just 21
-    (22, 5) -> Just 33
-    (22, 7) -> Just 29
-    (22, 8) -> Just 31
-    (22, 9) -> Just 24
-    (22, 10) -> Just 34
-    (23, 5) -> Just 33
-    (23, 7) -> Just 30
-    (23, 8) -> Just 31
-    (23, 9) -> Just 24
-    (23, 10) -> Just 34
-    (24, 5) -> Just 33
-    (24, 8) -> Just 32
-    (24, 9) -> Just 24
-    (24, 10) -> Just 34
-    (25, 5) -> Just 28
-    (_, _) -> Nothing
+  let s' = production s in
+    case compare (q, s') (13, 11) of {
+      LT ->
+    case compare (q, s') (7, 4) of {
+      LT ->
+    case compare (q, s') (2, 6) of {
+      LT ->
+    case compare (q, s') (0, 4) of {
+      LT ->
+    case compare (q, s') (0, 1) of {
+      LT ->
+    case compare (q, s') (0, 0) of {
+      LT ->
+        Nothing;
+      EQ ->
+        Just 1;
+      GT ->
+        Nothing
+    };
+      EQ ->
+        Just 4;
+      GT ->
+        Nothing
+    };
+      EQ ->
+        Just 7;
+      GT ->
+    case compare (q, s') (2, 2) of {
+      LT ->
+        Nothing;
+      EQ ->
+        Just 5;
+      GT ->
+        Nothing
+    }
+    };
+      EQ ->
+        Just 9;
+      GT ->
+    case compare (q, s') (3, 11) of {
+      LT ->
+    case compare (q, s') (3, 3) of {
+      LT ->
+        Nothing;
+      EQ ->
+        Just 6;
+      GT ->
+        Nothing
+    };
+      EQ ->
+        Just 11;
+      GT ->
+    case compare (q, s') (7, 1) of {
+      LT ->
+        Nothing;
+      EQ ->
+        Just 8;
+      GT ->
+        Nothing
+    }
+    }
+    };
+      EQ ->
+        Just 7;
+      GT ->
+    case compare (q, s') (11, 11) of {
+      LT ->
+    case compare (q, s') (9, 6) of {
+      LT ->
+    case compare (q, s') (9, 2) of {
+      LT ->
+        Nothing;
+      EQ ->
+        Just 10;
+      GT ->
+        Nothing
+    };
+      EQ ->
+        Just 9;
+      GT ->
+    case compare (q, s') (11, 3) of {
+      LT ->
+        Nothing;
+      EQ ->
+        Just 14;
+      GT ->
+        Nothing
+    }
+    };
+      EQ ->
+        Just 11;
+      GT ->
+    case compare (q, s') (12, 11) of {
+      LT ->
+    case compare (q, s') (12, 3) of {
+      LT ->
+        Nothing;
+      EQ ->
+        Just 19;
+      GT ->
+        Nothing
+    };
+      EQ ->
+        Just 11;
+      GT ->
+    case compare (q, s') (13, 3) of {
+      LT ->
+        Nothing;
+      EQ ->
+        Just 20;
+      GT ->
+        Nothing
+    }
+    }
+    }
+    };
+      EQ ->
+        Just 11;
+      GT ->
+    case compare (q, s') (23, 8) of {
+      LT ->
+    case compare (q, s') (22, 9) of {
+      LT ->
+    case compare (q, s') (22, 7) of {
+      LT ->
+    case compare (q, s') (22, 5) of {
+      LT ->
+    case compare (q, s') (15, 5) of {
+      LT ->
+        Nothing;
+      EQ ->
+        Just 21;
+      GT ->
+        Nothing
+    };
+      EQ ->
+        Just 33;
+      GT ->
+        Nothing
+    };
+      EQ ->
+        Just 29;
+      GT ->
+    case compare (q, s') (22, 8) of {
+      LT ->
+        Nothing;
+      EQ ->
+        Just 31;
+      GT ->
+        Nothing
+    }
+    };
+      EQ ->
+        Just 24;
+      GT ->
+    case compare (q, s') (23, 5) of {
+      LT ->
+    case compare (q, s') (22, 10) of {
+      LT ->
+        Nothing;
+      EQ ->
+        Just 34;
+      GT ->
+        Nothing
+    };
+      EQ ->
+        Just 33;
+      GT ->
+    case compare (q, s') (23, 7) of {
+      LT ->
+        Nothing;
+      EQ ->
+        Just 30;
+      GT ->
+        Nothing
+    }
+    }
+    };
+      EQ ->
+        Just 31;
+      GT ->
+    case compare (q, s') (24, 8) of {
+      LT ->
+    case compare (q, s') (23, 10) of {
+      LT ->
+    case compare (q, s') (23, 9) of {
+      LT ->
+        Nothing;
+      EQ ->
+        Just 24;
+      GT ->
+        Nothing
+    };
+      EQ ->
+        Just 34;
+      GT ->
+    case compare (q, s') (24, 5) of {
+      LT ->
+        Nothing;
+      EQ ->
+        Just 33;
+      GT ->
+        Nothing
+    }
+    };
+      EQ ->
+        Just 32;
+      GT ->
+    case compare (q, s') (24, 10) of {
+      LT ->
+    case compare (q, s') (24, 9) of {
+      LT ->
+        Nothing;
+      EQ ->
+        Just 24;
+      GT ->
+        Nothing
+    };
+      EQ ->
+        Just 34;
+      GT ->
+    case compare (q, s') (25, 5) of {
+      LT ->
+        Nothing;
+      EQ ->
+        Just 28;
+      GT ->
+        Nothing
+    }
+    }
+    }
+    }
+    }
 
 parse :: Monad m => SemanticActions m -> [Token] -> m (Either (Maybe Token) (Start, [Token]))
 parse actions = parse' [] where
