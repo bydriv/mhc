@@ -260,27 +260,25 @@ makeTable start grm0 =
                 right ))
           grm0 in
   let sets = makeSets grm in
-  let states0 = RBSet.fromList [Identity.runIdentity (StateT.evalStateT (closure sets grm (RBSet.fromList [(Start, [], [N (UserNonterminal start), T Dollar], Question)])) RBMap.empty)] in
+  let states0 = RBMap.fromList [(Identity.runIdentity (StateT.evalStateT (closure sets grm (RBSet.fromList [(Start, [], [N (UserNonterminal start), T Dollar], Question)])) RBMap.empty), 0)] in
   let edges0 = RBSet.empty in
-  let (states1, edges1) = makeStatesAndEdges states0 RBSet.empty edges0 RBSet.empty sets grm (RBMap.empty, RBMap.empty) in
+  let (states1, edges1) = makeStatesAndEdges states0 RBMap.empty edges0 RBSet.empty sets grm (RBMap.empty, RBMap.empty) in
   let (states, edges) = makeLALR1 states1 edges1 in
   let reduces0 = RBSet.empty in
   let reduces = makeReduces reduces0 states in
-  let statesIndex = RBMap.fromList $ zip (RBSet.toList states) [0..] in
   let actionTable0 =
         RBMap.fromList $ Maybe.mapMaybe
-          (\items ->
-            let p = maybe undefined id $ RBMap.lookup items statesIndex in
-              if RBSet.member (Start, [N (UserNonterminal start)], [T Dollar], Question) items then
-                Just ((p, Dollar), Accept)
-              else
-                Nothing)
-          (RBSet.toList states) in
+          (\(items, p) ->
+            if RBSet.member (Start, [N (UserNonterminal start)], [T Dollar], Question) items then
+              Just ((p, Dollar), Accept)
+            else
+              Nothing)
+          (RBMap.toList states) in
   let actionTable1 =
         RBMap.fromList $ Maybe.mapMaybe
           (\(items, symbol, items') ->
-            let p = maybe undefined id $ RBMap.lookup items statesIndex in
-            let q = maybe undefined id $ RBMap.lookup items' statesIndex in
+            let p = maybe undefined id $ RBMap.lookup items states in
+            let q = maybe undefined id $ RBMap.lookup items' states in
               case symbol of
                 N _ ->
                   Nothing
@@ -290,8 +288,8 @@ makeTable start grm0 =
   let gotoTable =
         RBMap.fromList $ Maybe.mapMaybe
           (\(items, symbol, items') ->
-            let p = maybe undefined id $ RBMap.lookup items statesIndex in
-            let q = maybe undefined id $ RBMap.lookup items' statesIndex in
+            let p = maybe undefined id $ RBMap.lookup items states in
+            let q = maybe undefined id $ RBMap.lookup items' states in
               case symbol of
                 N n ->
                   Just ((p, n), q)
@@ -300,8 +298,7 @@ makeTable start grm0 =
           (RBSet.toList edges) in
   let actionTable2list =
         map
-          (\(items, lookahead, left, right) ->
-            let p = maybe undefined id $ RBMap.lookup items statesIndex in
+          (\(p, lookahead, left, right) ->
             let q = maybe undefined fst $ List.find (\(i, (left', right')) -> left' == left && right' == right) $ zip [0..] grm in
               ((p, lookahead), Reduce (q - 1)))
           (RBSet.toList reduces) in
@@ -319,8 +316,8 @@ makeTable start grm0 =
   where
     makeStatesAndEdges states accStates edges accEdges sets grm mem =
       let (states', edges', mem') =
-            RBSet.foldl
-              (\items (states0, edges0, mem0) ->
+            foldl
+              (\(states0, edges0, mem0) (items, i) ->
                 RBSet.foldl
                   (\(left, middle, right, lookahead) (states1, edges1, mem1) ->
                     case right of
@@ -338,23 +335,46 @@ makeTable start grm0 =
                                         (goto sets grm (items, symbol))
                                         (fst mem1))
                                       (snd mem1)) in
-                            let states2 = RBSet.insert items' states1 in
-                            let edges2 = RBSet.insert (items, symbol, items') edges1 in
+                            let (j, states2) =
+                                  case RBMap.lookup items' states1 of
+                                    Nothing ->
+                                      case RBMap.lookup items' states of
+                                        Nothing ->
+                                          case RBMap.lookup items' accStates of
+                                            Nothing ->
+                                              let k = RBMap.length states1 + RBMap.length states + RBMap.length accStates in
+                                                (k, RBMap.insert items' k states1)
+                                            Just k ->
+                                              (k, states1)
+                                        Just k ->
+                                          (k, states1)
+                                    Just k ->
+                                      (k, states1) in
+                            let edges2 = RBSet.insert (i, symbol, j) edges1 in
                               (states2, edges2, (closmem, gotomem)))
                   (states0, edges0, mem0)
                   items)
-              (RBSet.empty, RBSet.empty, mem)
-              states in
-        let states'' = RBSet.union states accStates in
+              (RBMap.empty, RBSet.empty, mem)
+              (RBMap.toList states) in
+        let states'' = RBMap.unionl states accStates in
         let edges'' = RBSet.union edges accEdges in
-          if RBSet.subset states' states'' && RBSet.subset edges' edges'' then
+        let states''' = RBMap.diff states' states'' in
+        let edges''' = RBSet.diff edges' edges'' in
+          if RBMap.null states''' && RBSet.null edges''' then
             (states'', edges'')
           else
-            makeStatesAndEdges (RBSet.diff states' states'') states'' (RBSet.diff edges' edges'') edges'' sets grm mem'
+            makeStatesAndEdges states''' states'' edges''' edges'' sets grm mem'
 
     makeLALR1 states0 edges0 =
-      let states = RBSet.fromList $ makeLALR1States $ RBSet.toList states0 in
-      let edges = RBSet.fromList $ map (\(items, symbol, items') -> (maybe undefined id (List.find (lalrEqItems items) (RBSet.toList states)), symbol, maybe undefined id (List.find (lalrEqItems items') (RBSet.toList states)))) (RBSet.toList edges0) in
+      let indexStates = RBMap.fromList $ map (\(items, i) -> (i, items)) $ RBMap.toList states0 in
+      let st = makeLALR1States (RBMap.keys states0) in
+      let states = RBMap.fromList $ zip st [0..] in
+      let edges =
+            RBSet.fromList $
+              map (\(i, symbol, j) ->
+                let items = maybe undefined id (RBMap.lookup i indexStates) in
+                let items' = maybe undefined id (RBMap.lookup j indexStates) in
+                  (maybe undefined id (List.find (lalrEqItems items) (RBMap.keys states)), symbol, maybe undefined id (List.find (lalrEqItems items') (RBMap.keys states)))) (RBSet.toList edges0) in
         (states, edges)
       where
         makeLALR1States [] = []
@@ -378,18 +398,18 @@ makeTable start grm0 =
 
     makeReduces reduces states =
       foldl
-        (\reduces0 items ->
+        (\reduces0 (items, i) ->
           foldl
             (\reduces1 (left, middle, right, lookahead) ->
               case right of
                 [] ->
-                  RBSet.insert (items, lookahead, left, reverse middle) reduces1
+                  RBSet.insert (i, lookahead, left, reverse middle) reduces1
                 _ ->
                   reduces1)
             reduces0
             (RBSet.toList items))
         reduces
-        (RBSet.toList states)
+        (RBMap.toList states)
 
 generateParser :: Bool -> String -> String -> String -> String -> Grammar String String -> Maybe String
 generateParser trivial modid start0 header footer grm0 = do

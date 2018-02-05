@@ -1075,7 +1075,7 @@ dfaActionTransition q s =
       LT ->
     case compare (q, s') (60, 4) of {
       LT ->
-    case compare (q, s') (37, 33) of {
+    case compare (q, s') (50, 4) of {
       LT ->
     case compare (q, s') (25, 34) of {
       LT ->
@@ -1295,7 +1295,7 @@ dfaActionTransition q s =
       LT ->
         Nothing;
       EQ ->
-        Just (Shift 96);
+        Just (Shift 94);
       GT ->
     case compare (q, s') (13, 11) of {
       LT ->
@@ -1336,7 +1336,7 @@ dfaActionTransition q s =
         Nothing
     };
       EQ ->
-        Just (Shift 136);
+        Just (Shift 135);
       GT ->
         Nothing
     };
@@ -1434,7 +1434,7 @@ dfaActionTransition q s =
         Nothing
     };
       EQ ->
-        Just (Shift 96);
+        Just (Shift 94);
       GT ->
     case compare (q, s') (16, 8) of {
       LT ->
@@ -1471,7 +1471,7 @@ dfaActionTransition q s =
         Nothing
     };
       EQ ->
-        Just (Shift 136);
+        Just (Shift 135);
       GT ->
         Nothing
     }
@@ -1734,7 +1734,7 @@ dfaActionTransition q s =
       EQ ->
         Just (Shift 133);
       GT ->
-    case compare (q, s') (34, 49) of {
+    case compare (q, s') (36, 38) of {
       LT ->
     case compare (q, s') (33, 5) of {
       LT ->
@@ -1840,6 +1840,8 @@ dfaActionTransition q s =
       EQ ->
         Just (Shift 28);
       GT ->
+    case compare (q, s') (34, 40) of {
+      LT ->
     case compare (q, s') (34, 32) of {
       LT ->
     case compare (q, s') (34, 4) of {
@@ -1854,7 +1856,7 @@ dfaActionTransition q s =
       LT ->
         Nothing;
       EQ ->
-        Just (Shift 34);
+        Just (Shift 50);
       GT ->
         Nothing
     };
@@ -1887,6 +1889,32 @@ dfaActionTransition q s =
       EQ ->
         Just (Shift 473);
       GT ->
+    case compare (q, s') (34, 38) of {
+      LT ->
+    case compare (q, s') (34, 37) of {
+      LT ->
+        Nothing;
+      EQ ->
+        Just (Shift 292);
+      GT ->
+        Nothing
+    };
+      EQ ->
+        Just (Shift 110);
+      GT ->
+        Nothing
+    }
+    }
+    };
+      EQ ->
+        Just (Shift 88);
+      GT ->
+    case compare (q, s') (35, 40) of {
+      LT ->
+    case compare (q, s') (35, 32) of {
+      LT ->
+    case compare (q, s') (35, 4) of {
+      LT ->
     case compare (q, s') (34, 48) of {
       LT ->
     case compare (q, s') (34, 46) of {
@@ -1900,198 +1928,99 @@ dfaActionTransition q s =
       EQ ->
         Just (Shift 425);
       GT ->
-        Nothing
-    }
-    }
-    }
-    };
+    case compare (q, s') (34, 49) of {
+      LT ->
+        Nothing;
       EQ ->
         Just (Shift 475);
       GT ->
-    case compare (q, s') (35, 43) of {
-      LT ->
-    case compare (q, s') (35, 28) of {
-      LT ->
-    case compare (q, s') (35, 21) of {
-      LT ->
-    case compare (q, s') (35, 6) of {
-      LT ->
-    case compare (q, s') (35, 3) of {
-      LT ->
-    case compare (q, s') (35, 1) of {
-      LT ->
-        Nothing;
-      EQ ->
-        Just (Reduce 1 181);
-      GT ->
         Nothing
+    }
     };
-      EQ ->
-        Just (Reduce 1 181);
-      GT ->
-    case compare (q, s') (35, 4) of {
-      LT ->
-        Nothing;
       EQ ->
         Just (Shift 55);
       GT ->
-    case compare (q, s') (35, 5) of {
+    case compare (q, s') (35, 28) of {
       LT ->
-        Nothing;
-      EQ ->
-        Just (Reduce 1 181);
-      GT ->
-        Nothing
-    }
-    }
-    };
-      EQ ->
-        Just (Reduce 1 181);
-      GT ->
-    case compare (q, s') (35, 8) of {
-      LT ->
-    case compare (q, s') (35, 7) of {
-      LT ->
-        Nothing;
-      EQ ->
-        Just (Reduce 1 181);
-      GT ->
-        Nothing
-    };
-      EQ ->
-        Just (Reduce 1 181);
-      GT ->
-    case compare (q, s') (35, 12) of {
-      LT ->
-        Nothing;
-      EQ ->
-        Just (Reduce 1 181);
-      GT ->
-        Nothing
-    }
-    }
-    };
-      EQ ->
-        Just (Reduce 1 181);
-      GT ->
     case compare (q, s') (35, 23) of {
       LT ->
-    case compare (q, s') (35, 22) of {
-      LT ->
         Nothing;
       EQ ->
-        Just (Reduce 1 181);
+        Just (Shift 50);
       GT ->
         Nothing
-    };
-      EQ ->
-        Just (Reduce 1 181);
-      GT ->
-    case compare (q, s') (35, 27) of {
-      LT ->
-        Nothing;
-      EQ ->
-        Just (Reduce 1 181);
-      GT ->
-        Nothing
-    }
-    }
     };
       EQ ->
         Just (Shift 65);
       GT ->
-    case compare (q, s') (35, 35) of {
-      LT ->
-    case compare (q, s') (35, 33) of {
-      LT ->
-    case compare (q, s') (35, 32) of {
-      LT ->
-    case compare (q, s') (35, 29) of {
-      LT ->
-        Nothing;
-      EQ ->
-        Just (Reduce 1 181);
-      GT ->
         Nothing
+    }
     };
       EQ ->
         Just (Shift 131);
       GT ->
-        Nothing
-    };
+    case compare (q, s') (35, 35) of {
+      LT ->
+    case compare (q, s') (35, 34) of {
+      LT ->
+    case compare (q, s') (35, 33) of {
+      LT ->
+        Nothing;
       EQ ->
         Just (Shift 132);
       GT ->
-    case compare (q, s') (35, 34) of {
-      LT ->
-        Nothing;
+        Nothing
+    };
       EQ ->
         Just (Shift 133);
       GT ->
         Nothing
-    }
     };
       EQ ->
         Just (Shift 473);
       GT ->
-    case compare (q, s') (35, 41) of {
+    case compare (q, s') (35, 38) of {
       LT ->
-    case compare (q, s') (35, 36) of {
+    case compare (q, s') (35, 37) of {
       LT ->
         Nothing;
       EQ ->
-        Just (Reduce 1 181);
+        Just (Shift 292);
       GT ->
         Nothing
     };
       EQ ->
-        Just (Reduce 1 181);
-      GT ->
-    case compare (q, s') (35, 42) of {
-      LT ->
-        Nothing;
-      EQ ->
-        Just (Reduce 1 181);
+        Just (Shift 110);
       GT ->
         Nothing
     }
     }
-    }
     };
       EQ ->
-        Just (Reduce 1 181);
+        Just (Shift 88);
       GT ->
+    case compare (q, s') (36, 28) of {
+      LT ->
     case compare (q, s') (35, 49) of {
       LT ->
-    case compare (q, s') (35, 45) of {
+    case compare (q, s') (35, 48) of {
       LT ->
-    case compare (q, s') (35, 44) of {
+    case compare (q, s') (35, 46) of {
       LT ->
         Nothing;
       EQ ->
-        Just (Reduce 1 181);
+        Just (Shift 92);
       GT ->
         Nothing
     };
       EQ ->
-        Just (Reduce 1 181);
-      GT ->
-    case compare (q, s') (35, 47) of {
-      LT ->
-        Nothing;
-      EQ ->
-        Just (Reduce 1 181);
+        Just (Shift 425);
       GT ->
         Nothing
-    }
     };
       EQ ->
         Just (Shift 475);
       GT ->
-    case compare (q, s') (36, 34) of {
-      LT ->
-    case compare (q, s') (36, 28) of {
-      LT ->
     case compare (q, s') (36, 23) of {
       LT ->
     case compare (q, s') (36, 4) of {
@@ -2103,13 +2032,16 @@ dfaActionTransition q s =
         Nothing
     };
       EQ ->
-        Just (Shift 34);
+        Just (Shift 50);
       GT ->
         Nothing
+    }
     };
       EQ ->
         Just (Shift 65);
       GT ->
+    case compare (q, s') (36, 34) of {
+      LT ->
     case compare (q, s') (36, 33) of {
       LT ->
     case compare (q, s') (36, 32) of {
@@ -2124,15 +2056,10 @@ dfaActionTransition q s =
         Just (Shift 132);
       GT ->
         Nothing
-    }
     };
       EQ ->
         Just (Shift 133);
       GT ->
-    case compare (q, s') (36, 48) of {
-      LT ->
-    case compare (q, s') (36, 38) of {
-      LT ->
     case compare (q, s') (36, 37) of {
       LT ->
     case compare (q, s') (36, 35) of {
@@ -2147,10 +2074,27 @@ dfaActionTransition q s =
         Just (Shift 292);
       GT ->
         Nothing
+    }
+    }
+    }
+    }
+    }
     };
       EQ ->
         Just (Shift 110);
       GT ->
+    case compare (q, s') (44, 32) of {
+      LT ->
+    case compare (q, s') (40, 35) of {
+      LT ->
+    case compare (q, s') (38, 37) of {
+      LT ->
+    case compare (q, s') (37, 38) of {
+      LT ->
+    case compare (q, s') (37, 28) of {
+      LT ->
+    case compare (q, s') (36, 49) of {
+      LT ->
     case compare (q, s') (36, 46) of {
       LT ->
     case compare (q, s') (36, 40) of {
@@ -2164,96 +2108,81 @@ dfaActionTransition q s =
       EQ ->
         Just (Shift 92);
       GT ->
+    case compare (q, s') (36, 48) of {
+      LT ->
+        Nothing;
+      EQ ->
+        Just (Shift 425);
+      GT ->
         Nothing
     }
     };
       EQ ->
-        Just (Shift 425);
+        Just (Shift 475);
       GT ->
     case compare (q, s') (37, 23) of {
       LT ->
     case compare (q, s') (37, 4) of {
       LT ->
-    case compare (q, s') (36, 49) of {
-      LT ->
         Nothing;
-      EQ ->
-        Just (Shift 475);
-      GT ->
-        Nothing
-    };
       EQ ->
         Just (Shift 55);
       GT ->
         Nothing
     };
       EQ ->
-        Just (Shift 34);
+        Just (Shift 50);
       GT ->
-    case compare (q, s') (37, 32) of {
-      LT ->
-    case compare (q, s') (37, 28) of {
-      LT ->
-        Nothing;
+        Nothing
+    }
+    };
       EQ ->
         Just (Shift 65);
       GT ->
-        Nothing
-    };
+    case compare (q, s') (37, 34) of {
+      LT ->
+    case compare (q, s') (37, 33) of {
+      LT ->
+    case compare (q, s') (37, 32) of {
+      LT ->
+        Nothing;
       EQ ->
         Just (Shift 131);
       GT ->
         Nothing
-    }
-    }
-    }
-    }
-    }
-    }
-    }
     };
       EQ ->
         Just (Shift 132);
       GT ->
-    case compare (q, s') (52, 37) of {
-      LT ->
-    case compare (q, s') (44, 49) of {
-      LT ->
-    case compare (q, s') (41, 28) of {
-      LT ->
-    case compare (q, s') (39, 32) of {
-      LT ->
-    case compare (q, s') (38, 33) of {
-      LT ->
-    case compare (q, s') (37, 48) of {
-      LT ->
-    case compare (q, s') (37, 38) of {
-      LT ->
-    case compare (q, s') (37, 35) of {
-      LT ->
-    case compare (q, s') (37, 34) of {
-      LT ->
-        Nothing;
-      EQ ->
-        Just (Shift 133);
-      GT ->
         Nothing
     };
       EQ ->
-        Just (Shift 473);
+        Just (Shift 133);
       GT ->
     case compare (q, s') (37, 37) of {
       LT ->
+    case compare (q, s') (37, 35) of {
+      LT ->
         Nothing;
+      EQ ->
+        Just (Shift 473);
+      GT ->
+        Nothing
+    };
       EQ ->
         Just (Shift 292);
       GT ->
         Nothing
     }
+    }
     };
       EQ ->
         Just (Shift 110);
       GT ->
+    case compare (q, s') (38, 23) of {
+      LT ->
+    case compare (q, s') (37, 48) of {
+      LT ->
     case compare (q, s') (37, 46) of {
       LT ->
     case compare (q, s') (37, 40) of {
@@ -2268,13 +2197,10 @@ dfaActionTransition q s =
         Just (Shift 92);
       GT ->
         Nothing
-    }
     };
       EQ ->
         Just (Shift 425);
       GT ->
-    case compare (q, s') (38, 23) of {
-      LT ->
     case compare (q, s') (38, 4) of {
       LT ->
     case compare (q, s') (37, 49) of {
@@ -2289,10 +2215,13 @@ dfaActionTransition q s =
         Just (Shift 55);
       GT ->
         Nothing
+    }
     };
       EQ ->
-        Just (Shift 34);
+        Just (Shift 50);
       GT ->
+    case compare (q, s') (38, 33) of {
+      LT ->
     case compare (q, s') (38, 32) of {
       LT ->
     case compare (q, s') (38, 28) of {
@@ -2307,16 +2236,10 @@ dfaActionTransition q s =
         Just (Shift 131);
       GT ->
         Nothing
-    }
-    }
     };
       EQ ->
         Just (Shift 132);
       GT ->
-    case compare (q, s') (38, 46) of {
-      LT ->
-    case compare (q, s') (38, 37) of {
-      LT ->
     case compare (q, s') (38, 35) of {
       LT ->
     case compare (q, s') (38, 34) of {
@@ -2331,10 +2254,19 @@ dfaActionTransition q s =
         Just (Shift 473);
       GT ->
         Nothing
+    }
+    }
+    }
     };
       EQ ->
         Just (Shift 292);
       GT ->
+    case compare (q, s') (39, 37) of {
+      LT ->
+    case compare (q, s') (39, 23) of {
+      LT ->
+    case compare (q, s') (38, 48) of {
+      LT ->
     case compare (q, s') (38, 40) of {
       LT ->
     case compare (q, s') (38, 38) of {
@@ -2348,24 +2280,23 @@ dfaActionTransition q s =
       EQ ->
         Just (Shift 88);
       GT ->
+    case compare (q, s') (38, 46) of {
+      LT ->
+        Nothing;
+      EQ ->
+        Just (Shift 92);
+      GT ->
         Nothing
     }
     };
       EQ ->
-        Just (Shift 92);
+        Just (Shift 425);
       GT ->
     case compare (q, s') (39, 4) of {
       LT ->
     case compare (q, s') (38, 49) of {
       LT ->
-    case compare (q, s') (38, 48) of {
-      LT ->
         Nothing;
-      EQ ->
-        Just (Shift 425);
-      GT ->
-        Nothing
-    };
       EQ ->
         Just (Shift 475);
       GT ->
@@ -2374,58 +2305,56 @@ dfaActionTransition q s =
       EQ ->
         Just (Shift 55);
       GT ->
+        Nothing
+    }
+    };
+      EQ ->
+        Just (Shift 50);
+      GT ->
+    case compare (q, s') (39, 33) of {
+      LT ->
+    case compare (q, s') (39, 32) of {
+      LT ->
     case compare (q, s') (39, 28) of {
       LT ->
-    case compare (q, s') (39, 23) of {
-      LT ->
         Nothing;
-      EQ ->
-        Just (Shift 34);
-      GT ->
-        Nothing
-    };
       EQ ->
         Just (Shift 65);
       GT ->
         Nothing
-    }
-    }
-    }
     };
       EQ ->
         Just (Shift 131);
       GT ->
-    case compare (q, s') (40, 32) of {
-      LT ->
-    case compare (q, s') (39, 46) of {
-      LT ->
-    case compare (q, s') (39, 37) of {
-      LT ->
-    case compare (q, s') (39, 34) of {
-      LT ->
-    case compare (q, s') (39, 33) of {
-      LT ->
-        Nothing;
-      EQ ->
-        Just (Shift 132);
-      GT ->
         Nothing
     };
       EQ ->
-        Just (Shift 133);
+        Just (Shift 132);
       GT ->
     case compare (q, s') (39, 35) of {
       LT ->
+    case compare (q, s') (39, 34) of {
+      LT ->
         Nothing;
+      EQ ->
+        Just (Shift 133);
+      GT ->
+        Nothing
+    };
       EQ ->
         Just (Shift 473);
       GT ->
         Nothing
     }
+    }
     };
       EQ ->
         Just (Shift 292);
       GT ->
+    case compare (q, s') (40, 4) of {
+      LT ->
+    case compare (q, s') (39, 46) of {
+      LT ->
     case compare (q, s') (39, 40) of {
       LT ->
     case compare (q, s') (39, 38) of {
@@ -2440,13 +2369,10 @@ dfaActionTransition q s =
         Just (Shift 88);
       GT ->
         Nothing
-    }
     };
       EQ ->
         Just (Shift 92);
       GT ->
-    case compare (q, s') (40, 4) of {
-      LT ->
     case compare (q, s') (39, 49) of {
       LT ->
     case compare (q, s') (39, 48) of {
@@ -2461,17 +2387,20 @@ dfaActionTransition q s =
         Just (Shift 475);
       GT ->
         Nothing
+    }
     };
       EQ ->
         Just (Shift 55);
       GT ->
+    case compare (q, s') (40, 32) of {
+      LT ->
     case compare (q, s') (40, 28) of {
       LT ->
     case compare (q, s') (40, 23) of {
       LT ->
         Nothing;
       EQ ->
-        Just (Shift 34);
+        Just (Shift 50);
       GT ->
         Nothing
     };
@@ -2479,16 +2408,10 @@ dfaActionTransition q s =
         Just (Shift 65);
       GT ->
         Nothing
-    }
-    }
     };
       EQ ->
         Just (Shift 131);
       GT ->
-    case compare (q, s') (40, 40) of {
-      LT ->
-    case compare (q, s') (40, 35) of {
-      LT ->
     case compare (q, s') (40, 34) of {
       LT ->
     case compare (q, s') (40, 33) of {
@@ -2503,10 +2426,22 @@ dfaActionTransition q s =
         Just (Shift 133);
       GT ->
         Nothing
+    }
+    }
+    }
+    }
     };
       EQ ->
         Just (Shift 473);
       GT ->
+    case compare (q, s') (42, 34) of {
+      LT ->
+    case compare (q, s') (41, 35) of {
+      LT ->
+    case compare (q, s') (41, 4) of {
+      LT ->
+    case compare (q, s') (40, 46) of {
+      LT ->
     case compare (q, s') (40, 38) of {
       LT ->
     case compare (q, s') (40, 37) of {
@@ -2520,24 +2455,23 @@ dfaActionTransition q s =
       EQ ->
         Just (Shift 110);
       GT ->
+    case compare (q, s') (40, 40) of {
+      LT ->
+        Nothing;
+      EQ ->
+        Just (Shift 88);
+      GT ->
         Nothing
     }
     };
       EQ ->
-        Just (Shift 88);
+        Just (Shift 92);
       GT ->
     case compare (q, s') (40, 49) of {
       LT ->
     case compare (q, s') (40, 48) of {
       LT ->
-    case compare (q, s') (40, 46) of {
-      LT ->
         Nothing;
-      EQ ->
-        Just (Shift 92);
-      GT ->
-        Nothing
-    };
       EQ ->
         Just (Shift 425);
       GT ->
@@ -2546,61 +2480,56 @@ dfaActionTransition q s =
       EQ ->
         Just (Shift 475);
       GT ->
-    case compare (q, s') (41, 23) of {
-      LT ->
-    case compare (q, s') (41, 4) of {
-      LT ->
-        Nothing;
+        Nothing
+    }
+    };
       EQ ->
         Just (Shift 55);
       GT ->
-        Nothing
-    };
+    case compare (q, s') (41, 32) of {
+      LT ->
+    case compare (q, s') (41, 28) of {
+      LT ->
+    case compare (q, s') (41, 23) of {
+      LT ->
+        Nothing;
       EQ ->
-        Just (Shift 34);
+        Just (Shift 50);
       GT ->
         Nothing
-    }
-    }
-    }
-    }
     };
       EQ ->
         Just (Shift 65);
       GT ->
-    case compare (q, s') (43, 23) of {
-      LT ->
-    case compare (q, s') (42, 28) of {
-      LT ->
-    case compare (q, s') (41, 40) of {
-      LT ->
-    case compare (q, s') (41, 35) of {
-      LT ->
-    case compare (q, s') (41, 33) of {
-      LT ->
-    case compare (q, s') (41, 32) of {
-      LT ->
-        Nothing;
-      EQ ->
-        Just (Shift 131);
-      GT ->
         Nothing
     };
       EQ ->
-        Just (Shift 132);
+        Just (Shift 131);
       GT ->
     case compare (q, s') (41, 34) of {
       LT ->
+    case compare (q, s') (41, 33) of {
+      LT ->
         Nothing;
+      EQ ->
+        Just (Shift 132);
+      GT ->
+        Nothing
+    };
       EQ ->
         Just (Shift 133);
       GT ->
         Nothing
     }
+    }
     };
       EQ ->
         Just (Shift 473);
       GT ->
+    case compare (q, s') (41, 49) of {
+      LT ->
+    case compare (q, s') (41, 40) of {
+      LT ->
     case compare (q, s') (41, 38) of {
       LT ->
     case compare (q, s') (41, 37) of {
@@ -2615,13 +2544,10 @@ dfaActionTransition q s =
         Just (Shift 110);
       GT ->
         Nothing
-    }
     };
       EQ ->
         Just (Shift 88);
       GT ->
-    case compare (q, s') (41, 49) of {
-      LT ->
     case compare (q, s') (41, 48) of {
       LT ->
     case compare (q, s') (41, 46) of {
@@ -2636,10 +2562,13 @@ dfaActionTransition q s =
         Just (Shift 425);
       GT ->
         Nothing
+    }
     };
       EQ ->
         Just (Shift 475);
       GT ->
+    case compare (q, s') (42, 28) of {
+      LT ->
     case compare (q, s') (42, 23) of {
       LT ->
     case compare (q, s') (42, 4) of {
@@ -2651,19 +2580,13 @@ dfaActionTransition q s =
         Nothing
     };
       EQ ->
-        Just (Shift 34);
+        Just (Shift 50);
       GT ->
         Nothing
-    }
-    }
     };
       EQ ->
         Just (Shift 65);
       GT ->
-    case compare (q, s') (42, 38) of {
-      LT ->
-    case compare (q, s') (42, 34) of {
-      LT ->
     case compare (q, s') (42, 33) of {
       LT ->
     case compare (q, s') (42, 32) of {
@@ -2678,10 +2601,19 @@ dfaActionTransition q s =
         Just (Shift 132);
       GT ->
         Nothing
+    }
+    }
+    }
     };
       EQ ->
         Just (Shift 133);
       GT ->
+    case compare (q, s') (43, 33) of {
+      LT ->
+    case compare (q, s') (42, 48) of {
+      LT ->
+    case compare (q, s') (42, 38) of {
+      LT ->
     case compare (q, s') (42, 37) of {
       LT ->
     case compare (q, s') (42, 35) of {
@@ -2696,13 +2628,10 @@ dfaActionTransition q s =
         Just (Shift 292);
       GT ->
         Nothing
-    }
     };
       EQ ->
         Just (Shift 110);
       GT ->
-    case compare (q, s') (42, 48) of {
-      LT ->
     case compare (q, s') (42, 46) of {
       LT ->
     case compare (q, s') (42, 40) of {
@@ -2717,10 +2646,13 @@ dfaActionTransition q s =
         Just (Shift 92);
       GT ->
         Nothing
+    }
     };
       EQ ->
         Just (Shift 425);
       GT ->
+    case compare (q, s') (43, 23) of {
+      LT ->
     case compare (q, s') (43, 4) of {
       LT ->
     case compare (q, s') (42, 49) of {
@@ -2735,19 +2667,10 @@ dfaActionTransition q s =
         Just (Shift 55);
       GT ->
         Nothing
-    }
-    }
-    }
     };
       EQ ->
-        Just (Shift 34);
+        Just (Shift 50);
       GT ->
-    case compare (q, s') (44, 4) of {
-      LT ->
-    case compare (q, s') (43, 37) of {
-      LT ->
-    case compare (q, s') (43, 33) of {
-      LT ->
     case compare (q, s') (43, 32) of {
       LT ->
     case compare (q, s') (43, 28) of {
@@ -2762,10 +2685,16 @@ dfaActionTransition q s =
         Just (Shift 131);
       GT ->
         Nothing
+    }
+    }
     };
       EQ ->
         Just (Shift 132);
       GT ->
+    case compare (q, s') (43, 46) of {
+      LT ->
+    case compare (q, s') (43, 37) of {
+      LT ->
     case compare (q, s') (43, 35) of {
       LT ->
     case compare (q, s') (43, 34) of {
@@ -2780,13 +2709,10 @@ dfaActionTransition q s =
         Just (Shift 473);
       GT ->
         Nothing
-    }
     };
       EQ ->
         Just (Shift 292);
       GT ->
-    case compare (q, s') (43, 46) of {
-      LT ->
     case compare (q, s') (43, 40) of {
       LT ->
     case compare (q, s') (43, 38) of {
@@ -2801,10 +2727,13 @@ dfaActionTransition q s =
         Just (Shift 88);
       GT ->
         Nothing
+    }
     };
       EQ ->
         Just (Shift 92);
       GT ->
+    case compare (q, s') (44, 4) of {
+      LT ->
     case compare (q, s') (43, 49) of {
       LT ->
     case compare (q, s') (43, 48) of {
@@ -2819,23 +2748,17 @@ dfaActionTransition q s =
         Just (Shift 475);
       GT ->
         Nothing
-    }
-    }
     };
       EQ ->
         Just (Shift 55);
       GT ->
-    case compare (q, s') (44, 35) of {
-      LT ->
-    case compare (q, s') (44, 32) of {
-      LT ->
     case compare (q, s') (44, 28) of {
       LT ->
     case compare (q, s') (44, 23) of {
       LT ->
         Nothing;
       EQ ->
-        Just (Shift 34);
+        Just (Shift 50);
       GT ->
         Nothing
     };
@@ -2843,10 +2766,25 @@ dfaActionTransition q s =
         Just (Shift 65);
       GT ->
         Nothing
+    }
+    }
+    }
+    }
+    }
     };
       EQ ->
         Just (Shift 131);
       GT ->
+    case compare (q, s') (48, 23) of {
+      LT ->
+    case compare (q, s') (46, 28) of {
+      LT ->
+    case compare (q, s') (45, 32) of {
+      LT ->
+    case compare (q, s') (44, 46) of {
+      LT ->
+    case compare (q, s') (44, 37) of {
+      LT ->
     case compare (q, s') (44, 34) of {
       LT ->
     case compare (q, s') (44, 33) of {
@@ -2860,24 +2798,23 @@ dfaActionTransition q s =
       EQ ->
         Just (Shift 133);
       GT ->
+    case compare (q, s') (44, 35) of {
+      LT ->
+        Nothing;
+      EQ ->
+        Just (Shift 473);
+      GT ->
         Nothing
     }
     };
       EQ ->
-        Just (Shift 473);
+        Just (Shift 292);
       GT ->
     case compare (q, s') (44, 40) of {
       LT ->
     case compare (q, s') (44, 38) of {
       LT ->
-    case compare (q, s') (44, 37) of {
-      LT ->
         Nothing;
-      EQ ->
-        Just (Shift 292);
-      GT ->
-        Nothing
-    };
       EQ ->
         Just (Shift 110);
       GT ->
@@ -2886,66 +2823,56 @@ dfaActionTransition q s =
       EQ ->
         Just (Shift 88);
       GT ->
-    case compare (q, s') (44, 48) of {
-      LT ->
-    case compare (q, s') (44, 46) of {
-      LT ->
-        Nothing;
+        Nothing
+    }
+    };
       EQ ->
         Just (Shift 92);
       GT ->
-        Nothing
-    };
+    case compare (q, s') (45, 4) of {
+      LT ->
+    case compare (q, s') (44, 49) of {
+      LT ->
+    case compare (q, s') (44, 48) of {
+      LT ->
+        Nothing;
       EQ ->
         Just (Shift 425);
       GT ->
         Nothing
-    }
-    }
-    }
-    }
-    }
     };
       EQ ->
         Just (Shift 475);
       GT ->
-    case compare (q, s') (50, 40) of {
-      LT ->
-    case compare (q, s') (48, 46) of {
-      LT ->
-    case compare (q, s') (46, 48) of {
-      LT ->
-    case compare (q, s') (45, 49) of {
-      LT ->
-    case compare (q, s') (45, 35) of {
-      LT ->
-    case compare (q, s') (45, 32) of {
-      LT ->
-    case compare (q, s') (45, 23) of {
-      LT ->
-    case compare (q, s') (45, 4) of {
-      LT ->
-        Nothing;
-      EQ ->
-        Just (Shift 55);
-      GT ->
         Nothing
     };
       EQ ->
-        Just (Shift 34);
+        Just (Shift 55);
       GT ->
     case compare (q, s') (45, 28) of {
       LT ->
+    case compare (q, s') (45, 23) of {
+      LT ->
         Nothing;
+      EQ ->
+        Just (Shift 50);
+      GT ->
+        Nothing
+    };
       EQ ->
         Just (Shift 65);
       GT ->
         Nothing
     }
+    }
     };
       EQ ->
         Just (Shift 131);
       GT ->
+    case compare (q, s') (45, 40) of {
+      LT ->
+    case compare (q, s') (45, 35) of {
+      LT ->
     case compare (q, s') (45, 34) of {
       LT ->
     case compare (q, s') (45, 33) of {
@@ -2960,13 +2887,10 @@ dfaActionTransition q s =
         Just (Shift 133);
       GT ->
         Nothing
-    }
     };
       EQ ->
         Just (Shift 473);
       GT ->
-    case compare (q, s') (45, 40) of {
-      LT ->
     case compare (q, s') (45, 38) of {
       LT ->
     case compare (q, s') (45, 37) of {
@@ -2981,10 +2905,13 @@ dfaActionTransition q s =
         Just (Shift 110);
       GT ->
         Nothing
+    }
     };
       EQ ->
         Just (Shift 88);
       GT ->
+    case compare (q, s') (45, 49) of {
+      LT ->
     case compare (q, s') (45, 48) of {
       LT ->
     case compare (q, s') (45, 46) of {
@@ -2999,16 +2926,10 @@ dfaActionTransition q s =
         Just (Shift 425);
       GT ->
         Nothing
-    }
-    }
     };
       EQ ->
         Just (Shift 475);
       GT ->
-    case compare (q, s') (46, 34) of {
-      LT ->
-    case compare (q, s') (46, 28) of {
-      LT ->
     case compare (q, s') (46, 23) of {
       LT ->
     case compare (q, s') (46, 4) of {
@@ -3020,13 +2941,22 @@ dfaActionTransition q s =
         Nothing
     };
       EQ ->
-        Just (Shift 34);
+        Just (Shift 50);
       GT ->
         Nothing
+    }
+    }
+    }
     };
       EQ ->
         Just (Shift 65);
       GT ->
+    case compare (q, s') (47, 28) of {
+      LT ->
+    case compare (q, s') (46, 40) of {
+      LT ->
+    case compare (q, s') (46, 35) of {
+      LT ->
     case compare (q, s') (46, 33) of {
       LT ->
     case compare (q, s') (46, 32) of {
@@ -3040,24 +2970,23 @@ dfaActionTransition q s =
       EQ ->
         Just (Shift 132);
       GT ->
+    case compare (q, s') (46, 34) of {
+      LT ->
+        Nothing;
+      EQ ->
+        Just (Shift 133);
+      GT ->
         Nothing
     }
     };
       EQ ->
-        Just (Shift 133);
+        Just (Shift 473);
       GT ->
     case compare (q, s') (46, 38) of {
       LT ->
     case compare (q, s') (46, 37) of {
       LT ->
-    case compare (q, s') (46, 35) of {
-      LT ->
         Nothing;
-      EQ ->
-        Just (Shift 473);
-      GT ->
-        Nothing
-    };
       EQ ->
         Just (Shift 292);
       GT ->
@@ -3066,58 +2995,56 @@ dfaActionTransition q s =
       EQ ->
         Just (Shift 110);
       GT ->
-    case compare (q, s') (46, 46) of {
-      LT ->
-    case compare (q, s') (46, 40) of {
-      LT ->
-        Nothing;
+        Nothing
+    }
+    };
       EQ ->
         Just (Shift 88);
       GT ->
-        Nothing
-    };
+    case compare (q, s') (46, 49) of {
+      LT ->
+    case compare (q, s') (46, 48) of {
+      LT ->
+    case compare (q, s') (46, 46) of {
+      LT ->
+        Nothing;
       EQ ->
         Just (Shift 92);
       GT ->
         Nothing
-    }
-    }
-    }
     };
       EQ ->
         Just (Shift 425);
       GT ->
-    case compare (q, s') (47, 48) of {
-      LT ->
-    case compare (q, s') (47, 34) of {
-      LT ->
-    case compare (q, s') (47, 28) of {
+        Nothing
+    };
+      EQ ->
+        Just (Shift 475);
+      GT ->
+    case compare (q, s') (47, 23) of {
       LT ->
     case compare (q, s') (47, 4) of {
       LT ->
-    case compare (q, s') (46, 49) of {
-      LT ->
         Nothing;
       EQ ->
-        Just (Shift 475);
+        Just (Shift 55);
       GT ->
         Nothing
     };
       EQ ->
-        Just (Shift 55);
-      GT ->
-    case compare (q, s') (47, 23) of {
-      LT ->
-        Nothing;
-      EQ ->
-        Just (Shift 34);
+        Just (Shift 50);
       GT ->
         Nothing
+    }
     }
     };
       EQ ->
         Just (Shift 65);
       GT ->
+    case compare (q, s') (47, 38) of {
+      LT ->
+    case compare (q, s') (47, 34) of {
+      LT ->
     case compare (q, s') (47, 33) of {
       LT ->
     case compare (q, s') (47, 32) of {
@@ -3132,13 +3059,10 @@ dfaActionTransition q s =
         Just (Shift 132);
       GT ->
         Nothing
-    }
     };
       EQ ->
         Just (Shift 133);
       GT ->
-    case compare (q, s') (47, 38) of {
-      LT ->
     case compare (q, s') (47, 37) of {
       LT ->
     case compare (q, s') (47, 35) of {
@@ -3153,10 +3077,13 @@ dfaActionTransition q s =
         Just (Shift 292);
       GT ->
         Nothing
+    }
     };
       EQ ->
         Just (Shift 110);
       GT ->
+    case compare (q, s') (47, 48) of {
+      LT ->
     case compare (q, s') (47, 46) of {
       LT ->
     case compare (q, s') (47, 40) of {
@@ -3171,16 +3098,10 @@ dfaActionTransition q s =
         Just (Shift 92);
       GT ->
         Nothing
-    }
-    }
     };
       EQ ->
         Just (Shift 425);
       GT ->
-    case compare (q, s') (48, 33) of {
-      LT ->
-    case compare (q, s') (48, 23) of {
-      LT ->
     case compare (q, s') (48, 4) of {
       LT ->
     case compare (q, s') (47, 49) of {
@@ -3195,10 +3116,20 @@ dfaActionTransition q s =
         Just (Shift 55);
       GT ->
         Nothing
+    }
+    }
+    }
+    }
     };
       EQ ->
-        Just (Shift 34);
+        Just (Shift 50);
       GT ->
+    case compare (q, s') (49, 23) of {
+      LT ->
+    case compare (q, s') (48, 38) of {
+      LT ->
+    case compare (q, s') (48, 34) of {
+      LT ->
     case compare (q, s') (48, 32) of {
       LT ->
     case compare (q, s') (48, 28) of {
@@ -3212,24 +3143,23 @@ dfaActionTransition q s =
       EQ ->
         Just (Shift 131);
       GT ->
+    case compare (q, s') (48, 33) of {
+      LT ->
+        Nothing;
+      EQ ->
+        Just (Shift 132);
+      GT ->
         Nothing
     }
     };
       EQ ->
-        Just (Shift 132);
+        Just (Shift 133);
       GT ->
     case compare (q, s') (48, 37) of {
       LT ->
     case compare (q, s') (48, 35) of {
       LT ->
-    case compare (q, s') (48, 34) of {
-      LT ->
         Nothing;
-      EQ ->
-        Just (Shift 133);
-      GT ->
-        Nothing
-    };
       EQ ->
         Just (Shift 473);
       GT ->
@@ -3238,59 +3168,56 @@ dfaActionTransition q s =
       EQ ->
         Just (Shift 292);
       GT ->
-    case compare (q, s') (48, 40) of {
-      LT ->
-    case compare (q, s') (48, 38) of {
-      LT ->
-        Nothing;
+        Nothing
+    }
+    };
       EQ ->
         Just (Shift 110);
       GT ->
-        Nothing
-    };
+    case compare (q, s') (48, 48) of {
+      LT ->
+    case compare (q, s') (48, 46) of {
+      LT ->
+    case compare (q, s') (48, 40) of {
+      LT ->
+        Nothing;
       EQ ->
         Just (Shift 88);
       GT ->
         Nothing
-    }
-    }
-    }
-    }
     };
       EQ ->
         Just (Shift 92);
       GT ->
-    case compare (q, s') (49, 46) of {
-      LT ->
-    case compare (q, s') (49, 33) of {
-      LT ->
-    case compare (q, s') (49, 23) of {
-      LT ->
-    case compare (q, s') (48, 49) of {
-      LT ->
-    case compare (q, s') (48, 48) of {
-      LT ->
-        Nothing;
-      EQ ->
-        Just (Shift 425);
-      GT ->
         Nothing
     };
       EQ ->
-        Just (Shift 475);
+        Just (Shift 425);
       GT ->
     case compare (q, s') (49, 4) of {
       LT ->
+    case compare (q, s') (48, 49) of {
+      LT ->
         Nothing;
+      EQ ->
+        Just (Shift 475);
+      GT ->
+        Nothing
+    };
       EQ ->
         Just (Shift 55);
       GT ->
         Nothing
     }
+    }
     };
       EQ ->
-        Just (Shift 34);
+        Just (Shift 50);
       GT ->
+    case compare (q, s') (49, 37) of {
+      LT ->
+    case compare (q, s') (49, 33) of {
+      LT ->
     case compare (q, s') (49, 32) of {
       LT ->
     case compare (q, s') (49, 28) of {
@@ -3305,13 +3232,10 @@ dfaActionTransition q s =
         Just (Shift 131);
       GT ->
         Nothing
-    }
     };
       EQ ->
         Just (Shift 132);
       GT ->
-    case compare (q, s') (49, 37) of {
-      LT ->
     case compare (q, s') (49, 35) of {
       LT ->
     case compare (q, s') (49, 34) of {
@@ -3326,10 +3250,13 @@ dfaActionTransition q s =
         Just (Shift 473);
       GT ->
         Nothing
+    }
     };
       EQ ->
         Just (Shift 292);
       GT ->
+    case compare (q, s') (49, 46) of {
+      LT ->
     case compare (q, s') (49, 40) of {
       LT ->
     case compare (q, s') (49, 38) of {
@@ -3344,16 +3271,10 @@ dfaActionTransition q s =
         Just (Shift 88);
       GT ->
         Nothing
-    }
-    }
     };
       EQ ->
         Just (Shift 92);
       GT ->
-    case compare (q, s') (50, 32) of {
-      LT ->
-    case compare (q, s') (50, 4) of {
-      LT ->
     case compare (q, s') (49, 49) of {
       LT ->
     case compare (q, s') (49, 48) of {
@@ -3368,17 +3289,34 @@ dfaActionTransition q s =
         Just (Shift 475);
       GT ->
         Nothing
+    }
+    }
+    }
+    }
+    }
+    }
+    }
     };
       EQ ->
         Just (Shift 55);
       GT ->
+    case compare (q, s') (52, 37) of {
+      LT ->
+    case compare (q, s') (51, 28) of {
+      LT ->
+    case compare (q, s') (51, 6) of {
+      LT ->
+    case compare (q, s') (50, 35) of {
+      LT ->
+    case compare (q, s') (50, 32) of {
+      LT ->
     case compare (q, s') (50, 28) of {
       LT ->
     case compare (q, s') (50, 23) of {
       LT ->
         Nothing;
       EQ ->
-        Just (Shift 34);
+        Just (Shift 50);
       GT ->
         Nothing
     };
@@ -3386,13 +3324,10 @@ dfaActionTransition q s =
         Just (Shift 65);
       GT ->
         Nothing
-    }
     };
       EQ ->
         Just (Shift 131);
       GT ->
-    case compare (q, s') (50, 35) of {
-      LT ->
     case compare (q, s') (50, 34) of {
       LT ->
     case compare (q, s') (50, 33) of {
@@ -3407,38 +3342,11 @@ dfaActionTransition q s =
         Just (Shift 133);
       GT ->
         Nothing
+    }
     };
       EQ ->
         Just (Shift 473);
       GT ->
-    case compare (q, s') (50, 38) of {
-      LT ->
-    case compare (q, s') (50, 37) of {
-      LT ->
-        Nothing;
-      EQ ->
-        Just (Shift 292);
-      GT ->
-        Nothing
-    };
-      EQ ->
-        Just (Shift 110);
-      GT ->
-        Nothing
-    }
-    }
-    }
-    }
-    };
-      EQ ->
-        Just (Shift 88);
-      GT ->
-    case compare (q, s') (52, 4) of {
-      LT ->
-    case compare (q, s') (51, 38) of {
-      LT ->
-    case compare (q, s') (51, 28) of {
-      LT ->
     case compare (q, s') (50, 49) of {
       LT ->
     case compare (q, s') (50, 48) of {
@@ -3459,37 +3367,118 @@ dfaActionTransition q s =
       EQ ->
         Just (Shift 475);
       GT ->
-    case compare (q, s') (51, 23) of {
+    case compare (q, s') (51, 3) of {
       LT ->
+    case compare (q, s') (51, 1) of {
+      LT ->
+        Nothing;
+      EQ ->
+        Just (Reduce 1 181);
+      GT ->
+        Nothing
+    };
+      EQ ->
+        Just (Reduce 1 181);
+      GT ->
     case compare (q, s') (51, 4) of {
       LT ->
         Nothing;
       EQ ->
         Just (Shift 55);
       GT ->
+    case compare (q, s') (51, 5) of {
+      LT ->
+        Nothing;
+      EQ ->
+        Just (Reduce 1 181);
+      GT ->
+        Nothing
+    }
+    }
+    }
+    }
+    };
+      EQ ->
+        Just (Reduce 1 181);
+      GT ->
+    case compare (q, s') (51, 21) of {
+      LT ->
+    case compare (q, s') (51, 8) of {
+      LT ->
+    case compare (q, s') (51, 7) of {
+      LT ->
+        Nothing;
+      EQ ->
+        Just (Reduce 1 181);
+      GT ->
         Nothing
     };
       EQ ->
-        Just (Shift 34);
+        Just (Reduce 1 181);
+      GT ->
+    case compare (q, s') (51, 12) of {
+      LT ->
+        Nothing;
+      EQ ->
+        Just (Reduce 1 181);
       GT ->
         Nothing
     }
     };
       EQ ->
+        Just (Reduce 1 181);
+      GT ->
+    case compare (q, s') (51, 23) of {
+      LT ->
+    case compare (q, s') (51, 22) of {
+      LT ->
+        Nothing;
+      EQ ->
+        Just (Reduce 1 181);
+      GT ->
+        Nothing
+    };
+      EQ ->
+        Just (Reduce 1 181);
+      GT ->
+    case compare (q, s') (51, 27) of {
+      LT ->
+        Nothing;
+      EQ ->
+        Just (Reduce 1 181);
+      GT ->
+        Nothing
+    }
+    }
+    }
+    };
+      EQ ->
         Just (Shift 65);
       GT ->
+    case compare (q, s') (52, 4) of {
+      LT ->
+    case compare (q, s') (51, 32) of {
+      LT ->
+    case compare (q, s') (51, 29) of {
+      LT ->
+        Nothing;
+      EQ ->
+        Just (Reduce 1 181);
+      GT ->
+        Nothing
+    };
+      EQ ->
+        Just (Shift 131);
+      GT ->
+    case compare (q, s') (51, 44) of {
+      LT ->
+    case compare (q, s') (51, 35) of {
+      LT ->
     case compare (q, s') (51, 34) of {
       LT ->
     case compare (q, s') (51, 33) of {
       LT ->
-    case compare (q, s') (51, 32) of {
-      LT ->
         Nothing;
-      EQ ->
-        Just (Shift 131);
-      GT ->
-        Nothing
-    };
       EQ ->
         Just (Shift 132);
       GT ->
@@ -3498,45 +3487,56 @@ dfaActionTransition q s =
       EQ ->
         Just (Shift 133);
       GT ->
-    case compare (q, s') (51, 37) of {
-      LT ->
-    case compare (q, s') (51, 35) of {
-      LT ->
-        Nothing;
+        Nothing
+    };
       EQ ->
         Just (Shift 473);
       GT ->
-        Nothing
-    };
-      EQ ->
-        Just (Shift 292);
-      GT ->
-        Nothing
-    }
-    }
-    };
-      EQ ->
-        Just (Shift 110);
-      GT ->
-    case compare (q, s') (51, 48) of {
+    case compare (q, s') (51, 42) of {
       LT ->
-    case compare (q, s') (51, 46) of {
+    case compare (q, s') (51, 41) of {
       LT ->
-    case compare (q, s') (51, 40) of {
+    case compare (q, s') (51, 36) of {
       LT ->
         Nothing;
       EQ ->
-        Just (Shift 88);
+        Just (Reduce 1 181);
       GT ->
         Nothing
     };
       EQ ->
-        Just (Shift 92);
+        Just (Reduce 1 181);
       GT ->
         Nothing
     };
       EQ ->
-        Just (Shift 425);
+        Just (Reduce 1 181);
+      GT ->
+    case compare (q, s') (51, 43) of {
+      LT ->
+        Nothing;
+      EQ ->
+        Just (Reduce 1 181);
+      GT ->
+        Nothing
+    }
+    }
+    };
+      EQ ->
+        Just (Reduce 1 181);
+      GT ->
+    case compare (q, s') (51, 47) of {
+      LT ->
+    case compare (q, s') (51, 45) of {
+      LT ->
+        Nothing;
+      EQ ->
+        Just (Reduce 1 181);
+      GT ->
+        Nothing
+    };
+      EQ ->
+        Just (Reduce 1 181);
       GT ->
     case compare (q, s') (51, 49) of {
       LT ->
@@ -3551,6 +3551,7 @@ dfaActionTransition q s =
         Just (Reduce 0 220);
       GT ->
         Nothing
+    }
     }
     }
     }
@@ -3569,7 +3570,7 @@ dfaActionTransition q s =
         Nothing
     };
       EQ ->
-        Just (Shift 34);
+        Just (Shift 50);
       GT ->
     case compare (q, s') (52, 33) of {
       LT ->
@@ -3605,7 +3606,6 @@ dfaActionTransition q s =
         Just (Shift 473);
       GT ->
         Nothing
-    }
     }
     }
     }
@@ -3676,7 +3676,7 @@ dfaActionTransition q s =
     }
     };
       EQ ->
-        Just (Shift 34);
+        Just (Shift 50);
       GT ->
     case compare (q, s') (53, 37) of {
       LT ->
@@ -3768,7 +3768,7 @@ dfaActionTransition q s =
       LT ->
         Nothing;
       EQ ->
-        Just (Shift 34);
+        Just (Shift 50);
       GT ->
         Nothing
     };
@@ -3974,7 +3974,7 @@ dfaActionTransition q s =
     }
     };
       EQ ->
-        Just (Shift 34);
+        Just (Shift 50);
       GT ->
     case compare (q, s') (58, 28) of {
       LT ->
@@ -4054,7 +4054,7 @@ dfaActionTransition q s =
       LT ->
         Nothing;
       EQ ->
-        Just (Shift 34);
+        Just (Shift 50);
       GT ->
         Nothing
     };
@@ -4140,7 +4140,7 @@ dfaActionTransition q s =
         Nothing
     };
       EQ ->
-        Just (Shift 34);
+        Just (Shift 50);
       GT ->
         Nothing
     }
@@ -4231,7 +4231,7 @@ dfaActionTransition q s =
     }
     };
       EQ ->
-        Just (Shift 34);
+        Just (Shift 50);
       GT ->
     case compare (q, s') (59, 37) of {
       LT ->
@@ -4344,7 +4344,7 @@ dfaActionTransition q s =
       LT ->
         Nothing;
       EQ ->
-        Just (Shift 34);
+        Just (Shift 50);
       GT ->
         Nothing
     };
@@ -4432,7 +4432,7 @@ dfaActionTransition q s =
       LT ->
         Nothing;
       EQ ->
-        Just (Shift 34);
+        Just (Shift 50);
       GT ->
         Nothing
     };
@@ -4521,7 +4521,7 @@ dfaActionTransition q s =
         Nothing
     };
       EQ ->
-        Just (Shift 34);
+        Just (Shift 50);
       GT ->
     case compare (q, s') (62, 28) of {
       LT ->
@@ -4609,7 +4609,7 @@ dfaActionTransition q s =
         Nothing
     };
       EQ ->
-        Just (Shift 34);
+        Just (Shift 50);
       GT ->
         Nothing
     };
@@ -4702,7 +4702,7 @@ dfaActionTransition q s =
       LT ->
         Nothing;
       EQ ->
-        Just (Shift 34);
+        Just (Shift 50);
       GT ->
         Nothing
     }
@@ -4789,7 +4789,7 @@ dfaActionTransition q s =
         Nothing
     };
       EQ ->
-        Just (Shift 34);
+        Just (Shift 50);
       GT ->
     case compare (q, s') (65, 32) of {
       LT ->
@@ -4881,7 +4881,7 @@ dfaActionTransition q s =
       LT ->
         Nothing;
       EQ ->
-        Just (Shift 34);
+        Just (Shift 50);
       GT ->
         Nothing
     };
@@ -4967,7 +4967,7 @@ dfaActionTransition q s =
         Nothing
     };
       EQ ->
-        Just (Shift 34);
+        Just (Shift 50);
       GT ->
         Nothing
     }
@@ -5064,7 +5064,7 @@ dfaActionTransition q s =
         Nothing
     };
       EQ ->
-        Just (Shift 34);
+        Just (Shift 50);
       GT ->
         Nothing
     }
@@ -5151,7 +5151,7 @@ dfaActionTransition q s =
     }
     };
       EQ ->
-        Just (Shift 34);
+        Just (Shift 50);
       GT ->
     case compare (q, s') (69, 33) of {
       LT ->
@@ -5242,7 +5242,7 @@ dfaActionTransition q s =
     }
     };
       EQ ->
-        Just (Shift 34);
+        Just (Shift 50);
       GT ->
     case compare (q, s') (70, 33) of {
       LT ->
@@ -5333,7 +5333,7 @@ dfaActionTransition q s =
       LT ->
         Nothing;
       EQ ->
-        Just (Shift 34);
+        Just (Shift 50);
       GT ->
         Nothing
     };
@@ -5427,7 +5427,7 @@ dfaActionTransition q s =
       LT ->
         Nothing;
       EQ ->
-        Just (Shift 34);
+        Just (Shift 50);
       GT ->
         Nothing
     };
@@ -5513,7 +5513,7 @@ dfaActionTransition q s =
         Nothing
     };
       EQ ->
-        Just (Shift 34);
+        Just (Shift 50);
       GT ->
         Nothing
     };
@@ -5602,7 +5602,7 @@ dfaActionTransition q s =
         Nothing
     };
       EQ ->
-        Just (Shift 34);
+        Just (Shift 50);
       GT ->
     case compare (q, s') (74, 32) of {
       LT ->
@@ -5691,7 +5691,7 @@ dfaActionTransition q s =
       LT ->
         Nothing;
       EQ ->
-        Just (Shift 34);
+        Just (Shift 50);
       GT ->
         Nothing
     };
@@ -5791,7 +5791,7 @@ dfaActionTransition q s =
       LT ->
         Nothing;
       EQ ->
-        Just (Shift 34);
+        Just (Shift 50);
       GT ->
         Nothing
     };
@@ -5877,7 +5877,7 @@ dfaActionTransition q s =
         Nothing
     };
       EQ ->
-        Just (Shift 34);
+        Just (Shift 50);
       GT ->
         Nothing
     }
@@ -5968,7 +5968,7 @@ dfaActionTransition q s =
         Nothing
     };
       EQ ->
-        Just (Shift 34);
+        Just (Shift 50);
       GT ->
         Nothing
     }
@@ -6058,7 +6058,7 @@ dfaActionTransition q s =
     }
     };
       EQ ->
-        Just (Shift 34);
+        Just (Shift 50);
       GT ->
     case compare (q, s') (81, 4) of {
       LT ->
@@ -6150,7 +6150,7 @@ dfaActionTransition q s =
     }
     };
       EQ ->
-        Just (Shift 34);
+        Just (Shift 50);
       GT ->
     case compare (q, s') (80, 37) of {
       LT ->
@@ -6246,7 +6246,7 @@ dfaActionTransition q s =
       LT ->
         Nothing;
       EQ ->
-        Just (Shift 34);
+        Just (Shift 50);
       GT ->
         Nothing
     };
@@ -6337,7 +6337,7 @@ dfaActionTransition q s =
         Nothing
     };
       EQ ->
-        Just (Shift 34);
+        Just (Shift 50);
       GT ->
     case compare (q, s') (82, 29) of {
       LT ->
@@ -6442,7 +6442,7 @@ dfaActionTransition q s =
       LT ->
         Nothing;
       EQ ->
-        Just (Shift 34);
+        Just (Shift 50);
       GT ->
         Nothing
     };
@@ -6528,7 +6528,7 @@ dfaActionTransition q s =
         Nothing
     };
       EQ ->
-        Just (Shift 34);
+        Just (Shift 50);
       GT ->
         Nothing
     }
@@ -6619,7 +6619,7 @@ dfaActionTransition q s =
         Nothing
     };
       EQ ->
-        Just (Shift 34);
+        Just (Shift 50);
       GT ->
         Nothing
     }
@@ -6706,7 +6706,7 @@ dfaActionTransition q s =
     }
     };
       EQ ->
-        Just (Shift 34);
+        Just (Shift 50);
       GT ->
     case compare (q, s') (86, 33) of {
       LT ->
@@ -6800,7 +6800,7 @@ dfaActionTransition q s =
     }
     };
       EQ ->
-        Just (Shift 34);
+        Just (Shift 50);
       GT ->
     case compare (q, s') (87, 33) of {
       LT ->
@@ -6891,7 +6891,7 @@ dfaActionTransition q s =
       LT ->
         Nothing;
       EQ ->
-        Just (Shift 34);
+        Just (Shift 50);
       GT ->
         Nothing
     };
@@ -6980,7 +6980,7 @@ dfaActionTransition q s =
         Nothing
     };
       EQ ->
-        Just (Shift 34);
+        Just (Shift 50);
       GT ->
         Nothing
     };
@@ -7066,7 +7066,7 @@ dfaActionTransition q s =
         Nothing
     };
       EQ ->
-        Just (Shift 34);
+        Just (Shift 50);
       GT ->
     case compare (q, s') (90, 32) of {
       LT ->
@@ -7099,7 +7099,7 @@ dfaActionTransition q s =
       LT ->
     case compare (q, s') (98, 32) of {
       LT ->
-    case compare (q, s') (94, 33) of {
+    case compare (q, s') (94, 32) of {
       LT ->
     case compare (q, s') (92, 32) of {
       LT ->
@@ -7171,7 +7171,7 @@ dfaActionTransition q s =
         Nothing
     };
       EQ ->
-        Just (Shift 34);
+        Just (Shift 50);
       GT ->
     case compare (q, s') (91, 32) of {
       LT ->
@@ -7260,7 +7260,7 @@ dfaActionTransition q s =
       LT ->
         Nothing;
       EQ ->
-        Just (Shift 34);
+        Just (Shift 50);
       GT ->
         Nothing
     };
@@ -7351,7 +7351,7 @@ dfaActionTransition q s =
       LT ->
         Nothing;
       EQ ->
-        Just (Shift 34);
+        Just (Shift 50);
       GT ->
         Nothing
     };
@@ -7426,49 +7426,63 @@ dfaActionTransition q s =
       EQ ->
         Just (Shift 475);
       GT ->
-    case compare (q, s') (94, 32) of {
+    case compare (q, s') (94, 23) of {
       LT ->
     case compare (q, s') (94, 4) of {
       LT ->
         Nothing;
       EQ ->
-        Just (Shift 96);
+        Just (Shift 94);
       GT ->
         Nothing
+    };
+      EQ ->
+        Just (Shift 130);
+      GT ->
+        Nothing
+    }
+    }
+    }
+    }
     };
       EQ ->
         Just (Shift 131);
       GT ->
-        Nothing
-    }
-    }
-    }
-    }
-    };
-      EQ ->
-        Just (Shift 132);
-      GT ->
-    case compare (q, s') (97, 44) of {
+    case compare (q, s') (97, 33) of {
       LT ->
-    case compare (q, s') (97, 5) of {
+    case compare (q, s') (96, 34) of {
       LT ->
-    case compare (q, s') (96, 23) of {
-      LT ->
-    case compare (q, s') (95, 33) of {
+    case compare (q, s') (95, 34) of {
       LT ->
     case compare (q, s') (95, 4) of {
       LT ->
     case compare (q, s') (94, 34) of {
       LT ->
+    case compare (q, s') (94, 33) of {
+      LT ->
         Nothing;
       EQ ->
-        Just (Shift 133);
+        Just (Shift 132);
       GT ->
         Nothing
     };
       EQ ->
-        Just (Shift 96);
+        Just (Shift 133);
       GT ->
+    case compare (q, s') (94, 43) of {
+      LT ->
+        Nothing;
+      EQ ->
+        Just (Shift 134);
+      GT ->
+        Nothing
+    }
+    };
+      EQ ->
+        Just (Shift 94);
+      GT ->
+    case compare (q, s') (95, 33) of {
+      LT ->
     case compare (q, s') (95, 32) of {
       LT ->
         Nothing;
@@ -7476,32 +7490,36 @@ dfaActionTransition q s =
         Just (Shift 131);
       GT ->
         Nothing
-    }
     };
       EQ ->
         Just (Shift 132);
       GT ->
-    case compare (q, s') (96, 4) of {
-      LT ->
-    case compare (q, s') (95, 34) of {
-      LT ->
-        Nothing;
-      EQ ->
-        Just (Shift 133);
-      GT ->
-        Nothing
-    };
-      EQ ->
-        Just (Shift 96);
-      GT ->
         Nothing
     }
     };
       EQ ->
-        Just (Shift 130);
+        Just (Shift 133);
       GT ->
-    case compare (q, s') (96, 34) of {
+    case compare (q, s') (96, 23) of {
       LT ->
+    case compare (q, s') (96, 5) of {
+      LT ->
+    case compare (q, s') (96, 4) of {
+      LT ->
+        Nothing;
+      EQ ->
+        Just (Shift 94);
+      GT ->
+        Nothing
+    };
+      EQ ->
+        Just (Shift 507);
+      GT ->
+        Nothing
+    };
+      EQ ->
+        Just (Shift 95);
+      GT ->
     case compare (q, s') (96, 33) of {
       LT ->
     case compare (q, s') (96, 32) of {
@@ -7516,35 +7534,35 @@ dfaActionTransition q s =
         Just (Shift 132);
       GT ->
         Nothing
+    }
+    }
     };
       EQ ->
         Just (Shift 133);
       GT ->
-    case compare (q, s') (97, 4) of {
+    case compare (q, s') (96, 45) of {
+      LT ->
+    case compare (q, s') (96, 44) of {
       LT ->
     case compare (q, s') (96, 43) of {
       LT ->
         Nothing;
       EQ ->
-        Just (Shift 134);
+        Just (Shift 512);
       GT ->
         Nothing
     };
       EQ ->
-        Just (Shift 96);
+        Just (Shift 374);
       GT ->
         Nothing
-    }
-    }
     };
       EQ ->
-        Just (Shift 507);
+        Just (Shift 377);
       GT ->
-    case compare (q, s') (97, 33) of {
-      LT ->
     case compare (q, s') (97, 32) of {
       LT ->
-    case compare (q, s') (97, 23) of {
+    case compare (q, s') (97, 4) of {
       LT ->
         Nothing;
       EQ ->
@@ -7556,39 +7574,21 @@ dfaActionTransition q s =
         Just (Shift 131);
       GT ->
         Nothing
+    }
+    }
     };
       EQ ->
         Just (Shift 132);
       GT ->
-    case compare (q, s') (97, 43) of {
+    case compare (q, s') (98, 8) of {
+      LT ->
+    case compare (q, s') (98, 4) of {
       LT ->
     case compare (q, s') (97, 34) of {
       LT ->
         Nothing;
       EQ ->
         Just (Shift 133);
-      GT ->
-        Nothing
-    };
-      EQ ->
-        Just (Shift 512);
-      GT ->
-        Nothing
-    }
-    }
-    };
-      EQ ->
-        Just (Shift 374);
-      GT ->
-    case compare (q, s') (98, 8) of {
-      LT ->
-    case compare (q, s') (98, 4) of {
-      LT ->
-    case compare (q, s') (97, 45) of {
-      LT ->
-        Nothing;
-      EQ ->
-        Just (Shift 377);
       GT ->
     case compare (q, s') (98, 3) of {
       LT ->
@@ -7600,7 +7600,7 @@ dfaActionTransition q s =
     }
     };
       EQ ->
-        Just (Shift 96);
+        Just (Shift 94);
       GT ->
         Nothing
     };
@@ -7663,7 +7663,7 @@ dfaActionTransition q s =
       LT ->
         Nothing;
       EQ ->
-        Just (Shift 96);
+        Just (Shift 94);
       GT ->
     case compare (q, s') (99, 25) of {
       LT ->
@@ -7727,7 +7727,7 @@ dfaActionTransition q s =
         Nothing
     };
       EQ ->
-        Just (Shift 96);
+        Just (Shift 94);
       GT ->
     case compare (q, s') (100, 8) of {
       LT ->
@@ -7786,7 +7786,7 @@ dfaActionTransition q s =
     }
     };
       EQ ->
-        Just (Shift 96);
+        Just (Shift 94);
       GT ->
     case compare (q, s') (101, 24) of {
       LT ->
@@ -7841,7 +7841,7 @@ dfaActionTransition q s =
     }
     };
       EQ ->
-        Just (Shift 96);
+        Just (Shift 94);
       GT ->
     case compare (q, s') (106, 45) of {
       LT ->
@@ -7859,7 +7859,7 @@ dfaActionTransition q s =
       LT ->
         Nothing;
       EQ ->
-        Just (Shift 46);
+        Just (Shift 34);
       GT ->
         Nothing
     };
@@ -7870,7 +7870,7 @@ dfaActionTransition q s =
       LT ->
         Nothing;
       EQ ->
-        Just (Shift 94);
+        Just (Shift 95);
       GT ->
         Nothing
     }
@@ -7922,7 +7922,7 @@ dfaActionTransition q s =
       LT ->
         Nothing;
       EQ ->
-        Just (Shift 96);
+        Just (Shift 94);
       GT ->
     case compare (q, s') (103, 33) of {
       LT ->
@@ -7967,7 +7967,7 @@ dfaActionTransition q s =
         Nothing
     };
       EQ ->
-        Just (Shift 96);
+        Just (Shift 94);
       GT ->
     case compare (q, s') (104, 8) of {
       LT ->
@@ -7997,13 +7997,13 @@ dfaActionTransition q s =
         Nothing
     };
       EQ ->
-        Just (Shift 96);
+        Just (Shift 94);
       GT ->
         Nothing
     }
     };
       EQ ->
-        Just (Shift 49);
+        Just (Shift 47);
       GT ->
     case compare (q, s') (105, 32) of {
       LT ->
@@ -8018,7 +8018,7 @@ dfaActionTransition q s =
         Nothing
     };
       EQ ->
-        Just (Shift 94);
+        Just (Shift 95);
       GT ->
         Nothing
     };
@@ -8068,13 +8068,13 @@ dfaActionTransition q s =
       LT ->
         Nothing;
       EQ ->
-        Just (Shift 96);
+        Just (Shift 94);
       GT ->
         Nothing
     }
     };
       EQ ->
-        Just (Shift 50);
+        Just (Shift 48);
       GT ->
     case compare (q, s') (106, 23) of {
       LT ->
@@ -8087,7 +8087,7 @@ dfaActionTransition q s =
         Nothing
     };
       EQ ->
-        Just (Shift 94);
+        Just (Shift 95);
       GT ->
         Nothing
     }
@@ -8142,7 +8142,7 @@ dfaActionTransition q s =
         Nothing
     };
       EQ ->
-        Just (Shift 96);
+        Just (Shift 94);
       GT ->
     case compare (q, s') (108, 33) of {
       LT ->
@@ -8186,7 +8186,7 @@ dfaActionTransition q s =
         Nothing
     };
       EQ ->
-        Just (Shift 96);
+        Just (Shift 94);
       GT ->
     case compare (q, s') (108, 8) of {
       LT ->
@@ -8219,7 +8219,7 @@ dfaActionTransition q s =
         Nothing
     };
       EQ ->
-        Just (Shift 96);
+        Just (Shift 94);
       GT ->
         Nothing
     };
@@ -8232,12 +8232,12 @@ dfaActionTransition q s =
       LT ->
         Nothing;
       EQ ->
-        Just (Shift 94);
+        Just (Shift 95);
       GT ->
         Nothing
     };
       EQ ->
-        Just (Shift 51);
+        Just (Shift 49);
       GT ->
         Nothing
     }
@@ -8289,7 +8289,7 @@ dfaActionTransition q s =
         Nothing
     };
       EQ ->
-        Just (Shift 96);
+        Just (Shift 94);
       GT ->
         Nothing
     }
@@ -8315,7 +8315,7 @@ dfaActionTransition q s =
         Nothing
     };
       EQ ->
-        Just (Shift 96);
+        Just (Shift 94);
       GT ->
     case compare (q, s') (111, 33) of {
       LT ->
@@ -8347,12 +8347,12 @@ dfaActionTransition q s =
       LT ->
         Nothing;
       EQ ->
-        Just (Shift 96);
+        Just (Shift 94);
       GT ->
         Nothing
     };
       EQ ->
-        Just (Shift 94);
+        Just (Shift 95);
       GT ->
         Nothing
     };
@@ -8404,12 +8404,12 @@ dfaActionTransition q s =
       LT ->
         Nothing;
       EQ ->
-        Just (Shift 96);
+        Just (Shift 94);
       GT ->
         Nothing
     };
       EQ ->
-        Just (Shift 94);
+        Just (Shift 95);
       GT ->
         Nothing
     }
@@ -10203,7 +10203,7 @@ dfaActionTransition q s =
       LT ->
         Nothing;
       EQ ->
-        Just (Shift 135);
+        Just (Shift 137);
       GT ->
         Nothing
     };
@@ -10219,9 +10219,9 @@ dfaActionTransition q s =
       GT ->
     case compare (q, s') (137, 28) of {
       LT ->
-    case compare (q, s') (136, 32) of {
+    case compare (q, s') (136, 30) of {
       LT ->
-    case compare (q, s') (136, 28) of {
+    case compare (q, s') (136, 4) of {
       LT ->
     case compare (q, s') (135, 34) of {
       LT ->
@@ -10236,83 +10236,83 @@ dfaActionTransition q s =
       EQ ->
         Just (Shift 363);
       GT ->
-    case compare (q, s') (136, 4) of {
+    case compare (q, s') (136, 1) of {
       LT ->
         Nothing;
       EQ ->
-        Just (Shift 175);
+        Just (Shift 259);
+      GT ->
+    case compare (q, s') (136, 3) of {
+      LT ->
+        Nothing;
+      EQ ->
+        Just (Reduce 0 65);
       GT ->
         Nothing
     }
+    }
+    };
+      EQ ->
+        Just (Shift 175);
+      GT ->
+    case compare (q, s') (136, 28) of {
+      LT ->
+    case compare (q, s') (136, 15) of {
+      LT ->
+    case compare (q, s') (136, 8) of {
+      LT ->
+        Nothing;
+      EQ ->
+        Just (Reduce 0 65);
+      GT ->
+        Nothing
+    };
+      EQ ->
+        Just (Shift 140);
+      GT ->
+        Nothing
     };
       EQ ->
         Just (Shift 179);
       GT ->
-    case compare (q, s') (136, 31) of {
-      LT ->
-    case compare (q, s') (136, 30) of {
-      LT ->
-        Nothing;
-      EQ ->
-        Just (Shift 135);
-      GT ->
-        Nothing
-    };
-      EQ ->
-        Just (Shift 182);
-      GT ->
         Nothing
     }
     };
       EQ ->
-        Just (Shift 361);
+        Just (Shift 137);
       GT ->
-    case compare (q, s') (137, 1) of {
-      LT ->
-    case compare (q, s') (136, 34) of {
-      LT ->
     case compare (q, s') (136, 33) of {
+      LT ->
+    case compare (q, s') (136, 32) of {
+      LT ->
+    case compare (q, s') (136, 31) of {
       LT ->
         Nothing;
       EQ ->
-        Just (Shift 362);
+        Just (Shift 182);
       GT ->
         Nothing
     };
+      EQ ->
+        Just (Shift 361);
+      GT ->
+        Nothing
+    };
+      EQ ->
+        Just (Shift 362);
+      GT ->
+    case compare (q, s') (137, 4) of {
+      LT ->
+    case compare (q, s') (136, 34) of {
+      LT ->
+        Nothing;
       EQ ->
         Just (Shift 363);
       GT ->
         Nothing
     };
       EQ ->
-        Just (Shift 259);
-      GT ->
-    case compare (q, s') (137, 15) of {
-      LT ->
-    case compare (q, s') (137, 4) of {
-      LT ->
-    case compare (q, s') (137, 3) of {
-      LT ->
-        Nothing;
-      EQ ->
-        Just (Reduce 0 65);
-      GT ->
-        Nothing
-    };
-      EQ ->
         Just (Shift 175);
-      GT ->
-    case compare (q, s') (137, 8) of {
-      LT ->
-        Nothing;
-      EQ ->
-        Just (Reduce 0 65);
-      GT ->
-        Nothing
-    }
-    };
-      EQ ->
-        Just (Shift 140);
       GT ->
         Nothing
     }
@@ -10331,7 +10331,7 @@ dfaActionTransition q s =
       LT ->
         Nothing;
       EQ ->
-        Just (Shift 135);
+        Just (Shift 137);
       GT ->
         Nothing
     };
@@ -10375,7 +10375,7 @@ dfaActionTransition q s =
         Nothing
     };
       EQ ->
-        Just (Shift 135);
+        Just (Shift 137);
       GT ->
         Nothing
     };
@@ -10452,7 +10452,7 @@ dfaActionTransition q s =
         Nothing
     };
       EQ ->
-        Just (Shift 135);
+        Just (Shift 137);
       GT ->
         Nothing
     }
@@ -10500,7 +10500,7 @@ dfaActionTransition q s =
     }
     };
       EQ ->
-        Just (Shift 135);
+        Just (Shift 137);
       GT ->
     case compare (q, s') (140, 33) of {
       LT ->
@@ -10569,7 +10569,7 @@ dfaActionTransition q s =
         Nothing
     };
       EQ ->
-        Just (Shift 135);
+        Just (Shift 137);
       GT ->
         Nothing
     };
@@ -10633,7 +10633,7 @@ dfaActionTransition q s =
       LT ->
         Nothing;
       EQ ->
-        Just (Shift 135);
+        Just (Shift 137);
       GT ->
         Nothing
     }
@@ -10700,7 +10700,7 @@ dfaActionTransition q s =
       LT ->
         Nothing;
       EQ ->
-        Just (Shift 135);
+        Just (Shift 137);
       GT ->
         Nothing
     };
@@ -10744,7 +10744,7 @@ dfaActionTransition q s =
         Nothing
     };
       EQ ->
-        Just (Shift 135);
+        Just (Shift 137);
       GT ->
         Nothing
     }
@@ -10875,7 +10875,7 @@ dfaActionTransition q s =
     }
     };
       EQ ->
-        Just (Shift 135);
+        Just (Shift 137);
       GT ->
     case compare (q, s') (145, 31) of {
       LT ->
@@ -10949,7 +10949,7 @@ dfaActionTransition q s =
         Nothing
     };
       EQ ->
-        Just (Shift 135);
+        Just (Shift 137);
       GT ->
         Nothing
     };
@@ -10993,7 +10993,7 @@ dfaActionTransition q s =
         Nothing
     };
       EQ ->
-        Just (Shift 135);
+        Just (Shift 137);
       GT ->
     case compare (q, s') (147, 32) of {
       LT ->
@@ -11114,7 +11114,7 @@ dfaActionTransition q s =
     }
     };
       EQ ->
-        Just (Shift 135);
+        Just (Shift 137);
       GT ->
         Nothing
     }
@@ -11193,7 +11193,7 @@ dfaActionTransition q s =
         Nothing
     };
       EQ ->
-        Just (Shift 135);
+        Just (Shift 137);
       GT ->
         Nothing
     }
@@ -11277,7 +11277,7 @@ dfaActionTransition q s =
         Nothing
     };
       EQ ->
-        Just (Shift 135);
+        Just (Shift 137);
       GT ->
         Nothing
     };
@@ -11321,7 +11321,7 @@ dfaActionTransition q s =
         Nothing
     };
       EQ ->
-        Just (Shift 135);
+        Just (Shift 137);
       GT ->
     case compare (q, s') (151, 32) of {
       LT ->
@@ -11399,7 +11399,7 @@ dfaActionTransition q s =
         Nothing
     };
       EQ ->
-        Just (Shift 135);
+        Just (Shift 137);
       GT ->
         Nothing
     }
@@ -11447,7 +11447,7 @@ dfaActionTransition q s =
     }
     };
       EQ ->
-        Just (Shift 135);
+        Just (Shift 137);
       GT ->
     case compare (q, s') (154, 28) of {
       LT ->
@@ -11498,7 +11498,7 @@ dfaActionTransition q s =
       LT ->
         Nothing;
       EQ ->
-        Just (Shift 135);
+        Just (Shift 137);
       GT ->
         Nothing
     };
@@ -11594,7 +11594,7 @@ dfaActionTransition q s =
         Nothing
     };
       EQ ->
-        Just (Shift 135);
+        Just (Shift 137);
       GT ->
     case compare (q, s') (156, 32) of {
       LT ->
@@ -11655,7 +11655,7 @@ dfaActionTransition q s =
     }
     };
       EQ ->
-        Just (Shift 135);
+        Just (Shift 137);
       GT ->
     case compare (q, s') (157, 33) of {
       LT ->
@@ -11735,7 +11735,7 @@ dfaActionTransition q s =
       LT ->
         Nothing;
       EQ ->
-        Just (Shift 135);
+        Just (Shift 137);
       GT ->
         Nothing
     };
@@ -11782,7 +11782,7 @@ dfaActionTransition q s =
         Nothing
     };
       EQ ->
-        Just (Shift 135);
+        Just (Shift 137);
       GT ->
     case compare (q, s') (159, 31) of {
       LT ->
@@ -11861,7 +11861,7 @@ dfaActionTransition q s =
       LT ->
         Nothing;
       EQ ->
-        Just (Shift 135);
+        Just (Shift 137);
       GT ->
         Nothing
     };
@@ -11907,7 +11907,7 @@ dfaActionTransition q s =
         Nothing
     };
       EQ ->
-        Just (Shift 135);
+        Just (Shift 137);
       GT ->
         Nothing
     }
@@ -11954,7 +11954,7 @@ dfaActionTransition q s =
     }
     };
       EQ ->
-        Just (Shift 135);
+        Just (Shift 137);
       GT ->
     case compare (q, s') (165, 34) of {
       LT ->
@@ -12006,7 +12006,7 @@ dfaActionTransition q s =
     }
     };
       EQ ->
-        Just (Shift 135);
+        Just (Shift 137);
       GT ->
     case compare (q, s') (163, 33) of {
       LT ->
@@ -12058,7 +12058,7 @@ dfaActionTransition q s =
       LT ->
         Nothing;
       EQ ->
-        Just (Shift 135);
+        Just (Shift 137);
       GT ->
         Nothing
     };
@@ -12102,7 +12102,7 @@ dfaActionTransition q s =
         Nothing
     };
       EQ ->
-        Just (Shift 135);
+        Just (Shift 137);
       GT ->
         Nothing
     };
@@ -12152,7 +12152,7 @@ dfaActionTransition q s =
         Nothing
     };
       EQ ->
-        Just (Shift 135);
+        Just (Shift 137);
       GT ->
     case compare (q, s') (166, 32) of {
       LT ->
@@ -12199,7 +12199,7 @@ dfaActionTransition q s =
       LT ->
         Nothing;
       EQ ->
-        Just (Shift 135);
+        Just (Shift 137);
       GT ->
         Nothing
     };
@@ -12252,7 +12252,7 @@ dfaActionTransition q s =
     }
     };
       EQ ->
-        Just (Shift 135);
+        Just (Shift 137);
       GT ->
     case compare (q, s') (168, 33) of {
       LT ->
@@ -12313,7 +12313,7 @@ dfaActionTransition q s =
       LT ->
         Nothing;
       EQ ->
-        Just (Shift 135);
+        Just (Shift 137);
       GT ->
         Nothing
     };
@@ -12369,7 +12369,7 @@ dfaActionTransition q s =
         Nothing
     };
       EQ ->
-        Just (Shift 135);
+        Just (Shift 137);
       GT ->
     case compare (q, s') (170, 32) of {
       LT ->
@@ -12419,7 +12419,7 @@ dfaActionTransition q s =
       LT ->
         Nothing;
       EQ ->
-        Just (Shift 135);
+        Just (Shift 137);
       GT ->
         Nothing
     };
@@ -12463,7 +12463,7 @@ dfaActionTransition q s =
         Nothing
     };
       EQ ->
-        Just (Shift 135);
+        Just (Shift 137);
       GT ->
         Nothing
     }
@@ -12521,7 +12521,7 @@ dfaActionTransition q s =
     }
     };
       EQ ->
-        Just (Shift 135);
+        Just (Shift 137);
       GT ->
     case compare (q, s') (173, 33) of {
       LT ->
@@ -12578,7 +12578,7 @@ dfaActionTransition q s =
         Nothing
     };
       EQ ->
-        Just (Shift 135);
+        Just (Shift 137);
       GT ->
         Nothing
     };
@@ -12644,7 +12644,7 @@ dfaActionTransition q s =
     }
     };
       EQ ->
-        Just (Shift 135);
+        Just (Shift 137);
       GT ->
     case compare (q, s') (176, 34) of {
       LT ->
@@ -12709,7 +12709,7 @@ dfaActionTransition q s =
         Nothing
     };
       EQ ->
-        Just (Shift 135);
+        Just (Shift 137);
       GT ->
         Nothing
     };
@@ -12756,7 +12756,7 @@ dfaActionTransition q s =
         Nothing
     };
       EQ ->
-        Just (Shift 135);
+        Just (Shift 137);
       GT ->
     case compare (q, s') (177, 32) of {
       LT ->
@@ -12803,7 +12803,7 @@ dfaActionTransition q s =
       LT ->
         Nothing;
       EQ ->
-        Just (Shift 135);
+        Just (Shift 137);
       GT ->
         Nothing
     };
@@ -12866,7 +12866,7 @@ dfaActionTransition q s =
     }
     };
       EQ ->
-        Just (Shift 135);
+        Just (Shift 137);
       GT ->
     case compare (q, s') (179, 33) of {
       LT ->
@@ -16033,7 +16033,7 @@ dfaActionTransition q s =
     }
     };
       EQ ->
-        Just (Shift 47);
+        Just (Shift 35);
       GT ->
     case compare (q, s') (330, 21) of {
       LT ->
@@ -28191,7 +28191,7 @@ dfaActionTransition q s =
     }
     };
       EQ ->
-        Just (Shift 48);
+        Just (Shift 46);
       GT ->
     case compare (q, s') (501, 27) of {
       LT ->
@@ -29092,9 +29092,9 @@ dfaGotoTransition q s =
       LT ->
     case compare (q, s') (63, 63) of {
       LT ->
-    case compare (q, s') (45, 63) of {
+    case compare (q, s') (44, 63) of {
       LT ->
-    case compare (q, s') (37, 8) of {
+    case compare (q, s') (36, 8) of {
       LT ->
     case compare (q, s') (16, 41) of {
       LT ->
@@ -29367,11 +29367,11 @@ dfaGotoTransition q s =
       EQ ->
         Just 185;
       GT ->
-    case compare (q, s') (36, 8) of {
-      LT ->
-    case compare (q, s') (34, 68) of {
+    case compare (q, s') (35, 8) of {
       LT ->
     case compare (q, s') (34, 63) of {
+      LT ->
+    case compare (q, s') (34, 32) of {
       LT ->
     case compare (q, s') (34, 8) of {
       LT ->
@@ -29382,40 +29382,88 @@ dfaGotoTransition q s =
         Nothing
     };
       EQ ->
-        Just 427;
+        Just 281;
       GT ->
+    case compare (q, s') (34, 61) of {
+      LT ->
+        Nothing;
+      EQ ->
+        Just 308;
+      GT ->
+        Nothing
+    }
+    };
+      EQ ->
+        Just 418;
+      GT ->
+    case compare (q, s') (34, 68) of {
+      LT ->
     case compare (q, s') (34, 67) of {
       LT ->
         Nothing;
       EQ ->
-        Just 35;
+        Just 51;
       GT ->
         Nothing
-    }
     };
       EQ ->
         Just 454;
       GT ->
-    case compare (q, s') (35, 68) of {
-      LT ->
-    case compare (q, s') (35, 8) of {
-      LT ->
-        Nothing;
-      EQ ->
-        Just 476;
-      GT ->
-        Nothing
-    };
-      EQ ->
-        Just 455;
-      GT ->
         Nothing
     }
     };
       EQ ->
         Just 476;
       GT ->
-    case compare (q, s') (36, 63) of {
+    case compare (q, s') (35, 63) of {
+      LT ->
+    case compare (q, s') (35, 61) of {
+      LT ->
+    case compare (q, s') (35, 32) of {
+      LT ->
+        Nothing;
+      EQ ->
+        Just 309;
+      GT ->
+        Nothing
+    };
+      EQ ->
+        Just 308;
+      GT ->
+        Nothing
+    };
+      EQ ->
+        Just 418;
+      GT ->
+    case compare (q, s') (35, 68) of {
+      LT ->
+    case compare (q, s') (35, 67) of {
+      LT ->
+        Nothing;
+      EQ ->
+        Just 51;
+      GT ->
+        Nothing
+    };
+      EQ ->
+        Just 454;
+      GT ->
+        Nothing
+    }
+    }
+    }
+    }
+    };
+      EQ ->
+        Just 476;
+      GT ->
+    case compare (q, s') (40, 61) of {
+      LT ->
+    case compare (q, s') (38, 32) of {
+      LT ->
+    case compare (q, s') (37, 32) of {
+      LT ->
+    case compare (q, s') (36, 67) of {
       LT ->
     case compare (q, s') (36, 61) of {
       LT ->
@@ -29430,65 +29478,56 @@ dfaGotoTransition q s =
       EQ ->
         Just 308;
       GT ->
-        Nothing
-    };
-      EQ ->
-        Just 418;
-      GT ->
-    case compare (q, s') (36, 68) of {
-      LT ->
-    case compare (q, s') (36, 67) of {
+    case compare (q, s') (36, 63) of {
       LT ->
         Nothing;
       EQ ->
-        Just 35;
+        Just 418;
       GT ->
         Nothing
+    }
     };
+      EQ ->
+        Just 51;
+      GT ->
+    case compare (q, s') (37, 8) of {
+      LT ->
+    case compare (q, s') (36, 68) of {
+      LT ->
+        Nothing;
       EQ ->
         Just 454;
       GT ->
         Nothing
-    }
-    }
-    }
-    }
     };
       EQ ->
         Just 476;
       GT ->
-    case compare (q, s') (41, 61) of {
-      LT ->
-    case compare (q, s') (39, 32) of {
-      LT ->
-    case compare (q, s') (38, 32) of {
-      LT ->
-    case compare (q, s') (37, 67) of {
-      LT ->
-    case compare (q, s') (37, 61) of {
-      LT ->
-    case compare (q, s') (37, 32) of {
-      LT ->
-        Nothing;
-      EQ ->
-        Just 405;
-      GT ->
-        Nothing
-    };
-      EQ ->
-        Just 308;
-      GT ->
-    case compare (q, s') (37, 63) of {
-      LT ->
-        Nothing;
-      EQ ->
-        Just 418;
-      GT ->
         Nothing
     }
     };
       EQ ->
-        Just 35;
+        Just 405;
+      GT ->
+    case compare (q, s') (37, 67) of {
+      LT ->
+    case compare (q, s') (37, 63) of {
+      LT ->
+    case compare (q, s') (37, 61) of {
+      LT ->
+        Nothing;
+      EQ ->
+        Just 308;
+      GT ->
+        Nothing
+    };
+      EQ ->
+        Just 418;
+      GT ->
+        Nothing
+    };
+      EQ ->
+        Just 51;
       GT ->
     case compare (q, s') (38, 8) of {
       LT ->
@@ -29505,11 +29544,14 @@ dfaGotoTransition q s =
       GT ->
         Nothing
     }
+    }
     };
       EQ ->
         Just 406;
       GT ->
-    case compare (q, s') (38, 67) of {
+    case compare (q, s') (39, 61) of {
+      LT ->
+    case compare (q, s') (38, 68) of {
       LT ->
     case compare (q, s') (38, 63) of {
       LT ->
@@ -29524,56 +29566,53 @@ dfaGotoTransition q s =
       EQ ->
         Just 418;
       GT ->
-        Nothing
-    };
-      EQ ->
-        Just 35;
-      GT ->
-    case compare (q, s') (39, 8) of {
-      LT ->
-    case compare (q, s') (38, 68) of {
+    case compare (q, s') (38, 67) of {
       LT ->
         Nothing;
       EQ ->
-        Just 454;
+        Just 51;
       GT ->
         Nothing
+    }
     };
+      EQ ->
+        Just 454;
+      GT ->
+    case compare (q, s') (39, 32) of {
+      LT ->
+    case compare (q, s') (39, 8) of {
+      LT ->
+        Nothing;
       EQ ->
         Just 476;
       GT ->
         Nothing
-    }
-    }
     };
       EQ ->
         Just 409;
       GT ->
-    case compare (q, s') (40, 61) of {
-      LT ->
+        Nothing
+    }
+    };
+      EQ ->
+        Just 308;
+      GT ->
     case compare (q, s') (39, 68) of {
+      LT ->
+    case compare (q, s') (39, 67) of {
       LT ->
     case compare (q, s') (39, 63) of {
       LT ->
-    case compare (q, s') (39, 61) of {
-      LT ->
         Nothing;
       EQ ->
-        Just 308;
+        Just 418;
       GT ->
         Nothing
     };
       EQ ->
-        Just 418;
-      GT ->
-    case compare (q, s') (39, 67) of {
-      LT ->
-        Nothing;
-      EQ ->
-        Just 35;
+        Just 51;
       GT ->
         Nothing
-    }
     };
       EQ ->
         Just 454;
@@ -29593,11 +29632,17 @@ dfaGotoTransition q s =
       GT ->
         Nothing
     }
+    }
+    }
     };
       EQ ->
         Just 308;
       GT ->
-    case compare (q, s') (40, 68) of {
+    case compare (q, s') (42, 63) of {
+      LT ->
+    case compare (q, s') (41, 63) of {
+      LT ->
+    case compare (q, s') (41, 8) of {
       LT ->
     case compare (q, s') (40, 67) of {
       LT ->
@@ -29610,61 +29655,55 @@ dfaGotoTransition q s =
         Nothing
     };
       EQ ->
-        Just 35;
+        Just 51;
       GT ->
-        Nothing
-    };
-      EQ ->
-        Just 454;
-      GT ->
-    case compare (q, s') (41, 32) of {
-      LT ->
-    case compare (q, s') (41, 8) of {
+    case compare (q, s') (40, 68) of {
       LT ->
         Nothing;
       EQ ->
-        Just 476;
+        Just 454;
       GT ->
         Nothing
+    }
     };
+      EQ ->
+        Just 476;
+      GT ->
+    case compare (q, s') (41, 61) of {
+      LT ->
+    case compare (q, s') (41, 32) of {
+      LT ->
+        Nothing;
       EQ ->
         Just 411;
       GT ->
         Nothing
-    }
-    }
-    }
     };
       EQ ->
         Just 308;
       GT ->
-    case compare (q, s') (43, 63) of {
-      LT ->
-    case compare (q, s') (42, 63) of {
-      LT ->
+        Nothing
+    }
+    };
+      EQ ->
+        Just 418;
+      GT ->
     case compare (q, s') (42, 8) of {
+      LT ->
+    case compare (q, s') (41, 68) of {
       LT ->
     case compare (q, s') (41, 67) of {
       LT ->
-    case compare (q, s') (41, 63) of {
-      LT ->
         Nothing;
       EQ ->
-        Just 418;
+        Just 51;
       GT ->
         Nothing
     };
       EQ ->
-        Just 35;
-      GT ->
-    case compare (q, s') (41, 68) of {
-      LT ->
-        Nothing;
-      EQ ->
         Just 454;
       GT ->
         Nothing
-    }
     };
       EQ ->
         Just 476;
@@ -29684,10 +29723,13 @@ dfaGotoTransition q s =
       GT ->
         Nothing
     }
+    }
     };
       EQ ->
         Just 418;
       GT ->
+    case compare (q, s') (43, 63) of {
+      LT ->
     case compare (q, s') (43, 8) of {
       LT ->
     case compare (q, s') (42, 68) of {
@@ -29696,7 +29738,7 @@ dfaGotoTransition q s =
       LT ->
         Nothing;
       EQ ->
-        Just 35;
+        Just 51;
       GT ->
         Nothing
     };
@@ -29723,13 +29765,10 @@ dfaGotoTransition q s =
       GT ->
         Nothing
     }
-    }
     };
       EQ ->
         Just 418;
       GT ->
-    case compare (q, s') (44, 63) of {
-      LT ->
     case compare (q, s') (44, 8) of {
       LT ->
     case compare (q, s') (43, 68) of {
@@ -29738,7 +29777,7 @@ dfaGotoTransition q s =
       LT ->
         Nothing;
       EQ ->
-        Just 35;
+        Just 51;
       GT ->
         Nothing
     };
@@ -29765,45 +29804,6 @@ dfaGotoTransition q s =
       GT ->
         Nothing
     }
-    };
-      EQ ->
-        Just 418;
-      GT ->
-    case compare (q, s') (45, 8) of {
-      LT ->
-    case compare (q, s') (44, 68) of {
-      LT ->
-    case compare (q, s') (44, 67) of {
-      LT ->
-        Nothing;
-      EQ ->
-        Just 35;
-      GT ->
-        Nothing
-    };
-      EQ ->
-        Just 454;
-      GT ->
-        Nothing
-    };
-      EQ ->
-        Just 476;
-      GT ->
-    case compare (q, s') (45, 61) of {
-      LT ->
-    case compare (q, s') (45, 32) of {
-      LT ->
-        Nothing;
-      EQ ->
-        Just 415;
-      GT ->
-        Nothing
-    };
-      EQ ->
-        Just 308;
-      GT ->
-        Nothing
-    }
     }
     }
     }
@@ -29814,28 +29814,28 @@ dfaGotoTransition q s =
       GT ->
     case compare (q, s') (53, 75) of {
       LT ->
-    case compare (q, s') (49, 68) of {
-      LT ->
-    case compare (q, s') (47, 67) of {
+    case compare (q, s') (48, 68) of {
       LT ->
     case compare (q, s') (46, 67) of {
       LT ->
-    case compare (q, s') (46, 32) of {
-      LT ->
-    case compare (q, s') (45, 68) of {
-      LT ->
     case compare (q, s') (45, 67) of {
+      LT ->
+    case compare (q, s') (45, 32) of {
+      LT ->
+    case compare (q, s') (44, 68) of {
+      LT ->
+    case compare (q, s') (44, 67) of {
       LT ->
         Nothing;
       EQ ->
-        Just 35;
+        Just 51;
       GT ->
         Nothing
     };
       EQ ->
         Just 454;
       GT ->
-    case compare (q, s') (46, 8) of {
+    case compare (q, s') (45, 8) of {
       LT ->
         Nothing;
       EQ ->
@@ -29845,7 +29845,46 @@ dfaGotoTransition q s =
     }
     };
       EQ ->
-        Just 281;
+        Just 415;
+      GT ->
+    case compare (q, s') (45, 63) of {
+      LT ->
+    case compare (q, s') (45, 61) of {
+      LT ->
+        Nothing;
+      EQ ->
+        Just 308;
+      GT ->
+        Nothing
+    };
+      EQ ->
+        Just 418;
+      GT ->
+        Nothing
+    }
+    };
+      EQ ->
+        Just 51;
+      GT ->
+    case compare (q, s') (46, 32) of {
+      LT ->
+    case compare (q, s') (46, 8) of {
+      LT ->
+    case compare (q, s') (45, 68) of {
+      LT ->
+        Nothing;
+      EQ ->
+        Just 454;
+      GT ->
+        Nothing
+    };
+      EQ ->
+        Just 476;
+      GT ->
+        Nothing
+    };
+      EQ ->
+        Just 498;
       GT ->
     case compare (q, s') (46, 63) of {
       LT ->
@@ -29862,11 +29901,14 @@ dfaGotoTransition q s =
       GT ->
         Nothing
     }
+    }
     };
       EQ ->
-        Just 35;
+        Just 51;
       GT ->
-    case compare (q, s') (47, 32) of {
+    case compare (q, s') (47, 68) of {
+      LT ->
+    case compare (q, s') (47, 61) of {
       LT ->
     case compare (q, s') (47, 8) of {
       LT ->
@@ -29881,56 +29923,53 @@ dfaGotoTransition q s =
       EQ ->
         Just 476;
       GT ->
-        Nothing
-    };
-      EQ ->
-        Just 309;
-      GT ->
-    case compare (q, s') (47, 63) of {
-      LT ->
-    case compare (q, s') (47, 61) of {
+    case compare (q, s') (47, 32) of {
       LT ->
         Nothing;
       EQ ->
-        Just 308;
+        Just 319;
       GT ->
         Nothing
+    }
     };
+      EQ ->
+        Just 308;
+      GT ->
+    case compare (q, s') (47, 67) of {
+      LT ->
+    case compare (q, s') (47, 63) of {
+      LT ->
+        Nothing;
       EQ ->
         Just 418;
       GT ->
         Nothing
-    }
-    }
     };
       EQ ->
-        Just 35;
+        Just 51;
       GT ->
-    case compare (q, s') (48, 68) of {
-      LT ->
-    case compare (q, s') (48, 61) of {
-      LT ->
-    case compare (q, s') (48, 8) of {
-      LT ->
-    case compare (q, s') (47, 68) of {
-      LT ->
-        Nothing;
+        Nothing
+    }
+    };
       EQ ->
         Just 454;
       GT ->
-        Nothing
-    };
-      EQ ->
-        Just 476;
-      GT ->
+    case compare (q, s') (48, 61) of {
+      LT ->
     case compare (q, s') (48, 32) of {
+      LT ->
+    case compare (q, s') (48, 8) of {
       LT ->
         Nothing;
       EQ ->
-        Just 498;
+        Just 476;
       GT ->
         Nothing
-    }
+    };
+      EQ ->
+        Just 327;
+      GT ->
+        Nothing
     };
       EQ ->
         Just 308;
@@ -29946,15 +29985,21 @@ dfaGotoTransition q s =
         Nothing
     };
       EQ ->
-        Just 35;
+        Just 51;
       GT ->
         Nothing
+    }
+    }
     }
     };
       EQ ->
         Just 454;
       GT ->
-    case compare (q, s') (49, 61) of {
+    case compare (q, s') (52, 8) of {
+      LT ->
+    case compare (q, s') (50, 8) of {
+      LT ->
+    case compare (q, s') (49, 63) of {
       LT ->
     case compare (q, s') (49, 32) of {
       LT ->
@@ -29967,116 +30012,71 @@ dfaGotoTransition q s =
         Nothing
     };
       EQ ->
-        Just 319;
+        Just 496;
       GT ->
-        Nothing
-    };
-      EQ ->
-        Just 308;
-      GT ->
-    case compare (q, s') (49, 67) of {
-      LT ->
-    case compare (q, s') (49, 63) of {
+    case compare (q, s') (49, 61) of {
       LT ->
         Nothing;
       EQ ->
-        Just 418;
+        Just 308;
       GT ->
         Nothing
+    }
     };
       EQ ->
-        Just 35;
+        Just 418;
+      GT ->
+    case compare (q, s') (49, 68) of {
+      LT ->
+    case compare (q, s') (49, 67) of {
+      LT ->
+        Nothing;
+      EQ ->
+        Just 51;
       GT ->
         Nothing
-    }
-    }
-    }
     };
       EQ ->
         Just 454;
       GT ->
-    case compare (q, s') (52, 8) of {
-      LT ->
-    case compare (q, s') (51, 8) of {
-      LT ->
-    case compare (q, s') (50, 63) of {
-      LT ->
-    case compare (q, s') (50, 32) of {
-      LT ->
-    case compare (q, s') (50, 8) of {
-      LT ->
-        Nothing;
-      EQ ->
-        Just 476;
-      GT ->
-        Nothing
-    };
-      EQ ->
-        Just 327;
-      GT ->
-    case compare (q, s') (50, 61) of {
-      LT ->
-        Nothing;
-      EQ ->
-        Just 308;
-      GT ->
         Nothing
     }
     };
       EQ ->
-        Just 418;
+        Just 476;
       GT ->
     case compare (q, s') (50, 68) of {
       LT ->
     case compare (q, s') (50, 67) of {
       LT ->
+    case compare (q, s') (50, 63) of {
+      LT ->
         Nothing;
       EQ ->
-        Just 35;
+        Just 427;
+      GT ->
+        Nothing
+    };
+      EQ ->
+        Just 51;
       GT ->
         Nothing
     };
       EQ ->
         Just 454;
-      GT ->
-        Nothing
-    }
-    };
-      EQ ->
-        Just 476;
-      GT ->
-    case compare (q, s') (51, 63) of {
-      LT ->
-    case compare (q, s') (51, 61) of {
-      LT ->
-    case compare (q, s') (51, 32) of {
-      LT ->
-        Nothing;
-      EQ ->
-        Just 496;
-      GT ->
-        Nothing
-    };
-      EQ ->
-        Just 308;
-      GT ->
-        Nothing
-    };
-      EQ ->
-        Just 418;
       GT ->
     case compare (q, s') (51, 68) of {
       LT ->
-    case compare (q, s') (51, 67) of {
+    case compare (q, s') (51, 8) of {
       LT ->
         Nothing;
       EQ ->
-        Just 35;
+        Just 476;
       GT ->
         Nothing
     };
       EQ ->
-        Just 454;
+        Just 455;
       GT ->
         Nothing
     }
@@ -30112,7 +30112,7 @@ dfaGotoTransition q s =
     }
     };
       EQ ->
-        Just 35;
+        Just 51;
       GT ->
     case compare (q, s') (52, 75) of {
       LT ->
@@ -30159,7 +30159,7 @@ dfaGotoTransition q s =
       LT ->
         Nothing;
       EQ ->
-        Just 35;
+        Just 51;
       GT ->
         Nothing
     };
@@ -30206,7 +30206,7 @@ dfaGotoTransition q s =
     }
     };
       EQ ->
-        Just 35;
+        Just 51;
       GT ->
     case compare (q, s') (55, 8) of {
       LT ->
@@ -30245,7 +30245,7 @@ dfaGotoTransition q s =
         Nothing
     };
       EQ ->
-        Just 35;
+        Just 51;
       GT ->
     case compare (q, s') (55, 70) of {
       LT ->
@@ -30282,7 +30282,7 @@ dfaGotoTransition q s =
         Nothing
     };
       EQ ->
-        Just 35;
+        Just 51;
       GT ->
     case compare (q, s') (56, 68) of {
       LT ->
@@ -30313,7 +30313,7 @@ dfaGotoTransition q s =
     }
     };
       EQ ->
-        Just 35;
+        Just 51;
       GT ->
     case compare (q, s') (58, 32) of {
       LT ->
@@ -30354,7 +30354,7 @@ dfaGotoTransition q s =
     }
     };
       EQ ->
-        Just 35;
+        Just 51;
       GT ->
     case compare (q, s') (61, 8) of {
       LT ->
@@ -30398,7 +30398,7 @@ dfaGotoTransition q s =
         Nothing
     };
       EQ ->
-        Just 35;
+        Just 51;
       GT ->
         Nothing
     }
@@ -30432,7 +30432,7 @@ dfaGotoTransition q s =
       LT ->
         Nothing;
       EQ ->
-        Just 35;
+        Just 51;
       GT ->
         Nothing
     };
@@ -30466,7 +30466,7 @@ dfaGotoTransition q s =
         Nothing
     };
       EQ ->
-        Just 35;
+        Just 51;
       GT ->
     case compare (q, s') (62, 8) of {
       LT ->
@@ -30500,7 +30500,7 @@ dfaGotoTransition q s =
         Nothing
     };
       EQ ->
-        Just 35;
+        Just 51;
       GT ->
         Nothing
     };
@@ -30549,7 +30549,7 @@ dfaGotoTransition q s =
       LT ->
         Nothing;
       EQ ->
-        Just 35;
+        Just 51;
       GT ->
         Nothing
     };
@@ -30585,7 +30585,7 @@ dfaGotoTransition q s =
     }
     };
       EQ ->
-        Just 35;
+        Just 51;
       GT ->
     case compare (q, s') (65, 8) of {
       LT ->
@@ -30637,7 +30637,7 @@ dfaGotoTransition q s =
       LT ->
         Nothing;
       EQ ->
-        Just 35;
+        Just 51;
       GT ->
         Nothing
     };
@@ -30673,7 +30673,7 @@ dfaGotoTransition q s =
     }
     };
       EQ ->
-        Just 35;
+        Just 51;
       GT ->
     case compare (q, s') (67, 63) of {
       LT ->
@@ -30706,7 +30706,7 @@ dfaGotoTransition q s =
         Nothing
     };
       EQ ->
-        Just 35;
+        Just 51;
       GT ->
         Nothing
     }
@@ -30745,7 +30745,7 @@ dfaGotoTransition q s =
     }
     };
       EQ ->
-        Just 35;
+        Just 51;
       GT ->
     case compare (q, s') (69, 8) of {
       LT ->
@@ -30779,7 +30779,7 @@ dfaGotoTransition q s =
         Nothing
     };
       EQ ->
-        Just 35;
+        Just 51;
       GT ->
         Nothing
     };
@@ -30816,7 +30816,7 @@ dfaGotoTransition q s =
       LT ->
         Nothing;
       EQ ->
-        Just 35;
+        Just 51;
       GT ->
         Nothing
     };
@@ -30846,7 +30846,7 @@ dfaGotoTransition q s =
         Nothing
     };
       EQ ->
-        Just 35;
+        Just 51;
       GT ->
         Nothing
     }
@@ -30880,7 +30880,7 @@ dfaGotoTransition q s =
       LT ->
         Nothing;
       EQ ->
-        Just 35;
+        Just 51;
       GT ->
         Nothing
     };
@@ -30921,7 +30921,7 @@ dfaGotoTransition q s =
       LT ->
         Nothing;
       EQ ->
-        Just 35;
+        Just 51;
       GT ->
         Nothing
     }
@@ -30956,7 +30956,7 @@ dfaGotoTransition q s =
       LT ->
         Nothing;
       EQ ->
-        Just 35;
+        Just 51;
       GT ->
         Nothing
     };
@@ -30986,7 +30986,7 @@ dfaGotoTransition q s =
     }
     };
       EQ ->
-        Just 35;
+        Just 51;
       GT ->
     case compare (q, s') (76, 72) of {
       LT ->
@@ -31023,7 +31023,7 @@ dfaGotoTransition q s =
       LT ->
         Nothing;
       EQ ->
-        Just 35;
+        Just 51;
       GT ->
         Nothing
     };
@@ -31075,7 +31075,7 @@ dfaGotoTransition q s =
     }
     };
       EQ ->
-        Just 35;
+        Just 51;
       GT ->
     case compare (q, s') (79, 63) of {
       LT ->
@@ -31135,7 +31135,7 @@ dfaGotoTransition q s =
       LT ->
         Nothing;
       EQ ->
-        Just 35;
+        Just 51;
       GT ->
         Nothing
     };
@@ -31182,7 +31182,7 @@ dfaGotoTransition q s =
         Nothing
     };
       EQ ->
-        Just 35;
+        Just 51;
       GT ->
         Nothing
     };
@@ -31221,7 +31221,7 @@ dfaGotoTransition q s =
         Nothing
     };
       EQ ->
-        Just 35;
+        Just 51;
       GT ->
         Nothing
     };
@@ -31278,7 +31278,7 @@ dfaGotoTransition q s =
       LT ->
         Nothing;
       EQ ->
-        Just 35;
+        Just 51;
       GT ->
         Nothing
     }
@@ -31318,7 +31318,7 @@ dfaGotoTransition q s =
         Nothing
     };
       EQ ->
-        Just 35;
+        Just 51;
       GT ->
         Nothing
     };
@@ -31372,7 +31372,7 @@ dfaGotoTransition q s =
     }
     };
       EQ ->
-        Just 35;
+        Just 51;
       GT ->
     case compare (q, s') (84, 8) of {
       LT ->
@@ -31424,7 +31424,7 @@ dfaGotoTransition q s =
         Nothing
     };
       EQ ->
-        Just 35;
+        Just 51;
       GT ->
         Nothing
     }
@@ -31482,7 +31482,7 @@ dfaGotoTransition q s =
     }
     };
       EQ ->
-        Just 35;
+        Just 51;
       GT ->
     case compare (q, s') (86, 33) of {
       LT ->
@@ -31539,7 +31539,7 @@ dfaGotoTransition q s =
         Nothing
     };
       EQ ->
-        Just 35;
+        Just 51;
       GT ->
     case compare (q, s') (86, 68) of {
       LT ->
@@ -31585,7 +31585,7 @@ dfaGotoTransition q s =
         Nothing
     };
       EQ ->
-        Just 35;
+        Just 51;
       GT ->
         Nothing
     };
@@ -31633,7 +31633,7 @@ dfaGotoTransition q s =
         Nothing
     };
       EQ ->
-        Just 35;
+        Just 51;
       GT ->
     case compare (q, s') (88, 68) of {
       LT ->
@@ -31674,7 +31674,7 @@ dfaGotoTransition q s =
       LT ->
         Nothing;
       EQ ->
-        Just 35;
+        Just 51;
       GT ->
         Nothing
     };
@@ -31716,7 +31716,7 @@ dfaGotoTransition q s =
       LT ->
         Nothing;
       EQ ->
-        Just 35;
+        Just 51;
       GT ->
         Nothing
     };
@@ -31752,7 +31752,7 @@ dfaGotoTransition q s =
     }
     };
       EQ ->
-        Just 35;
+        Just 51;
       GT ->
     case compare (q, s') (92, 32) of {
       LT ->
@@ -31793,9 +31793,9 @@ dfaGotoTransition q s =
     }
     };
       EQ ->
-        Just 35;
+        Just 51;
       GT ->
-    case compare (q, s') (96, 31) of {
+    case compare (q, s') (96, 8) of {
       LT ->
     case compare (q, s') (93, 68) of {
       LT ->
@@ -31837,7 +31837,7 @@ dfaGotoTransition q s =
         Nothing
     };
       EQ ->
-        Just 35;
+        Just 51;
       GT ->
         Nothing
     }
@@ -31845,11 +31845,29 @@ dfaGotoTransition q s =
       EQ ->
         Just 454;
       GT ->
-    case compare (q, s') (95, 8) of {
-      LT ->
     case compare (q, s') (94, 76) of {
       LT ->
+    case compare (q, s') (94, 31) of {
+      LT ->
     case compare (q, s') (94, 8) of {
+      LT ->
+        Nothing;
+      EQ ->
+        Just 508;
+      GT ->
+        Nothing
+    };
+      EQ ->
+        Just 96;
+      GT ->
+        Nothing
+    };
+      EQ ->
+        Just 304;
+      GT ->
+    case compare (q, s') (95, 76) of {
+      LT ->
+    case compare (q, s') (95, 8) of {
       LT ->
         Nothing;
       EQ ->
@@ -31861,57 +31879,26 @@ dfaGotoTransition q s =
         Just 305;
       GT ->
         Nothing
-    };
-      EQ ->
-        Just 508;
-      GT ->
-    case compare (q, s') (96, 8) of {
-      LT ->
-    case compare (q, s') (95, 76) of {
-      LT ->
-        Nothing;
-      EQ ->
-        Just 307;
-      GT ->
-        Nothing
-    };
-      EQ ->
-        Just 508;
-      GT ->
-        Nothing
     }
     }
     };
       EQ ->
-        Just 97;
-      GT ->
-    case compare (q, s') (97, 77) of {
-      LT ->
-    case compare (q, s') (97, 44) of {
-      LT ->
-    case compare (q, s') (97, 8) of {
-      LT ->
-    case compare (q, s') (96, 76) of {
-      LT ->
-        Nothing;
-      EQ ->
-        Just 304;
-      GT ->
-        Nothing
-    };
-      EQ ->
         Just 508;
-      GT ->
-        Nothing
-    };
-      EQ ->
-        Just 95;
       GT ->
     case compare (q, s') (97, 76) of {
       LT ->
-    case compare (q, s') (97, 52) of {
+    case compare (q, s') (96, 76) of {
+      LT ->
+    case compare (q, s') (96, 52) of {
+      LT ->
+    case compare (q, s') (96, 44) of {
       LT ->
         Nothing;
+      EQ ->
+        Just 97;
+      GT ->
+        Nothing
+    };
       EQ ->
         Just 342;
       GT ->
@@ -31920,11 +31907,24 @@ dfaGotoTransition q s =
       EQ ->
         Just 306;
       GT ->
+    case compare (q, s') (97, 8) of {
+      LT ->
+    case compare (q, s') (96, 77) of {
+      LT ->
+        Nothing;
+      EQ ->
+        Just 343;
+      GT ->
+        Nothing
+    };
+      EQ ->
+        Just 508;
+      GT ->
         Nothing
     }
     };
       EQ ->
-        Just 343;
+        Just 307;
       GT ->
     case compare (q, s') (98, 29) of {
       LT ->
@@ -32175,7 +32175,7 @@ dfaGotoTransition q s =
         Nothing
     };
       EQ ->
-        Just 95;
+        Just 97;
       GT ->
     case compare (q, s') (102, 52) of {
       LT ->
@@ -32275,7 +32275,7 @@ dfaGotoTransition q s =
     }
     };
       EQ ->
-        Just 95;
+        Just 97;
       GT ->
     case compare (q, s') (105, 76) of {
       LT ->
@@ -32309,7 +32309,7 @@ dfaGotoTransition q s =
         Nothing
     };
       EQ ->
-        Just 95;
+        Just 97;
       GT ->
         Nothing
     };
@@ -32416,7 +32416,7 @@ dfaGotoTransition q s =
       LT ->
         Nothing;
       EQ ->
-        Just 95;
+        Just 97;
       GT ->
         Nothing
     };
@@ -32491,7 +32491,7 @@ dfaGotoTransition q s =
         Nothing
     };
       EQ ->
-        Just 95;
+        Just 97;
       GT ->
         Nothing
     };
@@ -32531,7 +32531,7 @@ dfaGotoTransition q s =
       LT ->
         Nothing;
       EQ ->
-        Just 95;
+        Just 97;
       GT ->
         Nothing
     };
@@ -32787,11 +32787,11 @@ dfaGotoTransition q s =
       EQ ->
         Just 269;
       GT ->
-    case compare (q, s') (136, 45) of {
+    case compare (q, s') (136, 23) of {
       LT ->
-    case compare (q, s') (135, 47) of {
+    case compare (q, s') (135, 46) of {
       LT ->
-    case compare (q, s') (135, 45) of {
+    case compare (q, s') (135, 17) of {
       LT ->
     case compare (q, s') (135, 9) of {
       LT ->
@@ -32802,46 +32802,51 @@ dfaGotoTransition q s =
         Nothing
     };
       EQ ->
-        Just 349;
+        Just 136;
       GT ->
-    case compare (q, s') (135, 46) of {
+    case compare (q, s') (135, 45) of {
       LT ->
         Nothing;
       EQ ->
-        Just 350;
+        Just 247;
       GT ->
         Nothing
     }
     };
       EQ ->
-        Just 351;
+        Just 350;
       GT ->
-    case compare (q, s') (136, 17) of {
-      LT ->
     case compare (q, s') (136, 9) of {
       LT ->
+    case compare (q, s') (135, 47) of {
+      LT ->
         Nothing;
+      EQ ->
+        Just 351;
+      GT ->
+        Nothing
+    };
       EQ ->
         Just 358;
       GT ->
         Nothing
-    };
-      EQ ->
-        Just 137;
-      GT ->
-        Nothing
     }
     };
       EQ ->
-        Just 247;
+        Just 239;
       GT ->
-    case compare (q, s') (137, 9) of {
-      LT ->
     case compare (q, s') (136, 47) of {
       LT ->
     case compare (q, s') (136, 46) of {
       LT ->
+    case compare (q, s') (136, 45) of {
+      LT ->
         Nothing;
+      EQ ->
+        Just 248;
+      GT ->
+        Nothing
+    };
       EQ ->
         Just 350;
       GT ->
@@ -32850,23 +32855,18 @@ dfaGotoTransition q s =
       EQ ->
         Just 351;
       GT ->
-        Nothing
-    };
-      EQ ->
-        Just 358;
-      GT ->
     case compare (q, s') (137, 45) of {
       LT ->
-    case compare (q, s') (137, 23) of {
+    case compare (q, s') (137, 9) of {
       LT ->
         Nothing;
       EQ ->
-        Just 239;
+        Just 358;
       GT ->
         Nothing
     };
       EQ ->
-        Just 248;
+        Just 349;
       GT ->
         Nothing
     }
