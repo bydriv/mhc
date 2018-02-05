@@ -276,25 +276,21 @@ makeTable start grm0 =
           (RBMap.toList states) in
   let actionTable1 =
         RBMap.fromList $ Maybe.mapMaybe
-          (\(items, symbol, items') ->
-            let p = maybe undefined id $ RBMap.lookup items states in
-            let q = maybe undefined id $ RBMap.lookup items' states in
-              case symbol of
-                N _ ->
-                  Nothing
-                T t ->
-                  Just ((p, t), Shift q))
+          (\(p, symbol, q) ->
+            case symbol of
+              N _ ->
+                Nothing
+              T t ->
+                Just ((p, t), Shift q))
           (RBSet.toList edges) in
   let gotoTable =
         RBMap.fromList $ Maybe.mapMaybe
-          (\(items, symbol, items') ->
-            let p = maybe undefined id $ RBMap.lookup items states in
-            let q = maybe undefined id $ RBMap.lookup items' states in
-              case symbol of
-                N n ->
-                  Just ((p, n), q)
-                T _ ->
-                  Nothing)
+          (\(p, symbol, q) ->
+            case symbol of
+              N n ->
+                Just ((p, n), q)
+              T _ ->
+                Nothing)
           (RBSet.toList edges) in
   let actionTable2list =
         map
@@ -366,32 +362,30 @@ makeTable start grm0 =
             makeStatesAndEdges states''' states'' edges''' edges'' sets grm mem'
 
     makeLALR1 states0 edges0 =
-      let indexStates = RBMap.fromList $ map (\(items, i) -> (i, items)) $ RBMap.toList states0 in
-      let st = makeLALR1States (RBMap.keys states0) in
-      let states = RBMap.fromList $ zip st [0..] in
+      let states_alist = map (\(states, i) -> (RBSet.toList states, i)) $ RBMap.toList states0 in
+      let indexStates = RBMap.fromList $ map (\(states, i) -> (i, states)) states_alist in
+      let states_list = map fst states_alist in
+      let lalrStates_list0 = List.nubBy (\items items' -> lalrEqItems (List.nubBy lalrEqItem $ List.sort items) (List.nubBy lalrEqItem $ List.sort items')) states_list in
+      let lalrStates_list1 =
+            map (\items -> List.nub $ concat $ filter (\items' -> lalrEqItems (List.nubBy lalrEqItem $ List.sort items) (List.nubBy lalrEqItem $ List.sort items')) states_list) lalrStates_list0 in
+      let lalrStates_alist = zip lalrStates_list1 [0..] in
+      let lalrStates_alist1 = map (\(items, i) -> (List.nubBy lalrEqItem (List.sort items), i)) lalrStates_alist in
+      let states = RBMap.fromList lalrStates_alist in
       let edges =
             RBSet.fromList $
               map (\(i, symbol, j) ->
-                let items = maybe undefined id (RBMap.lookup i indexStates) in
-                let items' = maybe undefined id (RBMap.lookup j indexStates) in
-                  (maybe undefined id (List.find (lalrEqItems items) (RBMap.keys states)), symbol, maybe undefined id (List.find (lalrEqItems items') (RBMap.keys states)))) (RBSet.toList edges0) in
-        (states, edges)
+                let items = List.nubBy lalrEqItem $ List.sort $ maybe undefined id (RBMap.lookup i indexStates) in
+                let items' = List.nubBy lalrEqItem $ List.sort $ maybe undefined id (RBMap.lookup j indexStates) in
+                let i' = maybe undefined snd (List.find (lalrEqItems items . fst) lalrStates_alist1) in
+                let j' = maybe undefined snd (List.find (lalrEqItems items' . fst) lalrStates_alist1) in
+                  (i', symbol, j'))
+                (RBSet.toList edges0)in
+        (RBMap.fromList (map (\(items, i) -> (RBSet.fromList items, i)) (RBMap.toList states)), edges)
       where
-        makeLALR1States [] = []
-        makeLALR1States (items : states1) =
-          let states = makeLALR1States states1 in
-            case List.find (lalrEqItems items) states of
-              Nothing ->
-                items : states
-              Just items' ->
-                RBSet.union items items' : filter (/= items') states
-
-        lalrEqItems items0 items0' =
-          let items = RBSet.fromList $ List.nubBy lalrEqItem $ RBSet.toList items0 in
-          let items' = RBSet.fromList $ List.nubBy lalrEqItem $ RBSet.toList items0' in
-            length (RBSet.toList items) == length (RBSet.toList items')
+        lalrEqItems items items' =
+            length items == length items'
           &&
-            all (uncurry lalrEqItem) (zip (RBSet.toList items) (RBSet.toList items'))
+            all (uncurry lalrEqItem) (zip items items')
 
         lalrEqItem (left, middle, right, _) (left', middle', right', _) =
           left == left' && middle == middle' && right == right'
