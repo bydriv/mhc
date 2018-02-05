@@ -696,33 +696,30 @@ generateLexer modid header footer rules = CodeGenerating.generate $
         CodeGenerating.write $ show i
         CodeGenerating.write "FinalStates dfa"
         CodeGenerating.write $ show i
-        CodeGenerating.write "Transition s) $ "
+        CodeGenerating.write "Transition s, -"
+        CodeGenerating.write $ show i
+        CodeGenerating.write ") $ "
 
-      CodeGenerating.write "Nothing of\n"
-      CodeGenerating.write "        Nothing ->\n"
+      CodeGenerating.write "(Nothing, 1 :: Int) of\n"
+      CodeGenerating.write "        (Nothing, _) ->\n"
       CodeGenerating.write "          return ([], s)\n"
-      CodeGenerating.write "        Just 0 ->\n"
+      CodeGenerating.write "        (Just 0, _) ->\n"
       CodeGenerating.write "          return ([], s)\n"
-      CodeGenerating.write "        Just i ->\n"
+      CodeGenerating.write "        (Just i, j) ->\n"
 
       CodeGenerating.write "          let (yytext, s') = splitAt i s in\n"
-      CodeGenerating.write "           "
+      CodeGenerating.write "            case j of\n"
       Monad.forM_  actions' $ \(i, action) -> do
-        CodeGenerating.write " if match dfa"
+        CodeGenerating.write "              -"
         CodeGenerating.write $ show i
-        CodeGenerating.write "InitialState dfa"
-        CodeGenerating.write $ show i
-        CodeGenerating.write "FinalStates dfa"
-        CodeGenerating.write $ show i
-        CodeGenerating.write "Transition s == Just i then do\n"
-        CodeGenerating.write "              x <- "
+        CodeGenerating.write " -> do\n"
+        CodeGenerating.write "                x <- "
         CodeGenerating.write action
         CodeGenerating.write " actions yytext\n"
-        CodeGenerating.write "              (xs, s'') <- lex' s'\n"
-        CodeGenerating.write "              return (x : xs, s'')\n"
-        CodeGenerating.write "            else"
-      CodeGenerating.write "\n"
-      CodeGenerating.write "              return ([], s)\n"
+        CodeGenerating.write "                (xs, s'') <- lex' s'\n"
+        CodeGenerating.write "                return (x : xs, s'')\n"
+      CodeGenerating.write "              _ ->\n"
+      CodeGenerating.write "                return ([], s)\n"
       CodeGenerating.write "    else"
     CodeGenerating.write "\n      return ([], s)\n"
     CodeGenerating.write "\n"

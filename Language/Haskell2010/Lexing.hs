@@ -2100,271 +2100,274 @@ lex actions = lex' where
   lex' s = do
     p <- Lexing $ \p -> return (p, p)
     if p == Initial then
-      case max (match dfa0InitialState dfa0FinalStates dfa0Transition s) $ max (match dfa1InitialState dfa1FinalStates dfa1Transition s) $ max (match dfa2InitialState dfa2FinalStates dfa2Transition s) $ max (match dfa3InitialState dfa3FinalStates dfa3Transition s) $ max (match dfa4InitialState dfa4FinalStates dfa4Transition s) $ max (match dfa5InitialState dfa5FinalStates dfa5Transition s) $ max (match dfa6InitialState dfa6FinalStates dfa6Transition s) $ max (match dfa7InitialState dfa7FinalStates dfa7Transition s) $ max (match dfa8InitialState dfa8FinalStates dfa8Transition s) $ max (match dfa9InitialState dfa9FinalStates dfa9Transition s) $ max (match dfa10InitialState dfa10FinalStates dfa10Transition s) $ max (match dfa11InitialState dfa11FinalStates dfa11Transition s) $ max (match dfa12InitialState dfa12FinalStates dfa12Transition s) $ max (match dfa13InitialState dfa13FinalStates dfa13Transition s) $ max (match dfa14InitialState dfa14FinalStates dfa14Transition s) $ max (match dfa15InitialState dfa15FinalStates dfa15Transition s) $ max (match dfa16InitialState dfa16FinalStates dfa16Transition s) $ max (match dfa17InitialState dfa17FinalStates dfa17Transition s) $ max (match dfa18InitialState dfa18FinalStates dfa18Transition s) $ max (match dfa19InitialState dfa19FinalStates dfa19Transition s) $ max (match dfa20InitialState dfa20FinalStates dfa20Transition s) $ max (match dfa21InitialState dfa21FinalStates dfa21Transition s) $ max (match dfa22InitialState dfa22FinalStates dfa22Transition s) $ max (match dfa23InitialState dfa23FinalStates dfa23Transition s) $ max (match dfa24InitialState dfa24FinalStates dfa24Transition s) $ max (match dfa25InitialState dfa25FinalStates dfa25Transition s) $ max (match dfa26InitialState dfa26FinalStates dfa26Transition s) $ max (match dfa27InitialState dfa27FinalStates dfa27Transition s) $ max (match dfa28InitialState dfa28FinalStates dfa28Transition s) $ max (match dfa29InitialState dfa29FinalStates dfa29Transition s) $ max (match dfa30InitialState dfa30FinalStates dfa30Transition s) $ max (match dfa31InitialState dfa31FinalStates dfa31Transition s) $ max (match dfa32InitialState dfa32FinalStates dfa32Transition s) $ max (match dfa33InitialState dfa33FinalStates dfa33Transition s) $ max (match dfa34InitialState dfa34FinalStates dfa34Transition s) $ max (match dfa35InitialState dfa35FinalStates dfa35Transition s) $ max (match dfa36InitialState dfa36FinalStates dfa36Transition s) $ max (match dfa37InitialState dfa37FinalStates dfa37Transition s) $ max (match dfa38InitialState dfa38FinalStates dfa38Transition s) $ max (match dfa39InitialState dfa39FinalStates dfa39Transition s) $ max (match dfa40InitialState dfa40FinalStates dfa40Transition s) $ max (match dfa41InitialState dfa41FinalStates dfa41Transition s) $ max (match dfa42InitialState dfa42FinalStates dfa42Transition s) $ max (match dfa43InitialState dfa43FinalStates dfa43Transition s) $ max (match dfa44InitialState dfa44FinalStates dfa44Transition s) $ max (match dfa45InitialState dfa45FinalStates dfa45Transition s) $ max (match dfa46InitialState dfa46FinalStates dfa46Transition s) $ max (match dfa47InitialState dfa47FinalStates dfa47Transition s) $ max (match dfa48InitialState dfa48FinalStates dfa48Transition s) $ max (match dfa49InitialState dfa49FinalStates dfa49Transition s) $ max (match dfa50InitialState dfa50FinalStates dfa50Transition s) $ max (match dfa51InitialState dfa51FinalStates dfa51Transition s) $ max (match dfa52InitialState dfa52FinalStates dfa52Transition s) $ max (match dfa53InitialState dfa53FinalStates dfa53Transition s) $ Nothing of
-        Nothing ->
+      case max (match dfa0InitialState dfa0FinalStates dfa0Transition s, -0) $ max (match dfa1InitialState dfa1FinalStates dfa1Transition s, -1) $ max (match dfa2InitialState dfa2FinalStates dfa2Transition s, -2) $ max (match dfa3InitialState dfa3FinalStates dfa3Transition s, -3) $ max (match dfa4InitialState dfa4FinalStates dfa4Transition s, -4) $ max (match dfa5InitialState dfa5FinalStates dfa5Transition s, -5) $ max (match dfa6InitialState dfa6FinalStates dfa6Transition s, -6) $ max (match dfa7InitialState dfa7FinalStates dfa7Transition s, -7) $ max (match dfa8InitialState dfa8FinalStates dfa8Transition s, -8) $ max (match dfa9InitialState dfa9FinalStates dfa9Transition s, -9) $ max (match dfa10InitialState dfa10FinalStates dfa10Transition s, -10) $ max (match dfa11InitialState dfa11FinalStates dfa11Transition s, -11) $ max (match dfa12InitialState dfa12FinalStates dfa12Transition s, -12) $ max (match dfa13InitialState dfa13FinalStates dfa13Transition s, -13) $ max (match dfa14InitialState dfa14FinalStates dfa14Transition s, -14) $ max (match dfa15InitialState dfa15FinalStates dfa15Transition s, -15) $ max (match dfa16InitialState dfa16FinalStates dfa16Transition s, -16) $ max (match dfa17InitialState dfa17FinalStates dfa17Transition s, -17) $ max (match dfa18InitialState dfa18FinalStates dfa18Transition s, -18) $ max (match dfa19InitialState dfa19FinalStates dfa19Transition s, -19) $ max (match dfa20InitialState dfa20FinalStates dfa20Transition s, -20) $ max (match dfa21InitialState dfa21FinalStates dfa21Transition s, -21) $ max (match dfa22InitialState dfa22FinalStates dfa22Transition s, -22) $ max (match dfa23InitialState dfa23FinalStates dfa23Transition s, -23) $ max (match dfa24InitialState dfa24FinalStates dfa24Transition s, -24) $ max (match dfa25InitialState dfa25FinalStates dfa25Transition s, -25) $ max (match dfa26InitialState dfa26FinalStates dfa26Transition s, -26) $ max (match dfa27InitialState dfa27FinalStates dfa27Transition s, -27) $ max (match dfa28InitialState dfa28FinalStates dfa28Transition s, -28) $ max (match dfa29InitialState dfa29FinalStates dfa29Transition s, -29) $ max (match dfa30InitialState dfa30FinalStates dfa30Transition s, -30) $ max (match dfa31InitialState dfa31FinalStates dfa31Transition s, -31) $ max (match dfa32InitialState dfa32FinalStates dfa32Transition s, -32) $ max (match dfa33InitialState dfa33FinalStates dfa33Transition s, -33) $ max (match dfa34InitialState dfa34FinalStates dfa34Transition s, -34) $ max (match dfa35InitialState dfa35FinalStates dfa35Transition s, -35) $ max (match dfa36InitialState dfa36FinalStates dfa36Transition s, -36) $ max (match dfa37InitialState dfa37FinalStates dfa37Transition s, -37) $ max (match dfa38InitialState dfa38FinalStates dfa38Transition s, -38) $ max (match dfa39InitialState dfa39FinalStates dfa39Transition s, -39) $ max (match dfa40InitialState dfa40FinalStates dfa40Transition s, -40) $ max (match dfa41InitialState dfa41FinalStates dfa41Transition s, -41) $ max (match dfa42InitialState dfa42FinalStates dfa42Transition s, -42) $ max (match dfa43InitialState dfa43FinalStates dfa43Transition s, -43) $ max (match dfa44InitialState dfa44FinalStates dfa44Transition s, -44) $ max (match dfa45InitialState dfa45FinalStates dfa45Transition s, -45) $ max (match dfa46InitialState dfa46FinalStates dfa46Transition s, -46) $ max (match dfa47InitialState dfa47FinalStates dfa47Transition s, -47) $ max (match dfa48InitialState dfa48FinalStates dfa48Transition s, -48) $ max (match dfa49InitialState dfa49FinalStates dfa49Transition s, -49) $ max (match dfa50InitialState dfa50FinalStates dfa50Transition s, -50) $ max (match dfa51InitialState dfa51FinalStates dfa51Transition s, -51) $ max (match dfa52InitialState dfa52FinalStates dfa52Transition s, -52) $ max (match dfa53InitialState dfa53FinalStates dfa53Transition s, -53) $ (Nothing, 1 :: Int) of
+        (Nothing, _) ->
           return ([], s)
-        Just 0 ->
+        (Just 0, _) ->
           return ([], s)
-        Just i ->
+        (Just i, j) ->
           let (yytext, s') = splitAt i s in
-            if match dfa0InitialState dfa0FinalStates dfa0Transition s == Just i then do
-              x <- saWhitechar actions yytext
-              (xs, s'') <- lex' s'
-              return (x : xs, s'')
-            else if match dfa1InitialState dfa1FinalStates dfa1Transition s == Just i then do
-              x <- saOpenDashes actions yytext
-              (xs, s'') <- lex' s'
-              return (x : xs, s'')
-            else if match dfa2InitialState dfa2FinalStates dfa2Transition s == Just i then do
-              x <- saOpenNested actions yytext
-              (xs, s'') <- lex' s'
-              return (x : xs, s'')
-            else if match dfa3InitialState dfa3FinalStates dfa3Transition s == Just i then do
-              x <- saAs actions yytext
-              (xs, s'') <- lex' s'
-              return (x : xs, s'')
-            else if match dfa4InitialState dfa4FinalStates dfa4Transition s == Just i then do
-              x <- saBackquote actions yytext
-              (xs, s'') <- lex' s'
-              return (x : xs, s'')
-            else if match dfa5InitialState dfa5FinalStates dfa5Transition s == Just i then do
-              x <- saCase actions yytext
-              (xs, s'') <- lex' s'
-              return (x : xs, s'')
-            else if match dfa6InitialState dfa6FinalStates dfa6Transition s == Just i then do
-              x <- saClass actions yytext
-              (xs, s'') <- lex' s'
-              return (x : xs, s'')
-            else if match dfa7InitialState dfa7FinalStates dfa7Transition s == Just i then do
-              x <- saColonColon actions yytext
-              (xs, s'') <- lex' s'
-              return (x : xs, s'')
-            else if match dfa8InitialState dfa8FinalStates dfa8Transition s == Just i then do
-              x <- saComma actions yytext
-              (xs, s'') <- lex' s'
-              return (x : xs, s'')
-            else if match dfa9InitialState dfa9FinalStates dfa9Transition s == Just i then do
-              x <- saDArrow actions yytext
-              (xs, s'') <- lex' s'
-              return (x : xs, s'')
-            else if match dfa10InitialState dfa10FinalStates dfa10Transition s == Just i then do
-              x <- saData actions yytext
-              (xs, s'') <- lex' s'
-              return (x : xs, s'')
-            else if match dfa11InitialState dfa11FinalStates dfa11Transition s == Just i then do
-              x <- saDefault actions yytext
-              (xs, s'') <- lex' s'
-              return (x : xs, s'')
-            else if match dfa12InitialState dfa12FinalStates dfa12Transition s == Just i then do
-              x <- saDeriving actions yytext
-              (xs, s'') <- lex' s'
-              return (x : xs, s'')
-            else if match dfa13InitialState dfa13FinalStates dfa13Transition s == Just i then do
-              x <- saDo actions yytext
-              (xs, s'') <- lex' s'
-              return (x : xs, s'')
-            else if match dfa14InitialState dfa14FinalStates dfa14Transition s == Just i then do
-              x <- saDotDot actions yytext
-              (xs, s'') <- lex' s'
-              return (x : xs, s'')
-            else if match dfa15InitialState dfa15FinalStates dfa15Transition s == Just i then do
-              x <- saElse actions yytext
-              (xs, s'') <- lex' s'
-              return (x : xs, s'')
-            else if match dfa16InitialState dfa16FinalStates dfa16Transition s == Just i then do
-              x <- saEqual actions yytext
-              (xs, s'') <- lex' s'
-              return (x : xs, s'')
-            else if match dfa17InitialState dfa17FinalStates dfa17Transition s == Just i then do
-              x <- saExcl actions yytext
-              (xs, s'') <- lex' s'
-              return (x : xs, s'')
-            else if match dfa18InitialState dfa18FinalStates dfa18Transition s == Just i then do
-              x <- saExport actions yytext
-              (xs, s'') <- lex' s'
-              return (x : xs, s'')
-            else if match dfa19InitialState dfa19FinalStates dfa19Transition s == Just i then do
-              x <- saForeign actions yytext
-              (xs, s'') <- lex' s'
-              return (x : xs, s'')
-            else if match dfa20InitialState dfa20FinalStates dfa20Transition s == Just i then do
-              x <- saHiding actions yytext
-              (xs, s'') <- lex' s'
-              return (x : xs, s'')
-            else if match dfa21InitialState dfa21FinalStates dfa21Transition s == Just i then do
-              x <- saImport actions yytext
-              (xs, s'') <- lex' s'
-              return (x : xs, s'')
-            else if match dfa22InitialState dfa22FinalStates dfa22Transition s == Just i then do
-              x <- saIf actions yytext
-              (xs, s'') <- lex' s'
-              return (x : xs, s'')
-            else if match dfa23InitialState dfa23FinalStates dfa23Transition s == Just i then do
-              x <- saIn actions yytext
-              (xs, s'') <- lex' s'
-              return (x : xs, s'')
-            else if match dfa24InitialState dfa24FinalStates dfa24Transition s == Just i then do
-              x <- saInfix actions yytext
-              (xs, s'') <- lex' s'
-              return (x : xs, s'')
-            else if match dfa25InitialState dfa25FinalStates dfa25Transition s == Just i then do
-              x <- saInfixL actions yytext
-              (xs, s'') <- lex' s'
-              return (x : xs, s'')
-            else if match dfa26InitialState dfa26FinalStates dfa26Transition s == Just i then do
-              x <- saInfixR actions yytext
-              (xs, s'') <- lex' s'
-              return (x : xs, s'')
-            else if match dfa27InitialState dfa27FinalStates dfa27Transition s == Just i then do
-              x <- saInstance actions yytext
-              (xs, s'') <- lex' s'
-              return (x : xs, s'')
-            else if match dfa28InitialState dfa28FinalStates dfa28Transition s == Just i then do
-              x <- saInteger actions yytext
-              (xs, s'') <- lex' s'
-              return (x : xs, s'')
-            else if match dfa29InitialState dfa29FinalStates dfa29Transition s == Just i then do
-              x <- saLambda actions yytext
-              (xs, s'') <- lex' s'
-              return (x : xs, s'')
-            else if match dfa30InitialState dfa30FinalStates dfa30Transition s == Just i then do
-              x <- saLArrow actions yytext
-              (xs, s'') <- lex' s'
-              return (x : xs, s'')
-            else if match dfa31InitialState dfa31FinalStates dfa31Transition s == Just i then do
-              x <- saLBrace actions yytext
-              (xs, s'') <- lex' s'
-              return (x : xs, s'')
-            else if match dfa32InitialState dfa32FinalStates dfa32Transition s == Just i then do
-              x <- saLBracket actions yytext
-              (xs, s'') <- lex' s'
-              return (x : xs, s'')
-            else if match dfa33InitialState dfa33FinalStates dfa33Transition s == Just i then do
-              x <- saLet actions yytext
-              (xs, s'') <- lex' s'
-              return (x : xs, s'')
-            else if match dfa34InitialState dfa34FinalStates dfa34Transition s == Just i then do
-              x <- saLParen actions yytext
-              (xs, s'') <- lex' s'
-              return (x : xs, s'')
-            else if match dfa35InitialState dfa35FinalStates dfa35Transition s == Just i then do
-              x <- saMinus actions yytext
-              (xs, s'') <- lex' s'
-              return (x : xs, s'')
-            else if match dfa36InitialState dfa36FinalStates dfa36Transition s == Just i then do
-              x <- saModule actions yytext
-              (xs, s'') <- lex' s'
-              return (x : xs, s'')
-            else if match dfa37InitialState dfa37FinalStates dfa37Transition s == Just i then do
-              x <- saNewtype actions yytext
-              (xs, s'') <- lex' s'
-              return (x : xs, s'')
-            else if match dfa38InitialState dfa38FinalStates dfa38Transition s == Just i then do
-              x <- saOf actions yytext
-              (xs, s'') <- lex' s'
-              return (x : xs, s'')
-            else if match dfa39InitialState dfa39FinalStates dfa39Transition s == Just i then do
-              x <- saPipe actions yytext
-              (xs, s'') <- lex' s'
-              return (x : xs, s'')
-            else if match dfa40InitialState dfa40FinalStates dfa40Transition s == Just i then do
-              x <- saQualified actions yytext
-              (xs, s'') <- lex' s'
-              return (x : xs, s'')
-            else if match dfa41InitialState dfa41FinalStates dfa41Transition s == Just i then do
-              x <- saRArrow actions yytext
-              (xs, s'') <- lex' s'
-              return (x : xs, s'')
-            else if match dfa42InitialState dfa42FinalStates dfa42Transition s == Just i then do
-              x <- saRBrace actions yytext
-              (xs, s'') <- lex' s'
-              return (x : xs, s'')
-            else if match dfa43InitialState dfa43FinalStates dfa43Transition s == Just i then do
-              x <- saRBracket actions yytext
-              (xs, s'') <- lex' s'
-              return (x : xs, s'')
-            else if match dfa44InitialState dfa44FinalStates dfa44Transition s == Just i then do
-              x <- saRParen actions yytext
-              (xs, s'') <- lex' s'
-              return (x : xs, s'')
-            else if match dfa45InitialState dfa45FinalStates dfa45Transition s == Just i then do
-              x <- saSemicolon actions yytext
-              (xs, s'') <- lex' s'
-              return (x : xs, s'')
-            else if match dfa46InitialState dfa46FinalStates dfa46Transition s == Just i then do
-              x <- saString actions yytext
-              (xs, s'') <- lex' s'
-              return (x : xs, s'')
-            else if match dfa47InitialState dfa47FinalStates dfa47Transition s == Just i then do
-              x <- saThen actions yytext
-              (xs, s'') <- lex' s'
-              return (x : xs, s'')
-            else if match dfa48InitialState dfa48FinalStates dfa48Transition s == Just i then do
-              x <- saType actions yytext
-              (xs, s'') <- lex' s'
-              return (x : xs, s'')
-            else if match dfa49InitialState dfa49FinalStates dfa49Transition s == Just i then do
-              x <- saWhere actions yytext
-              (xs, s'') <- lex' s'
-              return (x : xs, s'')
-            else if match dfa50InitialState dfa50FinalStates dfa50Transition s == Just i then do
-              x <- saVarId actions yytext
-              (xs, s'') <- lex' s'
-              return (x : xs, s'')
-            else if match dfa51InitialState dfa51FinalStates dfa51Transition s == Just i then do
-              x <- saConId actions yytext
-              (xs, s'') <- lex' s'
-              return (x : xs, s'')
-            else if match dfa52InitialState dfa52FinalStates dfa52Transition s == Just i then do
-              x <- saVarSym actions yytext
-              (xs, s'') <- lex' s'
-              return (x : xs, s'')
-            else if match dfa53InitialState dfa53FinalStates dfa53Transition s == Just i then do
-              x <- saConSym actions yytext
-              (xs, s'') <- lex' s'
-              return (x : xs, s'')
-            else
-              return ([], s)
+            case j of
+              -0 -> do
+                x <- saWhitechar actions yytext
+                (xs, s'') <- lex' s'
+                return (x : xs, s'')
+              -1 -> do
+                x <- saOpenDashes actions yytext
+                (xs, s'') <- lex' s'
+                return (x : xs, s'')
+              -2 -> do
+                x <- saOpenNested actions yytext
+                (xs, s'') <- lex' s'
+                return (x : xs, s'')
+              -3 -> do
+                x <- saAs actions yytext
+                (xs, s'') <- lex' s'
+                return (x : xs, s'')
+              -4 -> do
+                x <- saBackquote actions yytext
+                (xs, s'') <- lex' s'
+                return (x : xs, s'')
+              -5 -> do
+                x <- saCase actions yytext
+                (xs, s'') <- lex' s'
+                return (x : xs, s'')
+              -6 -> do
+                x <- saClass actions yytext
+                (xs, s'') <- lex' s'
+                return (x : xs, s'')
+              -7 -> do
+                x <- saColonColon actions yytext
+                (xs, s'') <- lex' s'
+                return (x : xs, s'')
+              -8 -> do
+                x <- saComma actions yytext
+                (xs, s'') <- lex' s'
+                return (x : xs, s'')
+              -9 -> do
+                x <- saDArrow actions yytext
+                (xs, s'') <- lex' s'
+                return (x : xs, s'')
+              -10 -> do
+                x <- saData actions yytext
+                (xs, s'') <- lex' s'
+                return (x : xs, s'')
+              -11 -> do
+                x <- saDefault actions yytext
+                (xs, s'') <- lex' s'
+                return (x : xs, s'')
+              -12 -> do
+                x <- saDeriving actions yytext
+                (xs, s'') <- lex' s'
+                return (x : xs, s'')
+              -13 -> do
+                x <- saDo actions yytext
+                (xs, s'') <- lex' s'
+                return (x : xs, s'')
+              -14 -> do
+                x <- saDotDot actions yytext
+                (xs, s'') <- lex' s'
+                return (x : xs, s'')
+              -15 -> do
+                x <- saElse actions yytext
+                (xs, s'') <- lex' s'
+                return (x : xs, s'')
+              -16 -> do
+                x <- saEqual actions yytext
+                (xs, s'') <- lex' s'
+                return (x : xs, s'')
+              -17 -> do
+                x <- saExcl actions yytext
+                (xs, s'') <- lex' s'
+                return (x : xs, s'')
+              -18 -> do
+                x <- saExport actions yytext
+                (xs, s'') <- lex' s'
+                return (x : xs, s'')
+              -19 -> do
+                x <- saForeign actions yytext
+                (xs, s'') <- lex' s'
+                return (x : xs, s'')
+              -20 -> do
+                x <- saHiding actions yytext
+                (xs, s'') <- lex' s'
+                return (x : xs, s'')
+              -21 -> do
+                x <- saImport actions yytext
+                (xs, s'') <- lex' s'
+                return (x : xs, s'')
+              -22 -> do
+                x <- saIf actions yytext
+                (xs, s'') <- lex' s'
+                return (x : xs, s'')
+              -23 -> do
+                x <- saIn actions yytext
+                (xs, s'') <- lex' s'
+                return (x : xs, s'')
+              -24 -> do
+                x <- saInfix actions yytext
+                (xs, s'') <- lex' s'
+                return (x : xs, s'')
+              -25 -> do
+                x <- saInfixL actions yytext
+                (xs, s'') <- lex' s'
+                return (x : xs, s'')
+              -26 -> do
+                x <- saInfixR actions yytext
+                (xs, s'') <- lex' s'
+                return (x : xs, s'')
+              -27 -> do
+                x <- saInstance actions yytext
+                (xs, s'') <- lex' s'
+                return (x : xs, s'')
+              -28 -> do
+                x <- saInteger actions yytext
+                (xs, s'') <- lex' s'
+                return (x : xs, s'')
+              -29 -> do
+                x <- saLambda actions yytext
+                (xs, s'') <- lex' s'
+                return (x : xs, s'')
+              -30 -> do
+                x <- saLArrow actions yytext
+                (xs, s'') <- lex' s'
+                return (x : xs, s'')
+              -31 -> do
+                x <- saLBrace actions yytext
+                (xs, s'') <- lex' s'
+                return (x : xs, s'')
+              -32 -> do
+                x <- saLBracket actions yytext
+                (xs, s'') <- lex' s'
+                return (x : xs, s'')
+              -33 -> do
+                x <- saLet actions yytext
+                (xs, s'') <- lex' s'
+                return (x : xs, s'')
+              -34 -> do
+                x <- saLParen actions yytext
+                (xs, s'') <- lex' s'
+                return (x : xs, s'')
+              -35 -> do
+                x <- saMinus actions yytext
+                (xs, s'') <- lex' s'
+                return (x : xs, s'')
+              -36 -> do
+                x <- saModule actions yytext
+                (xs, s'') <- lex' s'
+                return (x : xs, s'')
+              -37 -> do
+                x <- saNewtype actions yytext
+                (xs, s'') <- lex' s'
+                return (x : xs, s'')
+              -38 -> do
+                x <- saOf actions yytext
+                (xs, s'') <- lex' s'
+                return (x : xs, s'')
+              -39 -> do
+                x <- saPipe actions yytext
+                (xs, s'') <- lex' s'
+                return (x : xs, s'')
+              -40 -> do
+                x <- saQualified actions yytext
+                (xs, s'') <- lex' s'
+                return (x : xs, s'')
+              -41 -> do
+                x <- saRArrow actions yytext
+                (xs, s'') <- lex' s'
+                return (x : xs, s'')
+              -42 -> do
+                x <- saRBrace actions yytext
+                (xs, s'') <- lex' s'
+                return (x : xs, s'')
+              -43 -> do
+                x <- saRBracket actions yytext
+                (xs, s'') <- lex' s'
+                return (x : xs, s'')
+              -44 -> do
+                x <- saRParen actions yytext
+                (xs, s'') <- lex' s'
+                return (x : xs, s'')
+              -45 -> do
+                x <- saSemicolon actions yytext
+                (xs, s'') <- lex' s'
+                return (x : xs, s'')
+              -46 -> do
+                x <- saString actions yytext
+                (xs, s'') <- lex' s'
+                return (x : xs, s'')
+              -47 -> do
+                x <- saThen actions yytext
+                (xs, s'') <- lex' s'
+                return (x : xs, s'')
+              -48 -> do
+                x <- saType actions yytext
+                (xs, s'') <- lex' s'
+                return (x : xs, s'')
+              -49 -> do
+                x <- saWhere actions yytext
+                (xs, s'') <- lex' s'
+                return (x : xs, s'')
+              -50 -> do
+                x <- saVarId actions yytext
+                (xs, s'') <- lex' s'
+                return (x : xs, s'')
+              -51 -> do
+                x <- saConId actions yytext
+                (xs, s'') <- lex' s'
+                return (x : xs, s'')
+              -52 -> do
+                x <- saVarSym actions yytext
+                (xs, s'') <- lex' s'
+                return (x : xs, s'')
+              -53 -> do
+                x <- saConSym actions yytext
+                (xs, s'') <- lex' s'
+                return (x : xs, s'')
+              _ ->
+                return ([], s)
     else if p == Dashes then
-      case max (match dfa54InitialState dfa54FinalStates dfa54Transition s) $ max (match dfa55InitialState dfa55FinalStates dfa55Transition s) $ Nothing of
-        Nothing ->
+      case max (match dfa54InitialState dfa54FinalStates dfa54Transition s, -54) $ max (match dfa55InitialState dfa55FinalStates dfa55Transition s, -55) $ (Nothing, 1 :: Int) of
+        (Nothing, _) ->
           return ([], s)
-        Just 0 ->
+        (Just 0, _) ->
           return ([], s)
-        Just i ->
+        (Just i, j) ->
           let (yytext, s') = splitAt i s in
-            if match dfa54InitialState dfa54FinalStates dfa54Transition s == Just i then do
-              x <- saCloseDashes actions yytext
-              (xs, s'') <- lex' s'
-              return (x : xs, s'')
-            else if match dfa55InitialState dfa55FinalStates dfa55Transition s == Just i then do
-              x <- saComment actions yytext
-              (xs, s'') <- lex' s'
-              return (x : xs, s'')
-            else
-              return ([], s)
+            case j of
+              -54 -> do
+                x <- saCloseDashes actions yytext
+                (xs, s'') <- lex' s'
+                return (x : xs, s'')
+              -55 -> do
+                x <- saComment actions yytext
+                (xs, s'') <- lex' s'
+                return (x : xs, s'')
+              _ ->
+                return ([], s)
     else if p == Nested then
-      case max (match dfa56InitialState dfa56FinalStates dfa56Transition s) $ max (match dfa57InitialState dfa57FinalStates dfa57Transition s) $ max (match dfa58InitialState dfa58FinalStates dfa58Transition s) $ Nothing of
-        Nothing ->
+      case max (match dfa56InitialState dfa56FinalStates dfa56Transition s, -56) $ max (match dfa57InitialState dfa57FinalStates dfa57Transition s, -57) $ max (match dfa58InitialState dfa58FinalStates dfa58Transition s, -58) $ (Nothing, 1 :: Int) of
+        (Nothing, _) ->
           return ([], s)
-        Just 0 ->
+        (Just 0, _) ->
           return ([], s)
-        Just i ->
+        (Just i, j) ->
           let (yytext, s') = splitAt i s in
-            if match dfa56InitialState dfa56FinalStates dfa56Transition s == Just i then do
-              x <- saOpenNested actions yytext
-              (xs, s'') <- lex' s'
-              return (x : xs, s'')
-            else if match dfa57InitialState dfa57FinalStates dfa57Transition s == Just i then do
-              x <- saCloseNested actions yytext
-              (xs, s'') <- lex' s'
-              return (x : xs, s'')
-            else if match dfa58InitialState dfa58FinalStates dfa58Transition s == Just i then do
-              x <- saComment actions yytext
-              (xs, s'') <- lex' s'
-              return (x : xs, s'')
-            else
-              return ([], s)
+            case j of
+              -56 -> do
+                x <- saOpenNested actions yytext
+                (xs, s'') <- lex' s'
+                return (x : xs, s'')
+              -57 -> do
+                x <- saCloseNested actions yytext
+                (xs, s'') <- lex' s'
+                return (x : xs, s'')
+              -58 -> do
+                x <- saComment actions yytext
+                (xs, s'') <- lex' s'
+                return (x : xs, s'')
+              _ ->
+                return ([], s)
     else
       return ([], s)
 
