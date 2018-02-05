@@ -662,6 +662,8 @@ generateLexer modid header footer rules = CodeGenerating.generate $
     CodeGenerating.write "match initialState finalStates transition = match' 0 Nothing initialState\n"
     CodeGenerating.write "  where\n"
     CodeGenerating.write "    match' :: Int -> Maybe Int -> Int -> String -> Maybe Int\n"
+    CodeGenerating.write "    match' _ r 0 _ =\n"
+    CodeGenerating.write "      r\n"
     CodeGenerating.write "    match' i r q s =\n"
     CodeGenerating.write "      let r' =\n"
     CodeGenerating.write "            if q `elem` finalStates then\n"

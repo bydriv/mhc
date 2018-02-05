@@ -2082,6 +2082,8 @@ match :: Int -> [Int] -> (Int -> Char -> Int) -> String -> Maybe Int
 match initialState finalStates transition = match' 0 Nothing initialState
   where
     match' :: Int -> Maybe Int -> Int -> String -> Maybe Int
+    match' _ r 0 _ =
+      r
     match' i r q s =
       let r' =
             if q `elem` finalStates then
