@@ -32,6 +32,7 @@ data Token =
 data Action = Shift Int | Reduce Int Int | Accept
 type ActionState = Int
 data ActionSymbol = Token Token | EOF
+  deriving (Eq, Ord, Read, Show)
 type GotoState = Int
 type GotoSymbol = Int
 
@@ -61,57 +62,359 @@ data SemanticActions m = SemanticActions
 
 dfaActionTransition :: ActionState -> ActionSymbol -> Maybe Action
 dfaActionTransition q s =
-  case (q, s) of
-    (0, Token (ID _)) -> Just (Shift 8)
-    (0, Token (LPAREN _)) -> Just (Shift 5)
-    (0, Token (LAMBDA _)) -> Just (Shift 7)
-    (1, EOF) -> Just (Accept)
-    (2, Token (ID _)) -> Just (Shift 8)
-    (2, Token (LPAREN _)) -> Just (Shift 5)
-    (3, EOF) -> Just (Reduce 1 7)
-    (3, Token (ID _)) -> Just (Shift 8)
-    (3, Token (LPAREN _)) -> Just (Shift 5)
-    (3, Token (RPAREN _)) -> Just (Reduce 1 7)
-    (4, EOF) -> Just (Reduce 4 8)
-    (4, Token (ID _)) -> Just (Shift 8)
-    (4, Token (LPAREN _)) -> Just (Shift 5)
-    (4, Token (RPAREN _)) -> Just (Reduce 4 8)
-    (5, Token (ID _)) -> Just (Shift 8)
-    (5, Token (LPAREN _)) -> Just (Shift 5)
-    (5, Token (LAMBDA _)) -> Just (Shift 7)
-    (6, Token (ID _)) -> Just (Shift 8)
-    (6, Token (DOT _)) -> Just (Reduce 1 1)
-    (7, Token (ID _)) -> Just (Shift 8)
-    (8, EOF) -> Just (Reduce 1 0)
-    (8, Token (ID _)) -> Just (Reduce 1 0)
-    (8, Token (LPAREN _)) -> Just (Reduce 1 0)
-    (8, Token (RPAREN _)) -> Just (Reduce 1 0)
-    (8, Token (LAMBDA _)) -> Just (Reduce 1 0)
-    (8, Token (DOT _)) -> Just (Reduce 1 0)
-    (9, Token (DOT _)) -> Just (Reduce 2 2)
-    (10, EOF) -> Just (Reduce 3 4)
-    (10, Token (ID _)) -> Just (Reduce 3 4)
-    (10, Token (LPAREN _)) -> Just (Reduce 3 4)
-    (10, Token (RPAREN _)) -> Just (Reduce 3 4)
-    (10, Token (LAMBDA _)) -> Just (Reduce 3 4)
-    (11, EOF) -> Just (Reduce 1 3)
-    (11, Token (ID _)) -> Just (Reduce 1 3)
-    (11, Token (LPAREN _)) -> Just (Reduce 1 3)
-    (11, Token (RPAREN _)) -> Just (Reduce 1 3)
-    (11, Token (LAMBDA _)) -> Just (Reduce 1 3)
-    (12, Token (RPAREN _)) -> Just (Shift 10)
-    (13, Token (DOT _)) -> Just (Shift 2)
-    (14, EOF) -> Just (Reduce 1 5)
-    (14, Token (ID _)) -> Just (Reduce 1 5)
-    (14, Token (LPAREN _)) -> Just (Reduce 1 5)
-    (14, Token (RPAREN _)) -> Just (Reduce 1 5)
-    (14, Token (LAMBDA _)) -> Just (Reduce 1 5)
-    (15, EOF) -> Just (Reduce 2 6)
-    (15, Token (ID _)) -> Just (Reduce 2 6)
-    (15, Token (LPAREN _)) -> Just (Reduce 2 6)
-    (15, Token (RPAREN _)) -> Just (Reduce 2 6)
-    (15, Token (LAMBDA _)) -> Just (Reduce 2 6)
-    (_, _) -> Nothing
+  let s' =
+        case s of
+          EOF -> -1
+          Token (DOT _) -> 4
+          Token (ID _) -> 0
+          Token (LAMBDA _) -> 3
+          Token (LPAREN _) -> 1
+          Token (RPAREN _) -> 2
+  in
+    case compare (q, s') (11, -1) of {
+      LT ->
+    case compare (q, s') (6, 0) of {
+      LT ->
+    case compare (q, s') (2, 1) of {
+      LT ->
+    case compare (q, s') (1, -1) of {
+      LT ->
+    case compare (q, s') (0, 3) of {
+      LT ->
+    case compare (q, s') (0, 1) of {
+      LT ->
+    case compare (q, s') (0, 0) of {
+      LT ->
+        Nothing;
+      EQ ->
+        Just (Shift 8);
+      GT ->
+        Nothing
+    };
+      EQ ->
+        Just (Shift 5);
+      GT ->
+        Nothing
+    };
+      EQ ->
+        Just (Shift 7);
+      GT ->
+        Nothing
+    };
+      EQ ->
+        Just (Accept);
+      GT ->
+    case compare (q, s') (2, 0) of {
+      LT ->
+        Nothing;
+      EQ ->
+        Just (Shift 8);
+      GT ->
+        Nothing
+    }
+    };
+      EQ ->
+        Just (Shift 5);
+      GT ->
+    case compare (q, s') (4, -1) of {
+      LT ->
+    case compare (q, s') (3, 0) of {
+      LT ->
+    case compare (q, s') (3, -1) of {
+      LT ->
+        Nothing;
+      EQ ->
+        Just (Reduce 1 7);
+      GT ->
+        Nothing
+    };
+      EQ ->
+        Just (Shift 8);
+      GT ->
+    case compare (q, s') (3, 1) of {
+      LT ->
+        Nothing;
+      EQ ->
+        Just (Shift 5);
+      GT ->
+    case compare (q, s') (3, 2) of {
+      LT ->
+        Nothing;
+      EQ ->
+        Just (Reduce 1 7);
+      GT ->
+        Nothing
+    }
+    }
+    };
+      EQ ->
+        Just (Reduce 4 8);
+      GT ->
+    case compare (q, s') (4, 1) of {
+      LT ->
+    case compare (q, s') (4, 0) of {
+      LT ->
+        Nothing;
+      EQ ->
+        Just (Shift 8);
+      GT ->
+        Nothing
+    };
+      EQ ->
+        Just (Shift 5);
+      GT ->
+    case compare (q, s') (5, 0) of {
+      LT ->
+    case compare (q, s') (4, 2) of {
+      LT ->
+        Nothing;
+      EQ ->
+        Just (Reduce 4 8);
+      GT ->
+        Nothing
+    };
+      EQ ->
+        Just (Shift 8);
+      GT ->
+    case compare (q, s') (5, 1) of {
+      LT ->
+        Nothing;
+      EQ ->
+        Just (Shift 5);
+      GT ->
+    case compare (q, s') (5, 3) of {
+      LT ->
+        Nothing;
+      EQ ->
+        Just (Shift 7);
+      GT ->
+        Nothing
+    }
+    }
+    }
+    }
+    }
+    };
+      EQ ->
+        Just (Shift 8);
+      GT ->
+    case compare (q, s') (10, 0) of {
+      LT ->
+    case compare (q, s') (8, 3) of {
+      LT ->
+    case compare (q, s') (8, 1) of {
+      LT ->
+    case compare (q, s') (8, -1) of {
+      LT ->
+    case compare (q, s') (7, 0) of {
+      LT ->
+    case compare (q, s') (6, 4) of {
+      LT ->
+        Nothing;
+      EQ ->
+        Just (Reduce 1 1);
+      GT ->
+        Nothing
+    };
+      EQ ->
+        Just (Shift 8);
+      GT ->
+        Nothing
+    };
+      EQ ->
+        Just (Reduce 1 0);
+      GT ->
+    case compare (q, s') (8, 0) of {
+      LT ->
+        Nothing;
+      EQ ->
+        Just (Reduce 1 0);
+      GT ->
+        Nothing
+    }
+    };
+      EQ ->
+        Just (Reduce 1 0);
+      GT ->
+    case compare (q, s') (8, 2) of {
+      LT ->
+        Nothing;
+      EQ ->
+        Just (Reduce 1 0);
+      GT ->
+        Nothing
+    }
+    };
+      EQ ->
+        Just (Reduce 1 0);
+      GT ->
+    case compare (q, s') (9, 4) of {
+      LT ->
+    case compare (q, s') (8, 4) of {
+      LT ->
+        Nothing;
+      EQ ->
+        Just (Reduce 1 0);
+      GT ->
+        Nothing
+    };
+      EQ ->
+        Just (Reduce 2 2);
+      GT ->
+    case compare (q, s') (10, -1) of {
+      LT ->
+        Nothing;
+      EQ ->
+        Just (Reduce 3 4);
+      GT ->
+        Nothing
+    }
+    }
+    };
+      EQ ->
+        Just (Reduce 3 4);
+      GT ->
+    case compare (q, s') (10, 2) of {
+      LT ->
+    case compare (q, s') (10, 1) of {
+      LT ->
+        Nothing;
+      EQ ->
+        Just (Reduce 3 4);
+      GT ->
+        Nothing
+    };
+      EQ ->
+        Just (Reduce 3 4);
+      GT ->
+    case compare (q, s') (10, 3) of {
+      LT ->
+        Nothing;
+      EQ ->
+        Just (Reduce 3 4);
+      GT ->
+        Nothing
+    }
+    }
+    }
+    };
+      EQ ->
+        Just (Reduce 1 3);
+      GT ->
+    case compare (q, s') (14, 1) of {
+      LT ->
+    case compare (q, s') (11, 3) of {
+      LT ->
+    case compare (q, s') (11, 1) of {
+      LT ->
+    case compare (q, s') (11, 0) of {
+      LT ->
+        Nothing;
+      EQ ->
+        Just (Reduce 1 3);
+      GT ->
+        Nothing
+    };
+      EQ ->
+        Just (Reduce 1 3);
+      GT ->
+    case compare (q, s') (11, 2) of {
+      LT ->
+        Nothing;
+      EQ ->
+        Just (Reduce 1 3);
+      GT ->
+        Nothing
+    }
+    };
+      EQ ->
+        Just (Reduce 1 3);
+      GT ->
+    case compare (q, s') (13, 4) of {
+      LT ->
+    case compare (q, s') (12, 2) of {
+      LT ->
+        Nothing;
+      EQ ->
+        Just (Shift 10);
+      GT ->
+        Nothing
+    };
+      EQ ->
+        Just (Shift 2);
+      GT ->
+    case compare (q, s') (14, 0) of {
+      LT ->
+    case compare (q, s') (14, -1) of {
+      LT ->
+        Nothing;
+      EQ ->
+        Just (Reduce 1 5);
+      GT ->
+        Nothing
+    };
+      EQ ->
+        Just (Reduce 1 5);
+      GT ->
+        Nothing
+    }
+    }
+    };
+      EQ ->
+        Just (Reduce 1 5);
+      GT ->
+    case compare (q, s') (15, 0) of {
+      LT ->
+    case compare (q, s') (14, 3) of {
+      LT ->
+    case compare (q, s') (14, 2) of {
+      LT ->
+        Nothing;
+      EQ ->
+        Just (Reduce 1 5);
+      GT ->
+        Nothing
+    };
+      EQ ->
+        Just (Reduce 1 5);
+      GT ->
+    case compare (q, s') (15, -1) of {
+      LT ->
+        Nothing;
+      EQ ->
+        Just (Reduce 2 6);
+      GT ->
+        Nothing
+    }
+    };
+      EQ ->
+        Just (Reduce 2 6);
+      GT ->
+    case compare (q, s') (15, 2) of {
+      LT ->
+    case compare (q, s') (15, 1) of {
+      LT ->
+        Nothing;
+      EQ ->
+        Just (Reduce 2 6);
+      GT ->
+        Nothing
+    };
+      EQ ->
+        Just (Reduce 2 6);
+      GT ->
+    case compare (q, s') (15, 3) of {
+      LT ->
+        Nothing;
+      EQ ->
+        Just (Reduce 2 6);
+      GT ->
+        Nothing
+    }
+    }
+    }
+    }
+    }
 
 production :: Int -> Int
 production 0 = 0
@@ -126,27 +429,141 @@ production 8 = 3
 
 dfaGotoTransition :: GotoState -> GotoSymbol -> Maybe GotoState
 dfaGotoTransition q s =
-  case (q, production s) of
-    (0, 0) -> Just 11
-    (0, 2) -> Just 14
-    (0, 3) -> Just 1
-    (0, 4) -> Just 3
-    (2, 0) -> Just 11
-    (2, 2) -> Just 14
-    (2, 4) -> Just 4
-    (3, 0) -> Just 11
-    (3, 2) -> Just 15
-    (4, 0) -> Just 11
-    (4, 2) -> Just 15
-    (5, 0) -> Just 11
-    (5, 2) -> Just 14
-    (5, 3) -> Just 12
-    (5, 4) -> Just 3
-    (6, 0) -> Just 6
-    (6, 1) -> Just 9
-    (7, 0) -> Just 6
-    (7, 1) -> Just 13
-    (_, _) -> Nothing
+  let s' = production s in
+    case compare (q, s') (4, 0) of {
+      LT ->
+    case compare (q, s') (2, 0) of {
+      LT ->
+    case compare (q, s') (0, 3) of {
+      LT ->
+    case compare (q, s') (0, 2) of {
+      LT ->
+    case compare (q, s') (0, 0) of {
+      LT ->
+        Nothing;
+      EQ ->
+        Just 11;
+      GT ->
+        Nothing
+    };
+      EQ ->
+        Just 14;
+      GT ->
+        Nothing
+    };
+      EQ ->
+        Just 1;
+      GT ->
+    case compare (q, s') (0, 4) of {
+      LT ->
+        Nothing;
+      EQ ->
+        Just 3;
+      GT ->
+        Nothing
+    }
+    };
+      EQ ->
+        Just 11;
+      GT ->
+    case compare (q, s') (3, 0) of {
+      LT ->
+    case compare (q, s') (2, 4) of {
+      LT ->
+    case compare (q, s') (2, 2) of {
+      LT ->
+        Nothing;
+      EQ ->
+        Just 14;
+      GT ->
+        Nothing
+    };
+      EQ ->
+        Just 4;
+      GT ->
+        Nothing
+    };
+      EQ ->
+        Just 11;
+      GT ->
+    case compare (q, s') (3, 2) of {
+      LT ->
+        Nothing;
+      EQ ->
+        Just 15;
+      GT ->
+        Nothing
+    }
+    }
+    };
+      EQ ->
+        Just 11;
+      GT ->
+    case compare (q, s') (5, 4) of {
+      LT ->
+    case compare (q, s') (5, 2) of {
+      LT ->
+    case compare (q, s') (5, 0) of {
+      LT ->
+    case compare (q, s') (4, 2) of {
+      LT ->
+        Nothing;
+      EQ ->
+        Just 15;
+      GT ->
+        Nothing
+    };
+      EQ ->
+        Just 11;
+      GT ->
+        Nothing
+    };
+      EQ ->
+        Just 14;
+      GT ->
+    case compare (q, s') (5, 3) of {
+      LT ->
+        Nothing;
+      EQ ->
+        Just 12;
+      GT ->
+        Nothing
+    }
+    };
+      EQ ->
+        Just 3;
+      GT ->
+    case compare (q, s') (7, 0) of {
+      LT ->
+    case compare (q, s') (6, 1) of {
+      LT ->
+    case compare (q, s') (6, 0) of {
+      LT ->
+        Nothing;
+      EQ ->
+        Just 6;
+      GT ->
+        Nothing
+    };
+      EQ ->
+        Just 9;
+      GT ->
+        Nothing
+    };
+      EQ ->
+        Just 6;
+      GT ->
+    case compare (q, s') (7, 1) of {
+      LT ->
+        Nothing;
+      EQ ->
+        Just 13;
+      GT ->
+        Nothing
+    }
+    }
+    }
+    }
 
 parse :: Monad m => SemanticActions m -> [Token] -> m (Either (Maybe Token) (Abs, [Token]))
 parse actions = parse' [] where

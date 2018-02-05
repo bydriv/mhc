@@ -416,7 +416,7 @@ generateParser trivial modid start0 header footer grm0 = do
           grm0
 
   let terminalIndex = RBMap.fromList $ zip terminals [(0 :: Int)..]
-  let indexTerminal = RBMap.fromList $ zip [(0 :: Int)..] terminals
+  --let indexTerminal = RBMap.fromList $ zip [(0 :: Int)..] terminals
   let nonterminalIndex = RBMap.fromList $ zip nonterminals [(0 :: Int)..]
 
   let start = maybe undefined id $ RBMap.lookup start0 nonterminalIndex
@@ -435,8 +435,8 @@ generateParser trivial modid start0 header footer grm0 = do
 
   (actionTable, gotoTable) <- makeTable start grm
 
-  let actionTable_list = RBMap.toList actionTable
-  let gotoTable_list = RBMap.toList gotoTable
+  --let actionTable_list = RBMap.toList actionTable
+  --let gotoTable_list = RBMap.toList gotoTable
 
   return $ CodeGenerating.generate $ do
     CodeGenerating.write "module "
@@ -464,6 +464,7 @@ generateParser trivial modid start0 header footer grm0 = do
     CodeGenerating.write "data Action = Shift Int | Reduce Int Int | Accept\n"
     CodeGenerating.write "type ActionState = Int\n"
     CodeGenerating.write "data ActionSymbol = Token Token | EOF\n"
+    CodeGenerating.write "  deriving (Eq, Ord, Read, Show)\n"
     CodeGenerating.write "type GotoState = Int\n"
     CodeGenerating.write "type GotoSymbol = Int\n"
     CodeGenerating.write "\n"
@@ -588,43 +589,62 @@ generateParser trivial modid start0 header footer grm0 = do
 
     CodeGenerating.write "dfaActionTransition :: ActionState -> ActionSymbol -> Maybe Action\n"
     CodeGenerating.write "dfaActionTransition q s =\n"
-    CodeGenerating.write "  case (q, s) of\n"
+    CodeGenerating.write "  let s' =\n"
+    CodeGenerating.write "        case s of\n"
+    CodeGenerating.write "          EOF -> -1\n"
 
-    Monad.forM_ actionTable_list $ \((p, t), q) -> do
-      CodeGenerating.write "    "
-      CodeGenerating.write "("
-      CodeGenerating.write $ show p
-      CodeGenerating.write ", "
+    Monad.forM_ (RBMap.toList terminalIndex) $ \(t, i) -> do
+      CodeGenerating.write "          Token ("
+      CodeGenerating.write t
+      CodeGenerating.write " _) -> "
+      CodeGenerating.write $ show i
+      CodeGenerating.write "\n"
+    CodeGenerating.write "  in\n"
 
-      case t of
-        UserTerminal t' -> do
-          CodeGenerating.write "Token ("
-          CodeGenerating.write $ maybe undefined id $ RBMap.lookup t' indexTerminal
-          CodeGenerating.write " _)"
-        Dollar ->
-          CodeGenerating.write "EOF"
-        Question ->
-          undefined
+    RBMap.foldiTree
+      (\(p, t) q lm rm -> do
+        CodeGenerating.write "    case compare (q, s') "
+        CodeGenerating.write "("
+        CodeGenerating.write $ show p
+        CodeGenerating.write ", "
 
-      CodeGenerating.write ")"
-      CodeGenerating.write " -> Just ("
+        case t of
+          UserTerminal t' -> do
+            CodeGenerating.write $ show t'
+          Dollar ->
+            CodeGenerating.write "-1"
+          Question ->
+            undefined
 
-      case q of
-        Shift n -> do
-          CodeGenerating.write "Shift "
-          CodeGenerating.write $ show n
-        Reduce k -> do
-          let (_, right) = grm !! k
+        CodeGenerating.write ") of {\n"
+        CodeGenerating.write "      LT ->\n"
+        lm
+        CodeGenerating.write ";\n"
+        CodeGenerating.write "      EQ ->\n"
+        CodeGenerating.write "        Just ("
 
-          CodeGenerating.write "Reduce "
-          CodeGenerating.write $ show $ length right
-          CodeGenerating.write " "
-          CodeGenerating.write $ show k
-        Accept -> do
-          CodeGenerating.write "Accept"
+        case q of
+          Shift n -> do
+            CodeGenerating.write "Shift "
+            CodeGenerating.write $ show n
+          Reduce k -> do
+            let (_, right) = grm !! k
 
-      CodeGenerating.write ")\n"
-    CodeGenerating.write "    (_, _) -> Nothing\n"
+            CodeGenerating.write "Reduce "
+            CodeGenerating.write $ show $ length right
+            CodeGenerating.write " "
+            CodeGenerating.write $ show k
+          Accept -> do
+            CodeGenerating.write "Accept"
+        CodeGenerating.write ");\n"
+        CodeGenerating.write "      GT ->\n"
+        rm
+        CodeGenerating.write "\n"
+        CodeGenerating.write "    }")
+      (CodeGenerating.write "        Nothing")
+      actionTable
+
+    CodeGenerating.write "\n"
     CodeGenerating.write "\n"
 
     CodeGenerating.write "production :: Int -> Int\n"
@@ -638,25 +658,37 @@ generateParser trivial modid start0 header footer grm0 = do
 
     CodeGenerating.write "dfaGotoTransition :: GotoState -> GotoSymbol -> Maybe GotoState\n"
     CodeGenerating.write "dfaGotoTransition q s =\n"
-    CodeGenerating.write "  case (q, production s) of\n"
+    CodeGenerating.write "  let s' = production s in\n"
 
-    Monad.forM_ gotoTable_list $ \((p, n), q) -> do
-      CodeGenerating.write "    "
-      CodeGenerating.write "("
-      CodeGenerating.write $ show p
-      CodeGenerating.write ", "
+    RBMap.foldiTree
+      (\(p, n) q lm rm -> do
+        CodeGenerating.write "    case compare (q, s') "
+        CodeGenerating.write "("
+        CodeGenerating.write $ show p
+        CodeGenerating.write ", "
 
-      case n of
-        UserNonterminal n' ->
-          CodeGenerating.write $ show n'
-        Start ->
-          undefined
+        case n of
+          UserNonterminal n' ->
+            CodeGenerating.write $ show n'
+          Start ->
+            undefined
 
-      CodeGenerating.write ")"
-      CodeGenerating.write " -> Just "
-      CodeGenerating.write $ show q
-      CodeGenerating.write "\n"
-    CodeGenerating.write "    (_, _) -> Nothing\n"
+        CodeGenerating.write ") of {\n"
+        CodeGenerating.write "      LT ->\n"
+        lm
+        CodeGenerating.write ";\n"
+        CodeGenerating.write "      EQ ->\n"
+        CodeGenerating.write "        Just "
+        CodeGenerating.write $ show q
+        CodeGenerating.write ";\n"
+        CodeGenerating.write "      GT ->\n"
+        rm
+        CodeGenerating.write "\n"
+        CodeGenerating.write "    }")
+      (CodeGenerating.write "        Nothing")
+      gotoTable
+
+    CodeGenerating.write "\n"
     CodeGenerating.write "\n"
 
     CodeGenerating.write "parse :: Monad m => SemanticActions m -> [Token] -> m (Either (Maybe Token) ("
