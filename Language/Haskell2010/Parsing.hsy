@@ -362,12 +362,22 @@ def rule aexp :=
 | LBRACKET exp DOT_DOT exp RBRACKET
 | LBRACKET exp COMMA exp DOT_DOT RBRACKET
 | LBRACKET exp COMMA exp DOT_DOT exp RBRACKET
+| LBRACKET exp PIPE qual_seq RBRACKET
 | LPAREN QVARSYM infixexp RPAREN
 | LPAREN BACKQUOTE AS BACKQUOTE infixexp RPAREN
 | LPAREN BACKQUOTE EXPORT BACKQUOTE infixexp RPAREN
 | LPAREN BACKQUOTE QVARID BACKQUOTE infixexp RPAREN
 | LPAREN QCONSYM infixexp RPAREN
 | LPAREN BACKQUOTE QCONID BACKQUOTE infixexp RPAREN
+
+def rule qual_seq :=
+  qual
+| qual COMMA qual
+
+def rule qual :=
+  exp LARROW exp
+| LET decls
+| exp
 
 def rule alts :=
   alt

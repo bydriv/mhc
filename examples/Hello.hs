@@ -30,6 +30,7 @@ module Main where {
   f = (+1);
 
   l = [0,1..100];
+  l' = [ x | x <- [0..100], even x ];
 
   z =
     case x of {
