@@ -11,6 +11,7 @@ import qualified Language.Haskell2010.Parsing as Parsing
 case (Initial, "\r\n" | '\r' | '\n' | '\f' | '\v' | ' ' | '\t' | Zs) => saWhitechar
 case (Initial, "--" '-'*) => saOpenDashes
 case (Initial, "{-") => saOpenNested
+case (Initial, "@") => saAt
 case (Initial, "as") => saAs
 case (Initial, '`') => saBackquote
 case (Initial, "case") => saCase
@@ -56,7 +57,9 @@ case (Initial, ')') => saRParen
 case (Initial, ';') => saSemicolon
 case (Initial, '"' ([^ '"' '\'] | '\\' (['a'|'b'|'f'|'n'|'r'|'t'|'v'|'\\'|'"'|'\''|'&']|"NUL"|"SOH"|"STX"|"ETX"|"EOT"|"ENQ"|"ACK"|"BEL"|"BS"|"HT"|"LF"|"VT"|"FF"|"CR"|"SO"|"SI"|"DLE"|"DC1"|"DC2"|"DC3"|"DC4"|"NAK"|"SYN"|"ETB"|"CAN"|"EM"|"SUB"|"ESC"|"FS"|"GS"|"RS"|"US"|"SP"|"DEL"|Nd+|'o'['0'-'7']+""|'x'(Nd | ['a'-'f'] | ['A'-'F'])+) | '\'' ("\r\n" | '\r' | '\n' | '\f' | '\v' | ' ' | '\t' | Zs)+ '\\')* '"') => saString
 case (Initial, "then") => saThen
+case (Initial, "~") => saTilda
 case (Initial, "type") => saType
+case (Initial, "_") => saUnderscore
 case (Initial, "where") => saWhere
 case (Initial, ((Lu | Lt)((Ll | '_') | Lu | Lt | Nd | '\'')* '.')*(Ll | '_')((Ll | '_') | Lu | Lt | Nd | '\'')*) => saVarId
 case (Initial, ((Lu | Lt)((Ll | '_') | Lu | Lt | Nd | '\'')* '.')*(Lu | Lt)((Ll | '_') | Lu | Lt | Nd | '\'')*) => saConId
@@ -108,6 +111,8 @@ semanticActions = SemanticActions
 
   , saAs = withPosition $ \pos n _ ->
       return $ Just $ Parsing.AS (pos, n)
+  , saAt = withPosition $ \pos n _ ->
+      return $ Just $ Parsing.AT (pos, n)
   , saBackquote = withPosition $ \pos n _ ->
       return $ Just $ Parsing.BACKQUOTE (pos, n)
   , saCase = withPosition $ \pos n _ ->
@@ -198,6 +203,10 @@ semanticActions = SemanticActions
       return $ Just $ Parsing.THEN (pos, n)
   , saType = withPosition $ \pos n _ ->
       return $ Just $ Parsing.TYPE (pos, n)
+  , saTilda = withPosition $ \pos n _ ->
+      return $ Just $ Parsing.TILDA (pos, n)
+  , saUnderscore = withPosition $ \pos n _ ->
+      return $ Just $ Parsing.UNDERSCORE (pos, n)
   , saWhere = withPosition $ \pos n _ ->
       return $ Just $ Parsing.WHERE (pos, n)
   , saVarId = withPosition $ \pos n yytext ->

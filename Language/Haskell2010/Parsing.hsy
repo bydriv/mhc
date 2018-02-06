@@ -6,6 +6,7 @@
 %{
 type Pos = (Int, Int)
 type AS = Pos
+type AT = Pos
 type BACKQUOTE = Pos
 type CASE = Pos
 type CLASS = Pos
@@ -54,7 +55,9 @@ type RPAREN = Pos
 type SEMICOLON = Pos
 type STRING = (Pos, String)
 type THEN = Pos
+type TILDA = Pos
 type TYPE = Pos
+type UNDERSCORE = Pos
 type WHERE = Pos
 %}
 
@@ -308,6 +311,7 @@ def rule infixexp :=
   LAMBDA infixexp' RARROW exp
 | LET decls IN exp
 | IF exp semicolon_opt THEN exp semicolon_opt ELSE exp
+| lexp AT exp
 | lexp MINUS exp
 | lexp QVARSYM exp
 | lexp BACKQUOTE AS BACKQUOTE exp
@@ -327,6 +331,7 @@ def rule infixexp' :=
   LAMBDA infixexp' RARROW infixexp'
 | LET decls IN infixexp'
 | IF exp semicolon_opt THEN exp semicolon_opt ELSE infixexp'
+| lexp AT infixexp'
 | lexp MINUS infixexp'
 | lexp QVARSYM infixexp'
 | lexp BACKQUOTE AS BACKQUOTE infixexp'
@@ -375,6 +380,8 @@ def rule aexp :=
 | LPAREN BACKQUOTE QVARID BACKQUOTE infixexp RPAREN
 | LPAREN QCONSYM infixexp RPAREN
 | LPAREN BACKQUOTE QCONID BACKQUOTE infixexp RPAREN
+| TILDA aexp
+| UNDERSCORE
 
 def rule qual_seq :=
   qual
