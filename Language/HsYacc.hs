@@ -614,14 +614,14 @@ generateParser trivial modid start0 header footer grm0 = do
       CodeGenerating.write " _) -> "
       CodeGenerating.write $ show i
       CodeGenerating.write "\n"
-    CodeGenerating.write "  in\n"
+    CodeGenerating.write "  in "
 
     RBMap.foldiTree
       (\(p, t) q lm rm -> do
-        CodeGenerating.write "    case compare (q, s') "
+        CodeGenerating.write "case compare(q,s')"
         CodeGenerating.write "("
         CodeGenerating.write $ show p
-        CodeGenerating.write ", "
+        CodeGenerating.write ","
 
         case t of
           UserTerminal t' -> do
@@ -631,12 +631,12 @@ generateParser trivial modid start0 header footer grm0 = do
           Question ->
             undefined
 
-        CodeGenerating.write ") of {\n"
-        CodeGenerating.write "      LT ->\n"
+        CodeGenerating.write ")of{"
+        CodeGenerating.write "LT->"
         lm
-        CodeGenerating.write ";\n"
-        CodeGenerating.write "      EQ ->\n"
-        CodeGenerating.write "        Just ("
+        CodeGenerating.write ";"
+        CodeGenerating.write "EQ->"
+        CodeGenerating.write "Just("
 
         case q of
           Shift n -> do
@@ -651,12 +651,11 @@ generateParser trivial modid start0 header footer grm0 = do
             CodeGenerating.write $ show k
           Accept -> do
             CodeGenerating.write "Accept"
-        CodeGenerating.write ");\n"
-        CodeGenerating.write "      GT ->\n"
+        CodeGenerating.write ");"
+        CodeGenerating.write "GT->"
         rm
-        CodeGenerating.write "\n"
-        CodeGenerating.write "    }")
-      (CodeGenerating.write "        Nothing")
+        CodeGenerating.write "}")
+      (CodeGenerating.write "Nothing")
       actionTable
 
     CodeGenerating.write "\n"
@@ -674,13 +673,14 @@ generateParser trivial modid start0 header footer grm0 = do
     CodeGenerating.write "dfaGotoTransition :: GotoState -> GotoSymbol -> Maybe GotoState\n"
     CodeGenerating.write "dfaGotoTransition q s =\n"
     CodeGenerating.write "  let s' = production s in\n"
+    CodeGenerating.write "    "
 
     RBMap.foldiTree
       (\(p, n) q lm rm -> do
-        CodeGenerating.write "    case compare (q, s') "
+        CodeGenerating.write "case compare(q,s')"
         CodeGenerating.write "("
         CodeGenerating.write $ show p
-        CodeGenerating.write ", "
+        CodeGenerating.write ","
 
         case n of
           UserNonterminal n' ->
@@ -688,19 +688,18 @@ generateParser trivial modid start0 header footer grm0 = do
           Start ->
             undefined
 
-        CodeGenerating.write ") of {\n"
-        CodeGenerating.write "      LT ->\n"
+        CodeGenerating.write ")of{"
+        CodeGenerating.write "LT->"
         lm
-        CodeGenerating.write ";\n"
-        CodeGenerating.write "      EQ ->\n"
-        CodeGenerating.write "        Just "
+        CodeGenerating.write ";"
+        CodeGenerating.write "EQ->"
+        CodeGenerating.write "Just "
         CodeGenerating.write $ show q
-        CodeGenerating.write ";\n"
-        CodeGenerating.write "      GT ->\n"
+        CodeGenerating.write ";"
+        CodeGenerating.write "GT->"
         rm
-        CodeGenerating.write "\n"
-        CodeGenerating.write "    }")
-      (CodeGenerating.write "        Nothing")
+        CodeGenerating.write "}")
+      (CodeGenerating.write "Nothing")
       gotoTable
 
     CodeGenerating.write "\n"
