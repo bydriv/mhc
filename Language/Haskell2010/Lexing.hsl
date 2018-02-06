@@ -15,6 +15,7 @@ case (Initial, "@") => saAt
 case (Initial, "as") => saAs
 case (Initial, '`') => saBackquote
 case (Initial, "case") => saCase
+case (Initial, '\'' ([^ '\'' '\'] | '\\' (['a'|'b'|'f'|'n'|'r'|'t'|'v'|'\\'|'"'|'\'']|"NUL"|"SOH"|"STX"|"ETX"|"EOT"|"ENQ"|"ACK"|"BEL"|"BS"|"HT"|"LF"|"VT"|"FF"|"CR"|"SO"|"SI"|"DLE"|"DC1"|"DC2"|"DC3"|"DC4"|"NAK"|"SYN"|"ETB"|"CAN"|"EM"|"SUB"|"ESC"|"FS"|"GS"|"RS"|"US"|"SP"|"DEL"|Nd+|'o'['0'-'7']+""|'x'(Nd | ['a'-'f'] | ['A'-'F'])+)) '\'') => saChar
 case (Initial, "class") => saClass
 case (Initial, ':' ':') => saColonColon
 case (Initial, ',') => saComma
@@ -28,6 +29,7 @@ case (Initial, "else") => saElse
 case (Initial, '=') => saEqual
 case (Initial, '!') => saExcl
 case (Initial, "export") => saExport
+case (Initial, Nd+ '.' Nd+ | Nd+ ('e'|'E') ('+'|'-')? Nd+ | Nd+ '.' Nd+ ('e'|'E') ('+'|'-')? Nd+) => saFloat
 case (Initial, "foreign") => saForeign
 case (Initial, "hiding") => saHiding
 case (Initial, "import") => saImport
@@ -117,6 +119,8 @@ semanticActions = SemanticActions
       return $ Just $ Parsing.BACKQUOTE (pos, n)
   , saCase = withPosition $ \pos n _ ->
       return $ Just $ Parsing.CASE (pos, n)
+  , saChar = withPosition $ \pos n yytext ->
+      return $ Just $ Parsing.CHAR ((pos, n), read yytext)
   , saClass = withPosition $ \pos n _ ->
       return $ Just $ Parsing.CLASS (pos, n)
   , saColonColon = withPosition $ \pos n _ ->
@@ -143,6 +147,8 @@ semanticActions = SemanticActions
       return $ Just $ Parsing.EXCL (pos, n)
   , saExport = withPosition $ \pos n _ ->
       return $ Just $ Parsing.EXPORT (pos, n)
+  , saFloat = withPosition $ \pos n yytext ->
+      return $ Just $ Parsing.FLOAT ((pos, n), read yytext)
   , saForeign = withPosition $ \pos n _ ->
       return $ Just $ Parsing.FOREIGN (pos, n)
   , saHiding = withPosition $ \pos n _ ->

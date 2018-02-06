@@ -9,6 +9,7 @@ type AS = Pos
 type AT = Pos
 type BACKQUOTE = Pos
 type CASE = Pos
+type CHAR = (Pos, Char)
 type CLASS = Pos
 type COLON_COLON = Pos
 type COMMA = Pos
@@ -22,6 +23,7 @@ type ELSE = Pos
 type EQUAL = Pos
 type EXCL = Pos
 type EXPORT = Pos
+type FLOAT = (Pos, Double)
 type FOREIGN = Pos
 type HIDING = Pos
 type IMPORT = Pos
@@ -372,6 +374,8 @@ def rule aexp :=
   var
 | gcon
 | INTEGER
+| FLOAT
+| CHAR
 | STRING
 | LPAREN exp RPAREN
 | LPAREN exp_seq2 RPAREN
