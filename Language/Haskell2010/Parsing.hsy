@@ -301,9 +301,9 @@ def rule guards :=
 | guard COMMA guards
 
 def rule guard :=
-  infixexp LARROW exp
+  infixexp' LARROW infixexp'
 | LET decls
-| infixexp
+| infixexp'
 
 def rule exp :=
   infixexp
@@ -383,17 +383,8 @@ def rule alt :=
 | pat PIPE gdpat WHERE decls
 
 def rule gdpat :=
-  patguards RARROW exp
-| patguards RARROW exp PIPE gdpat
-
-def rule patguards :=
-  patguard
-| patguard COMMA patguards
-
-def rule patguard :=
-  infixexp' LARROW infixexp'
-| LET decls
-| infixexp'
+  guards RARROW exp
+| guards RARROW exp PIPE gdpat
 
 def rule stmts :=
   stmt
