@@ -25,6 +25,7 @@ type AST = Parsing.Module'
 
 posOf :: Parsing.Token -> Parsing.Pos
 posOf (Parsing.AS pos) = pos
+posOf (Parsing.AT pos) = pos
 posOf (Parsing.BACKQUOTE pos) = pos
 posOf (Parsing.CASE pos) = pos
 posOf (Parsing.CLASS pos) = pos
@@ -74,6 +75,8 @@ posOf (Parsing.SEMICOLON pos) = pos
 posOf (Parsing.STRING (pos, _)) = pos
 posOf (Parsing.THEN pos) = pos
 posOf (Parsing.TYPE pos) = pos
+posOf (Parsing.TILDA pos) = pos
+posOf (Parsing.UNDERSCORE pos) = pos
 posOf (Parsing.WHERE pos) = pos
 
 lineOf :: Parsing.Pos -> String -> Int
