@@ -48,43 +48,6 @@ runLexing = Monad.liftM fst . flip unLexing Initial
 yybegin :: Monad m => LexingState -> Lexing m ()
 yybegin s = Lexing $ const $ return ((), s)
 
-dfaInitialInitialState :: Int
-dfaInitialInitialState = 1
-
-dfaInitialFinalStates :: [Int]
-dfaInitialFinalStates = [2,3]
-
-dfaInitialTransition :: Int -> Char -> Int
-dfaInitialTransition q c =
-  let c' :: Int
-      c' =
-        case Char.ord c of
-          40 -> 2
-          41 -> 3
-          46 -> 4
-          95 -> 7
-          955 -> 9
-          c'' ->
-            if any (\(c1, c2) -> c1 <= c'' && c'' <= c2) [(9,13),(32,32)] then 1
-            else if 48 <= c'' && c'' <= 57 then 5
-            else if 65 <= c'' && c'' <= 90 then 6
-            else if 97 <= c'' && c'' <= 122 then 8
-            else 0 in
-    case (q, c') of
-      (1, 1) -> 2
-      (1, 2) -> 2
-      (1, 3) -> 2
-      (1, 4) -> 2
-      (1, 6) -> 3
-      (1, 7) -> 3
-      (1, 8) -> 3
-      (1, 9) -> 2
-      (3, 5) -> 3
-      (3, 6) -> 3
-      (3, 7) -> 3
-      (3, 8) -> 3
-      _ -> 0
-
 dfa0InitialState :: Int
 dfa0InitialState = 1
 
@@ -206,6 +169,8 @@ match :: Int -> [Int] -> (Int -> Char -> Int) -> String -> Maybe Int
 match initialState finalStates transition = match' 0 Nothing initialState
   where
     match' :: Int -> Maybe Int -> Int -> String -> Maybe Int
+    match' _ r 0 _ =
+      r
     match' i r q s =
       let r' =
             if q `elem` finalStates then
@@ -224,39 +189,40 @@ lex actions = lex' where
   lex' s = do
     p <- Lexing $ \p -> return (p, p)
     if p == Initial then
-      case match dfaInitialInitialState dfaInitialFinalStates dfaInitialTransition s of
-        Nothing ->
+      case max (match dfa0InitialState dfa0FinalStates dfa0Transition s, -0) $ max (match dfa1InitialState dfa1FinalStates dfa1Transition s, -1) $ max (match dfa2InitialState dfa2FinalStates dfa2Transition s, -2) $ max (match dfa3InitialState dfa3FinalStates dfa3Transition s, -3) $ max (match dfa4InitialState dfa4FinalStates dfa4Transition s, -4) $ max (match dfa5InitialState dfa5FinalStates dfa5Transition s, -5) $ (Nothing, 1 :: Int) of
+        (Nothing, _) ->
           return ([], s)
-        Just 0 ->
+        (Just 0, _) ->
           return ([], s)
-        Just i ->
+        (Just i, j) ->
           let (yytext, s') = splitAt i s in
-            if match dfa0InitialState dfa0FinalStates dfa0Transition s == Just i then do
-              x <- saLambda actions yytext
-              (xs, s'') <- lex' s'
-              return (x : xs, s'')
-            else if match dfa1InitialState dfa1FinalStates dfa1Transition s == Just i then do
-              x <- saDot actions yytext
-              (xs, s'') <- lex' s'
-              return (x : xs, s'')
-            else if match dfa2InitialState dfa2FinalStates dfa2Transition s == Just i then do
-              x <- saLParen actions yytext
-              (xs, s'') <- lex' s'
-              return (x : xs, s'')
-            else if match dfa3InitialState dfa3FinalStates dfa3Transition s == Just i then do
-              x <- saRParen actions yytext
-              (xs, s'') <- lex' s'
-              return (x : xs, s'')
-            else if match dfa4InitialState dfa4FinalStates dfa4Transition s == Just i then do
-              x <- saId actions yytext
-              (xs, s'') <- lex' s'
-              return (x : xs, s'')
-            else if match dfa5InitialState dfa5FinalStates dfa5Transition s == Just i then do
-              x <- saSpace actions yytext
-              (xs, s'') <- lex' s'
-              return (x : xs, s'')
-            else
-              return ([], s)
+            case j of
+              -0 -> do
+                x <- saLambda actions yytext
+                (xs, s'') <- lex' s'
+                return (x : xs, s'')
+              -1 -> do
+                x <- saDot actions yytext
+                (xs, s'') <- lex' s'
+                return (x : xs, s'')
+              -2 -> do
+                x <- saLParen actions yytext
+                (xs, s'') <- lex' s'
+                return (x : xs, s'')
+              -3 -> do
+                x <- saRParen actions yytext
+                (xs, s'') <- lex' s'
+                return (x : xs, s'')
+              -4 -> do
+                x <- saId actions yytext
+                (xs, s'') <- lex' s'
+                return (x : xs, s'')
+              -5 -> do
+                x <- saSpace actions yytext
+                (xs, s'') <- lex' s'
+                return (x : xs, s'')
+              _ ->
+                return ([], s)
     else
       return ([], s)
 
