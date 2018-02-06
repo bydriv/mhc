@@ -189,13 +189,14 @@ goto
   :: (Ord t, Ord n, Monad m)
   => Sets t n
   -> Grammar t n
-  -> (RBSet.RBSet (Item t n), Symbol t n)
+  -> RBSet.RBSet (Item t n)
+  -> (Int, Symbol t n)
   -> MemoT
-      (RBSet.RBSet (Item t n), Symbol t n)
+      (Int, Symbol t n)
       (RBSet.RBSet (Item t n))
       (MemoT (RBSet.RBSet (Item t n)) (RBSet.RBSet (Item t n)) m)
       (RBSet.RBSet (Item t n))
-goto sets grm = memo $ \(items, symbol) ->
+goto sets grm items = memo $ \(_, symbol) ->
   let items' =
         RBSet.foldl
           (\(left, middle, right, lookahead) items'' ->
@@ -328,7 +329,7 @@ makeTable start grm0 =
                                   Identity.runIdentity
                                     (StateT.runStateT
                                       (StateT.runStateT
-                                        (goto sets grm (items, symbol))
+                                        (goto sets grm items (i, symbol))
                                         (fst mem1))
                                       (snd mem1)) in
                             let (j, states2) =
