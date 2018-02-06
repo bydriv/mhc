@@ -147,10 +147,10 @@ def rule decl_seq :=
 
 def rule decl :=
   gendecl
-| pat EQUAL exp
-| pat EQUAL exp WHERE decls
-| pat PIPE gdrhs
-| pat PIPE gdrhs WHERE decls
+| infixexp' EQUAL exp
+| infixexp' EQUAL exp WHERE decls
+| infixexp' PIPE gdrhs
+| infixexp' PIPE gdrhs WHERE decls
 
 def rule cdecls_opt :=
 | WHERE cdecls
@@ -164,10 +164,10 @@ def rule cdecl_seq :=
 
 def rule cdecl :=
   gendecl
-| pat EQUAL exp
-| pat EQUAL exp WHERE decls
-| pat PIPE gdrhs
-| pat PIPE gdrhs WHERE decls
+| infixexp' EQUAL exp
+| infixexp' EQUAL exp WHERE decls
+| infixexp' PIPE gdrhs
+| infixexp' PIPE gdrhs WHERE decls
 
 def rule idecls_opt :=
 | WHERE idecls
@@ -180,14 +180,14 @@ def rule idecl_seq :=
 | idecl SEMICOLON idecl_seq
 
 def rule idecl :=
-| pat EQUAL exp
-| pat EQUAL exp WHERE decls
-| pat PIPE gdrhs
-| pat PIPE gdrhs WHERE decls
+| infixexp' EQUAL exp
+| infixexp' EQUAL exp WHERE decls
+| infixexp' PIPE gdrhs
+| infixexp' PIPE gdrhs WHERE decls
 
 def rule gendecl :=
-| vars COLON_COLON type'
-| vars COLON_COLON btype DARROW type'
+| infixexp' COLON_COLON type'
+| infixexp' COLON_COLON btype DARROW type'
 | fixity integer_opt ops
 
 def rule ops :=
@@ -305,7 +305,7 @@ def rule exp :=
   infixexp
 
 def rule infixexp :=
-  LAMBDA pat RARROW exp
+  LAMBDA infixexp' RARROW exp
 | LET decls IN exp
 | IF exp semicolon_opt THEN exp semicolon_opt ELSE exp
 | lexp MINUS exp
@@ -319,8 +319,12 @@ def rule infixexp :=
 | lexp COLON_COLON btype DARROW type'
 | lexp
 
+def rule infixexp'_seq :=
+  infixexp'
+| infixexp' COMMA infixexp'_seq
+
 def rule infixexp' :=
-  LAMBDA pat RARROW infixexp'
+  LAMBDA infixexp' RARROW infixexp'
 | LET decls IN infixexp'
 | IF exp semicolon_opt THEN exp semicolon_opt ELSE infixexp'
 | lexp MINUS infixexp'
@@ -386,10 +390,10 @@ def rule alts :=
 | alt SEMICOLON alts
 
 def rule alt :=
-| pat RARROW exp
-| pat RARROW exp WHERE decls
-| pat PIPE gdpat
-| pat PIPE gdpat WHERE decls
+| infixexp' RARROW exp
+| infixexp' RARROW exp WHERE decls
+| infixexp' PIPE gdpat
+| infixexp' PIPE gdpat WHERE decls
 
 def rule gdpat :=
   guards RARROW exp
