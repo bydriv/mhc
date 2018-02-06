@@ -415,16 +415,6 @@ def rule fbind_seq :=
 def rule fbind :=
   var EQUAL exp
 
-def rule pat :=
-  apat
-| pat apat
-| pat MINUS apat
-| pat op apat
-
-def rule apat :=
-  var
-| LPAREN pat RPAREN
-
 def rule gcon :=
   LPAREN RPAREN
 | LBRACKET RBRACKET
