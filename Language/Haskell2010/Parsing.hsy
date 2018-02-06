@@ -236,10 +236,6 @@ def rule gtycon :=
 | LPAREN RARROW RPAREN
 | LPAREN comma_list RPAREN
 
-def rule comma_list :=
-  COMMA
-| COMMA comma_list
-
 def rule constrs_opt :=
 | EQUAL constrs
 
@@ -356,6 +352,7 @@ def rule exp_seq2 :=
 
 def rule aexp :=
   var
+| gcon
 | INTEGER
 | STRING
 | LPAREN exp RPAREN
@@ -405,6 +402,12 @@ def rule apat :=
   var
 | LPAREN pat RPAREN
 
+def rule gcon :=
+  LPAREN RPAREN
+| LBRACKET RBRACKET
+| LPAREN comma_list RPAREN
+| con
+
 def rule var :=
   AS
 | EXPORT
@@ -452,4 +455,8 @@ def rule integer_opt :=
 
 def rule semicolon_opt :=
 | SEMICOLON
+
+def rule comma_list :=
+  COMMA
+| COMMA comma_list
 %%
