@@ -312,6 +312,13 @@ def rule infixexp :=
 | LET decls IN exp
 | IF exp semicolon_opt THEN exp semicolon_opt ELSE exp
 | lexp AT exp
+| lexp MINUS
+| lexp QVARSYM
+| lexp BACKQUOTE AS BACKQUOTE
+| lexp BACKQUOTE EXPORT BACKQUOTE
+| lexp BACKQUOTE QVARID BACKQUOTE
+| lexp QCONSYM
+| lexp BACKQUOTE QCONID BACKQUOTE
 | lexp MINUS exp
 | lexp QVARSYM exp
 | lexp BACKQUOTE AS BACKQUOTE exp
