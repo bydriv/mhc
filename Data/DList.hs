@@ -25,14 +25,18 @@ import qualified Prelude
 
 newtype DList a = DList ([a] -> [a])
 
+{-# INLINE empty #-}
 empty :: DList a
 empty = DList id
 
+{-# INLINE (++) #-}
 (++) :: DList a -> DList a -> DList a
 DList f ++ DList g = DList $ f . g
 
+{-# INLINE toList #-}
 toList :: DList a -> [a]
 toList (DList f) = f []
 
+{-# INLINE fromList #-}
 fromList :: [a] -> DList a
 fromList = DList . (Prelude.++)

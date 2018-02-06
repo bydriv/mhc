@@ -20,8 +20,10 @@ import qualified Control.Monad.Trans.CodeGenerating as CodeGeneratingT
 
 type CodeGenerating s = CodeGeneratingT.CodeGeneratingT s Identity.Identity
 
+{-# INLINE generate #-}
 generate :: CodeGenerating s () -> [s]
 generate = Identity.runIdentity . CodeGeneratingT.generate
 
+{-# INLINE write #-}
 write :: [s] -> CodeGenerating s ()
 write = CodeGeneratingT.write

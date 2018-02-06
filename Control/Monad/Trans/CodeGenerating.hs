@@ -24,9 +24,11 @@ import qualified Data.DList                as DList
 
 type CodeGeneratingT s = StateT.StateT (DList.DList s)
 
+{-# INLINE generate #-}
 generate :: Monad m => CodeGeneratingT s m () -> m [s]
 generate = Monad.liftM DList.toList . flip StateT.execStateT DList.empty
 
+{-# INLINE write #-}
 write :: Monad m => [s] -> CodeGeneratingT s m ()
 write l = do
   dl <- StateT.get
