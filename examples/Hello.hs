@@ -13,7 +13,5 @@
 -- You should have received a copy of the GNU General Public License
 -- along with MHC.  If not, see <http://www.gnu.org/licenses/>.
 
-module Main where {
-  main :: IO ();
-  main = putStrLn "hello world";
-}
+main :: IO ()
+main = putStrLn "hello world"

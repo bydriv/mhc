@@ -13,30 +13,30 @@
 -- You should have received a copy of the GNU General Public License
 -- along with MHC.  If not, see <http://www.gnu.org/licenses/>.
 
-module Data.List where {
-  (++) :: [a] -> [a] -> [a];
-  [] ++ l = l;
-  (x : xs) ++ l = x : (xs ++ l);
+module Data.List where
 
-  head :: [a] -> a;
-  head (x : _) = x;
+(++) :: [a] -> [a] -> [a]
+[] ++ l = l
+(x : xs) ++ l = x : (xs ++ l)
 
-  last :: [a] -> a;
-  last [x] = x;
-  last (_ : xs) = last xs;
+head :: [a] -> a
+head (x : _) = x
 
-  tail :: [a] -> [a];
-  tail (_ : xs) = xs;
+last :: [a] -> a
+last [x] = x
+last (_ : xs) = last xs
 
-  init :: [a] -> [a];
-  init [x] = [];
-  init (x : xs) = x : init xs;
+tail :: [a] -> [a]
+tail (_ : xs) = xs
 
-  null :: [a] -> Bool;
-  null [] = True;
-  null (_ : _) = False;
+init :: [a] -> [a]
+init [x] = []
+init (x : xs) = x : init xs
 
-  length :: [a] -> Int;
-  length [] = 0;
-  length (_ : xs) = length xs + 1;
-}
+null :: [a] -> Bool
+null [] = True
+null (_ : _) = False
+
+length :: [a] -> Int
+length [] = 0
+length (_ : xs) = length xs + 1

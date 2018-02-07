@@ -17,67 +17,11 @@ module Main where
 
 import qualified Control.Monad.Identity       as Identity
 import qualified Control.Monad.State          as State
-import qualified Data.Maybe                   as Maybe
+import qualified Language.Haskell2010.Layout  as Layout
 import qualified Language.Haskell2010.Lexing  as Lexing
 import qualified Language.Haskell2010.Parsing as Parsing
 
 type AST = Parsing.Module'
-
-posOf :: Parsing.Token -> Parsing.Pos
-posOf (Parsing.AS pos) = pos
-posOf (Parsing.AT pos) = pos
-posOf (Parsing.BACKQUOTE pos) = pos
-posOf (Parsing.CASE pos) = pos
-posOf (Parsing.CLASS pos) = pos
-posOf (Parsing.COLON_COLON pos) = pos
-posOf (Parsing.COMMA pos) = pos
-posOf (Parsing.DARROW pos) = pos
-posOf (Parsing.DATA pos) = pos
-posOf (Parsing.DEFAULT pos) = pos
-posOf (Parsing.DERIVING pos) = pos
-posOf (Parsing.DO pos) = pos
-posOf (Parsing.DOT_DOT pos) = pos
-posOf (Parsing.ELSE pos) = pos
-posOf (Parsing.EQUAL pos) = pos
-posOf (Parsing.EXCL pos) = pos
-posOf (Parsing.EXPORT pos) = pos
-posOf (Parsing.FOREIGN pos) = pos
-posOf (Parsing.HIDING pos) = pos
-posOf (Parsing.IMPORT pos) = pos
-posOf (Parsing.IF pos) = pos
-posOf (Parsing.IN pos) = pos
-posOf (Parsing.INFIX pos) = pos
-posOf (Parsing.INFIXL pos) = pos
-posOf (Parsing.INFIXR pos) = pos
-posOf (Parsing.INSTANCE pos) = pos
-posOf (Parsing.INTEGER (pos, _)) = pos
-posOf (Parsing.LAMBDA pos) = pos
-posOf (Parsing.LARROW pos) = pos
-posOf (Parsing.LBRACE pos) = pos
-posOf (Parsing.LBRACKET pos) = pos
-posOf (Parsing.LET pos) = pos
-posOf (Parsing.LPAREN pos) = pos
-posOf (Parsing.MINUS pos) = pos
-posOf (Parsing.MODULE pos) = pos
-posOf (Parsing.NEWTYPE pos) = pos
-posOf (Parsing.OF pos) = pos
-posOf (Parsing.PIPE pos) = pos
-posOf (Parsing.QCONID (pos, _)) = pos
-posOf (Parsing.QCONSYM (pos, _)) = pos
-posOf (Parsing.QUALIFIED pos) = pos
-posOf (Parsing.QVARID (pos, _)) = pos
-posOf (Parsing.QVARSYM (pos, _)) = pos
-posOf (Parsing.RARROW pos) = pos
-posOf (Parsing.RBRACE pos) = pos
-posOf (Parsing.RBRACKET pos) = pos
-posOf (Parsing.RPAREN pos) = pos
-posOf (Parsing.SEMICOLON pos) = pos
-posOf (Parsing.STRING (pos, _)) = pos
-posOf (Parsing.THEN pos) = pos
-posOf (Parsing.TYPE pos) = pos
-posOf (Parsing.TILDA pos) = pos
-posOf (Parsing.UNDERSCORE pos) = pos
-posOf (Parsing.WHERE pos) = pos
 
 lineOf :: Parsing.Pos -> String -> Int
 lineOf (pos, len) = length . lines . take (pos + len)
@@ -89,13 +33,13 @@ main = do
 
   case s' of
     [] -> do
-      let tokens = Maybe.catMaybes tokens0
+      let tokens = Layout.layout (State.evalState (Layout.preprocess tokens0) (0, True)) [] (0, 0)
 
       case Identity.runIdentity $ Parsing.parse Parsing.semanticActions tokens of
         Left Nothing ->
           putStrLn $ "line " ++ show (succ (length (lines s))) ++ ": syntax error."
         Left (Just token) ->
-          let pos' = posOf token in
+          let pos' = Parsing.posOf token in
           let lnum = lineOf pos' s in
             putStrLn $ "line " ++ show lnum ++ ": syntax error."
         Right (result, _) ->

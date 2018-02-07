@@ -43,6 +43,7 @@ executable mhc
     , Data.DList
     , Data.RBMap
     , Data.RBSet
+    , Language.Haskell2010.Layout
     , Language.Haskell2010.Lexing
     , Language.Haskell2010.Parsing
 
