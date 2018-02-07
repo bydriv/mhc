@@ -186,7 +186,9 @@ layout (Token token : ts) i ((mcxt, m, j) : ms) pos
     countDropWhere [] = 0
     countDropWhere ((Unknown, _, _) : _) = 0
     countDropWhere ((Module, _, _) : _) = 0
+    countDropWhere ((Let, _, _) : _) = 0
     countDropWhere ((Where, _, _) : _) = 0
+    countDropWhere ((Of, _, _) : _) = 0
     countDropWhere (_ : stack) = countDropWhere stack + 1
 
     isClose (Parsing.RPAREN _) = True
