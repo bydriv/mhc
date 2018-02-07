@@ -38,10 +38,10 @@ main = do
       case Identity.runIdentity $ Parsing.parse Parsing.semanticActions tokens of
         Left Nothing ->
           putStrLn $ "line " ++ show (succ (length (lines s))) ++ ": syntax error."
-        Left (Just token) ->
-          let pos' = Parsing.posOf token in
-          let lnum = lineOf pos' s in
-            putStrLn $ "line " ++ show lnum ++ ": syntax error."
+        Left (Just token) -> do
+          let pos' = Parsing.posOf token
+          let lnum = lineOf pos' s
+          putStrLn $ "line " ++ show lnum ++ ": syntax error."
         Right (result, _) ->
           print result
     (c : _) ->

@@ -66,13 +66,29 @@ preprocess' (Right token : tokens) = do
 
   case token of
     Parsing.LET _ ->
-      preprocessKw token tokens
+      if isFirst then do
+        tokens' <- preprocessKw token tokens
+        return $ Chevron m : tokens'
+      else
+        preprocessKw token tokens
     Parsing.WHERE _ ->
-      preprocessKw token tokens
+      if isFirst then do
+        tokens' <- preprocessKw token tokens
+        return $ Chevron m : tokens'
+      else
+        preprocessKw token tokens
     Parsing.DO _ ->
-      preprocessKw token tokens
+      if isFirst then do
+        tokens' <- preprocessKw token tokens
+        return $ Chevron m : tokens'
+      else
+        preprocessKw token tokens
     Parsing.OF _ ->
-      preprocessKw token tokens
+      if isFirst then do
+        tokens' <- preprocessKw token tokens
+        return $ Chevron m : tokens'
+      else
+        preprocessKw token tokens
     _ ->
       if isFirst then do
         tokens' <- preprocess' tokens
@@ -94,10 +110,8 @@ preprocessKw kw (Right token : tokens) =
       return $ Token kw : tokens'
     _ -> do
       n <- State.gets fst
-      let (_, m) = Parsing.posOf token
-      State.modify (\(i, first) -> (i + m, False))
-      tokens' <- preprocess' tokens
-      return $ Token kw : Brace n : Token token : tokens'
+      tokens' <- preprocess' $ Right token : tokens
+      return $ Token kw : Brace n : tokens'
 
 layout :: [Token] -> [Int] -> Parsing.Pos -> [Parsing.Token]
 layout (Chevron n : ts) (m : ms) pos
@@ -119,11 +133,20 @@ layout (Token token@(Parsing.RBRACE _) : ts) ms _ =
 layout (Token token@(Parsing.LBRACE _) : ts) ms _ =
   let pos = Parsing.posOf token in
     Parsing.LBRACE pos : layout ts (-1 : ms) pos
---layout (Token token : ts) (m : ms) pos
---  | m /= -1 = layout (Token token : ts) ms pos
+layout (Token token : ts) (m : ms) pos
+  | m /= -1 && parseError token = Parsing.RBRACE pos : layout (Token token : ts) ms pos
+  where
+    parseError (Parsing.IN _) = True
+    parseError _ = False
 layout (Token token : ts) ms _ =
   token : (layout ts ms (Parsing.posOf token))
 layout [] [] _ =
   []
 layout [] (_ : ms) pos =
   Parsing.RBRACE pos : layout [] ms pos
+
+test :: String -> [Parsing.Token]
+test s =
+  let ((tokens0, s'), (pos, _)) = flip State.runState (0, 0) $ Lexing.runLexing $ Lexing.lex Lexing.semanticActions s in
+  let tokens = layout (State.evalState (preprocess tokens0) (0, True)) [] (0, 0) in
+    tokens
