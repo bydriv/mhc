@@ -134,7 +134,7 @@ layout (Token token@(Parsing.LBRACE _) : ts) ms _ =
   let pos = Parsing.posOf token in
     Parsing.LBRACE pos : layout ts (-1 : ms) pos
 layout (Token token : ts) (m : ms) pos
-  | m /= -1 && parseError token = Parsing.RBRACE pos : layout (Token token : ts) ms pos
+  | m /= -1 && parseError token = Parsing.RBRACE pos : token : layout ts ms pos
   where
     parseError (Parsing.IN _) = True
     parseError _ = False
