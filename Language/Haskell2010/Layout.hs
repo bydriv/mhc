@@ -176,6 +176,7 @@ layout (Token token : ts) i ((mcxt, m, j) : ms) pos
 
     isClose (Parsing.RPAREN _) = True
     isClose (Parsing.RBRACKET _) = True
+    isClose (Parsing.OF _) = True
     isClose _ = False
 
     countDropClose [] = 0
@@ -188,6 +189,7 @@ layout (Token token : ts) i ms _
   where
     isOpen (Parsing.LPAREN _) = True
     isOpen (Parsing.LBRACKET _) = True
+    isOpen (Parsing.CASE _) = True
     isOpen _ = False
 layout [] _ [] _ =
   []
