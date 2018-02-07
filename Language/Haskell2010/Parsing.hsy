@@ -486,7 +486,7 @@ def rule stmt :=
 
 def rule fbind_seq :=
   fbind
-| fbind COMMA fbind
+| fbind COMMA fbind_seq
 
 def rule fbind :=
   var EQUAL exp
