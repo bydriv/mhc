@@ -33,7 +33,7 @@ main = do
 
   case s' of
     [] -> do
-      let tokens = Layout.layout (State.evalState (Layout.preprocess tokens0) (0, True)) [] (0, 0)
+      let tokens = Layout.layout (State.evalState (Layout.preprocess tokens0) (0, True)) 0 [] (0, 0)
 
       case Identity.runIdentity $ Parsing.parse Parsing.semanticActions tokens of
         Left Nothing ->

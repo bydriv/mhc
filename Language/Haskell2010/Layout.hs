@@ -120,61 +120,79 @@ preprocessKw cxt kw (Right token : tokens) =
       tokens' <- preprocess' $ Right token : tokens
       return $ Token kw : Brace cxt n : tokens'
 
-layout :: [Token] -> [(LayoutContext, Int)] -> Parsing.Pos -> [Parsing.Token]
-layout (Chevron n : ts) ((mcxt, m) : ms) pos
-  | m == n = Parsing.SEMICOLON pos : layout ts ((mcxt, m) : ms) pos
-  | n < m = Parsing.RBRACE pos : layout (Chevron n : ts) ms pos
-layout (Chevron n : ts) ms pos =
-  layout ts ms pos
-layout (Brace ncxt n : ts) ((mcxt, m) : ms) pos
-  | n > m = Parsing.LBRACE pos : layout ts ((ncxt, n) : (mcxt, m) : ms) pos
-layout (Brace ncxt n : ts) [] pos
-  | n > -1 = Parsing.LBRACE pos : layout ts [(ncxt, n)] pos
-layout (Brace _ n : ts) ms pos =
-  Parsing.LBRACE pos : Parsing.RBRACE pos : layout (Chevron n : ts) ms pos
-layout (Token token@(Parsing.RBRACE _) : ts) ((_, -1) : ms) _ =
+layout :: [Token] -> Int -> [(LayoutContext, Int, Int)] -> Parsing.Pos -> [Parsing.Token]
+layout (Chevron n : ts) i ((mcxt, m, j) : ms) pos
+  | m == n = Parsing.SEMICOLON pos : layout ts i ((mcxt, m, j) : ms) pos
+  | n < m = Parsing.RBRACE pos : layout (Chevron n : ts) i ms pos
+layout (Chevron n : ts) i ms pos =
+  layout ts i ms pos
+layout (Brace ncxt n : ts) i ((mcxt, m, j) : ms) pos
+  | n > m = Parsing.LBRACE pos : layout ts i ((ncxt, n, i) : (mcxt, m, j) : ms) pos
+layout (Brace ncxt n : ts) i [] pos
+  | n > -1 = Parsing.LBRACE pos : layout ts i [(ncxt, n, i)] pos
+layout (Brace _ n : ts) i ms pos =
+  Parsing.LBRACE pos : Parsing.RBRACE pos : layout (Chevron n : ts) i ms pos
+layout (Token token@(Parsing.RBRACE _) : ts) i ((_, -1, _) : ms) _ =
   let pos = Parsing.posOf token in
-    Parsing.RBRACE pos : layout ts ms pos
-layout (Token token@(Parsing.RBRACE _) : ts) ms _ =
+    Parsing.RBRACE pos : layout ts i ms pos
+layout (Token token@(Parsing.RBRACE _) : ts) i ms _ =
   undefined
-layout (Token token@(Parsing.LBRACE _) : ts) ms _ =
+layout (Token token@(Parsing.LBRACE _) : ts) i ms _ =
   let pos = Parsing.posOf token in
-    Parsing.LBRACE pos : layout ts ((Unknown, -1) : ms) pos
-layout (Token token : ts) ((mcxt, m) : ms) pos
+    Parsing.LBRACE pos : layout ts i ((Unknown, -1, i) : ms) pos
+layout (Token token : ts) i ((mcxt, m, j) : ms) pos
   | m /= -1 && isIn token =
-      let n = countDropLet ((mcxt, m) : ms) in
-      let ms' = drop n ((mcxt, m) : ms) in
-        replicate n (Parsing.RBRACE pos) ++ (token : layout ts ms' pos)
+      let n = countDropLet ((mcxt, m, j) : ms) in
+      let ms' = drop n ((mcxt, m, j) : ms) in
+        replicate n (Parsing.RBRACE pos) ++ (token : layout ts i ms' pos)
   | m /= -1 && isWhere token =
-      let n = countDropWhere ((mcxt, m) : ms) in
-      let ms' = drop n ((mcxt, m) : ms) in
-        replicate n (Parsing.RBRACE pos) ++ (token : layout ts ms' pos)
+      let n = countDropWhere ((mcxt, m, j) : ms) in
+      let ms' = drop n ((mcxt, m, j) : ms) in
+        replicate n (Parsing.RBRACE pos) ++ (token : layout ts i ms' pos)
+  | m /= -1 && isClose token =
+      let n = countDropClose ((mcxt, m, j) : ms) in
+      let ms' = drop n ((mcxt, m, j) : ms) in
+        replicate n (Parsing.RBRACE pos) ++ (token : layout ts (i-1) ms' pos)
   where
     isIn (Parsing.IN _) = True
     isIn _ = False
 
     countDropLet [] = 0
-    countDropLet ((Unknown, _) : _) = 0
-    countDropLet ((Let, _) : _) = 1
+    countDropLet ((Unknown, _, _) : _) = 0
+    countDropLet ((Let, _, _) : _) = 1
     countDropLet (_ : stack) = countDropLet stack + 1
 
     isWhere (Parsing.WHERE _) = True
     isWhere _ = False
 
     countDropWhere [] = 0
-    countDropWhere ((Unknown, _) : _) = 0
-    countDropWhere ((Module, _) : _) = 0
-    countDropWhere ((Where, _) : _) = 0
+    countDropWhere ((Unknown, _, _) : _) = 0
+    countDropWhere ((Module, _, _) : _) = 0
+    countDropWhere ((Where, _, _) : _) = 0
     countDropWhere (_ : stack) = countDropWhere stack + 1
-layout (Token token : ts) ms _ =
-  token : (layout ts ms (Parsing.posOf token))
-layout [] [] _ =
+
+    isClose (Parsing.RPAREN _) = True
+    isClose (Parsing.RBRACKET _) = True
+    isClose _ = False
+
+    countDropClose [] = 0
+    countDropClose ((_, _, j) : stack)
+      | i > j = 0
+      | otherwise = countDropClose stack + 1
+layout (Token token : ts) i ms _
+  | isOpen token = token : (layout ts (i+1) ms (Parsing.posOf token))
+  | otherwise = token : (layout ts i ms (Parsing.posOf token))
+  where
+    isOpen (Parsing.LPAREN _) = True
+    isOpen (Parsing.LBRACKET _) = True
+    isOpen _ = False
+layout [] _ [] _ =
   []
-layout [] (_ : ms) pos =
-  Parsing.RBRACE pos : layout [] ms pos
+layout [] i (_ : ms) pos =
+  Parsing.RBRACE pos : layout [] i ms pos
 
 test :: String -> [Parsing.Token]
 test s =
   let ((tokens0, s'), (pos, _)) = flip State.runState (0, 0) $ Lexing.runLexing $ Lexing.lex Lexing.semanticActions s in
-  let tokens = layout (State.evalState (preprocess tokens0) (0, True)) [] (0, 0) in
+  let tokens = layout (State.evalState (preprocess tokens0) (0, True)) 0 [] (0, 0) in
     tokens
