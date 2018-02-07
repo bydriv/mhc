@@ -55,10 +55,8 @@ preprocessMod (Left (_, "\n\r") : tokens) = do { State.put (0, True); preprocess
 preprocessMod (Left (_, sp) : tokens) = do { State.modify (\(i, first) -> (i + calcWidth sp, first)); preprocessMod tokens }
 preprocessMod (Right token : tokens) = do
   n <- State.gets fst
-  let (_, m) = Parsing.posOf token
-  State.modify (\(i, first) -> (i + m, False))
-  tokens' <- preprocess' tokens
-  return $ Brace Module n : Token token : tokens'
+  tokens' <- preprocess' $ Right token : tokens
+  return $ Brace Module n : tokens'
 
 preprocess' :: [Either (Parsing.Pos, String) Parsing.Token] -> State.State (Int, Bool) [Token]
 preprocess' [] = return []
