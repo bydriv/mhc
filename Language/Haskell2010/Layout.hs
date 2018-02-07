@@ -139,7 +139,20 @@ layout (Token token@(Parsing.RBRACE _) : ts) i ((_, -1, _) : ms) _ =
   let pos = Parsing.posOf token in
     Parsing.RBRACE pos : layout ts (i - 1) ms pos
 layout (Token token@(Parsing.RBRACE _) : ts) i ms _ =
-  undefined
+  let n = countDropClose ms in
+  let ms' = drop n ms in
+  let pos = Parsing.posOf token in
+    case ms' of
+      ((_, -1, _) : ms'') ->
+        replicate n (Parsing.RBRACE pos) ++ (Parsing.RBRACE pos : layout ts (i - 1) ms'' pos)
+      _ ->
+        undefined
+  where
+    countDropClose [] = 0
+    countDropClose ((Unknown, _, _) : stack) = 0
+    countDropClose ((_, _, j) : stack)
+      | i > j = 0
+      | otherwise = countDropClose stack + 1
 layout (Token token@(Parsing.LBRACE _) : ts) i ms _ =
   let pos = Parsing.posOf token in
     Parsing.LBRACE pos : layout ts (i + 1) ((Unknown, -1, i + 1) : ms) pos
