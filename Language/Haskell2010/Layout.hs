@@ -137,12 +137,12 @@ layout (Brace _ n : ts) i ms pos =
   Parsing.LBRACE pos : Parsing.RBRACE pos : layout (Chevron n : ts) i ms pos
 layout (Token token@(Parsing.RBRACE _) : ts) i ((_, -1, _) : ms) _ =
   let pos = Parsing.posOf token in
-    Parsing.RBRACE pos : layout ts i ms pos
+    Parsing.RBRACE pos : layout ts (i - 1) ms pos
 layout (Token token@(Parsing.RBRACE _) : ts) i ms _ =
   undefined
 layout (Token token@(Parsing.LBRACE _) : ts) i ms _ =
   let pos = Parsing.posOf token in
-    Parsing.LBRACE pos : layout ts i ((Unknown, -1, i) : ms) pos
+    Parsing.LBRACE pos : layout ts (i + 1) ((Unknown, -1, i + 1) : ms) pos
 layout (Token token : ts) i ((mcxt, m, j) : ms) pos
   | m /= -1 && isIn token =
       let n = countDropLet ((mcxt, m, j) : ms) in
@@ -180,6 +180,7 @@ layout (Token token : ts) i ((mcxt, m, j) : ms) pos
     isClose _ = False
 
     countDropClose [] = 0
+    countDropClose ((Unknown, _, _) : stack) = 0
     countDropClose ((_, _, j) : stack)
       | i > j = 0
       | otherwise = countDropClose stack + 1
