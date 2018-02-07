@@ -209,9 +209,3 @@ layout [] _ [] _ =
   []
 layout [] i (_ : ms) pos =
   Parsing.RBRACE pos : layout [] i ms pos
-
-test :: String -> [Parsing.Token]
-test s =
-  let ((tokens0, s'), (pos, _)) = flip State.runState (0, 0) $ Lexing.runLexing $ Lexing.lex Lexing.semanticActions s in
-  let tokens = layout (State.evalState (preprocess tokens0) (0, True)) 0 [] (0, 0) in
-    tokens
