@@ -97,12 +97,15 @@ preprocess' (Right token : tokens) = do
       else
         preprocessKw Of token tokens
     _ ->
-      if isFirst then do
+      if isFirst && notIn token then do
         tokens' <- preprocess' tokens
         return $ Chevron m : Token token : tokens'
       else do
         tokens' <- preprocess' tokens
         return $ Token token : tokens'
+      where
+        notIn (Parsing.IN _) = False
+        notIn _ = True
 
 preprocessKw :: LayoutContext -> Parsing.Token -> [Either (Parsing.Pos, String) Parsing.Token] -> State.State (Int, Bool) [Token]
 preprocessKw cxt kw [] = return [Token kw, Zero]
