@@ -113,7 +113,9 @@ preprocessKw cxt kw (Left (_, "\n") : tokens) = do { State.put (0, True); prepro
 preprocessKw cxt kw (Left (_, "\r") : tokens) = do { State.put (0, True); preprocessKw cxt kw tokens }
 preprocessKw cxt kw (Left (_, "\n\r") : tokens) = do { State.put (0, True); preprocessKw cxt kw tokens }
 preprocessKw cxt kw (Left (_, sp) : tokens) = do { State.modify (\(i, first) -> (i + calcWidth sp, first)); preprocessKw cxt kw tokens }
-preprocessKw cxt kw (Right token : tokens) =
+preprocessKw cxt kw (Right token : tokens) = do
+  State.modify $ \(i, _) -> (i, False) -- to avoid inserting <n>
+
   case token of
     Parsing.LBRACE _ -> do
       tokens' <- preprocess' $ Right token : tokens
