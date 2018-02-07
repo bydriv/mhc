@@ -118,6 +118,64 @@ posOf (TILDA pos) = pos
 posOf (UNDERSCORE pos) = pos
 posOf (WHERE pos) = pos
 
+showToken :: Token -> String
+showToken (AS _) = "as"
+showToken (AT _) = "@"
+showToken (BACKQUOTE _) = "`"
+showToken (CASE _) = "case"
+showToken (CHAR (_, c)) = show c
+showToken (CLASS _) = "class"
+showToken (COLON_COLON _) = "::"
+showToken (COMMA _) = ","
+showToken (DARROW _) = "=>"
+showToken (DATA _) = "data"
+showToken (DEFAULT _) = "default"
+showToken (DERIVING _) = "deriving"
+showToken (DO _) = "do"
+showToken (DOT_DOT _) = ".."
+showToken (ELSE _) = "else"
+showToken (EQUAL _) = "="
+showToken (EXCL _) = "!"
+showToken (EXPORT _) = "export"
+showToken (FLOAT (_, f)) = show f
+showToken (FOREIGN _) = "foreign"
+showToken (HIDING _) = "hiding"
+showToken (IMPORT _) = "import"
+showToken (IF _) = "if"
+showToken (IN _) = "in"
+showToken (INFIX _) = "infix"
+showToken (INFIXL _) = "infixl"
+showToken (INFIXR _) = "infixr"
+showToken (INSTANCE _) = "instance"
+showToken (INTEGER (_, i)) = show i
+showToken (LAMBDA _) = "\\"
+showToken (LARROW _) = "<-"
+showToken (LBRACE _) = "{"
+showToken (LBRACKET _) = "["
+showToken (LET _) = "let"
+showToken (LPAREN _) = "("
+showToken (MINUS _) = "-"
+showToken (MODULE _) = "module"
+showToken (NEWTYPE _) = "newtype"
+showToken (OF _) = "of"
+showToken (PIPE _) = "|"
+showToken (QCONID (_, qconid)) = qconid
+showToken (QCONSYM (_, qconsym)) = qconsym
+showToken (QUALIFIED _) = "qualified"
+showToken (QVARID (_, qvarid)) = qvarid
+showToken (QVARSYM (_, qvarsym)) = qvarsym
+showToken (RARROW _) = "->"
+showToken (RBRACE _) = "}"
+showToken (RBRACKET _) = "]"
+showToken (RPAREN _) = ")"
+showToken (SEMICOLON _) = ";"
+showToken (STRING (_, s)) = show s
+showToken (THEN _) = "then"
+showToken (TYPE _) = "type"
+showToken (TILDA _) = "~"
+showToken (UNDERSCORE _) = "_"
+showToken (WHERE _) = "where"
+
 data Token =
     AS AS
   | AT AT
