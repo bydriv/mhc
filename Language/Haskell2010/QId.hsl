@@ -1,0 +1,19 @@
+%module Language.Haskell2010.QId %where
+
+%%
+case (Initial, (Lu | Lt)((Ll | '_') | Lu | Lt | Nd | '\'')* '.') => saModId
+case (Initial, (Ll | '_')((Ll | '_') | Lu | Lt | Nd | '\'')*) => saVarId
+case (Initial, (Lu | Lt)((Ll | '_') | Lu | Lt | Nd | '\'')*) => saConId
+case (Initial, (['!'|'#'|'$'|'%'|'&'|'*'|'+'|'.'|'/'|'<'|'='|'>'|'?'|'@'|'\\'|'^'|'|'|'-'|'~']['!'|'#'|'$'|'%'|'&'|'*'|'+'|'.'|'/'|'<'|'='|'>'|'?'|'@'|'\\'|'^'|'|'|'-'|'~'|':']*)) =>
+  saVarSym
+case (Initial, (':'['!'|'#'|'$'|'%'|'&'|'*'|'+'|'.'|'/'|'<'|'='|'>'|'?'|'@'|'\\'|'^'|'|'|'-'|'~'|':']*)) =>
+  saConSym
+%%
+
+semanticActions :: Monad m => SemanticActions m String
+semanticActions = SemanticActions
+  { saModId = return . init
+  , saVarId = return
+  , saConId = return
+  , saVarSym = return
+  , saConSym = return }
