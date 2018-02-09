@@ -51,14 +51,8 @@ case (Initial, '+') => initialPlus
 case (Initial, '?') => initialQues
 case (Initial, '(') => initialLParen
 case (Initial, ')') => initialRParen
-case (Initial, '"'([^'"']|"\\\"")*'"') => initialString
-case (Initial, "'\\t'") => initialHT
-case (Initial, "'\\n'") => initialLF
-case (Initial, "'\\v'") => initialVT
-case (Initial, "'\\f'") => initialFF
-case (Initial, "'\\r'") => initialCR
-case (Initial, "'\\''") => initialSingleQuote
-case (Initial, '\''[^'\'']*'\'') => initialChar
+case (Initial, '"' ([^ '"' '\\'] | '\\' (['a'|'b'|'f'|'n'|'r'|'t'|'v'|'\\'|'"'|'\''|'&']|"NUL"|"SOH"|"STX"|"ETX"|"EOT"|"ENQ"|"ACK"|"BEL"|"BS"|"HT"|"LF"|"VT"|"FF"|"CR"|"SO"|"SI"|"DLE"|"DC1"|"DC2"|"DC3"|"DC4"|"NAK"|"SYN"|"ETB"|"CAN"|"EM"|"SUB"|"ESC"|"FS"|"GS"|"RS"|"US"|"SP"|"DEL"|Nd+|'o'['0'-'7']+|'x'(Nd | ['a'-'f'] | ['A'-'F'])+) | '\\' ("\r\n" | '\r' | '\n' | '\f' | '\v' | ' ' | '\t' | Zs)+ '\\')* '"') => initialString
+case (Initial, '\'' ([^ '\'' '\\'] | '\\' (['a'|'b'|'f'|'n'|'r'|'t'|'v'|'\\'|'"'|'\'']|"NUL"|"SOH"|"STX"|"ETX"|"EOT"|"ENQ"|"ACK"|"BEL"|"BS"|"HT"|"LF"|"VT"|"FF"|"CR"|"SO"|"SI"|"DLE"|"DC1"|"DC2"|"DC3"|"DC4"|"NAK"|"SYN"|"ETB"|"CAN"|"EM"|"SUB"|"ESC"|"FS"|"GS"|"RS"|"US"|"SP"|"DEL"|Nd+|'o'['0'-'7']+|'x'(Nd | ['a'-'f'] | ['A'-'F'])+)) '\'') => initialChar
 case (Initial, "%{") => initialPLBrace
 case (Initial, "%module") => initialPModule
 case (Initial, "%%") => initialPP
@@ -68,7 +62,6 @@ case (Initial, "%}") => initialPRBrace
 case (Initial, (Ll | '_')((Ll | '_') | Lu | Lt | Nd | '\'')*) => initialSemanticAction
 case (Initial, (Lu | Lt)((Ll | '_') | Lu | Lt | Nd | '\'')*) => initialLexingState
 case (Initial, .) => initialCode
-
 case (Rule, Zs) => ruleSpace
 case (Rule, "\r\n" | '\r' | '\n' | '\f') => ruleNewline
 case (Rule, '.') => ruleAny
@@ -114,14 +107,8 @@ case (Rule, '+') => rulePlus
 case (Rule, '?') => ruleQues
 case (Rule, '(') => ruleLParen
 case (Rule, ')') => ruleRParen
-case (Rule, '"'([^'"']|"\\\"")*'"') => ruleString
-case (Rule, "'\\t'") => ruleHT
-case (Rule, "'\\n'") => ruleLF
-case (Rule, "'\\v'") => ruleVT
-case (Rule, "'\\f'") => ruleFF
-case (Rule, "'\\r'") => ruleCR
-case (Rule, "'\\''") => ruleSingleQuote
-case (Rule, '\''[^'\'']*'\'') => ruleChar
+case (Rule, '"' ([^ '"' '\\'] | '\\' (['a'|'b'|'f'|'n'|'r'|'t'|'v'|'\\'|'"'|'\''|'&']|"NUL"|"SOH"|"STX"|"ETX"|"EOT"|"ENQ"|"ACK"|"BEL"|"BS"|"HT"|"LF"|"VT"|"FF"|"CR"|"SO"|"SI"|"DLE"|"DC1"|"DC2"|"DC3"|"DC4"|"NAK"|"SYN"|"ETB"|"CAN"|"EM"|"SUB"|"ESC"|"FS"|"GS"|"RS"|"US"|"SP"|"DEL"|Nd+|'o'['0'-'7']+|'x'(Nd | ['a'-'f'] | ['A'-'F'])+) | '\\' ("\r\n" | '\r' | '\n' | '\f' | '\v' | ' ' | '\t' | Zs)+ '\\')* '"') => ruleString
+case (Rule, '\'' ([^ '\'' '\\'] | '\\' (['a'|'b'|'f'|'n'|'r'|'t'|'v'|'\\'|'"'|'\'']|"NUL"|"SOH"|"STX"|"ETX"|"EOT"|"ENQ"|"ACK"|"BEL"|"BS"|"HT"|"LF"|"VT"|"FF"|"CR"|"SO"|"SI"|"DLE"|"DC1"|"DC2"|"DC3"|"DC4"|"NAK"|"SYN"|"ETB"|"CAN"|"EM"|"SUB"|"ESC"|"FS"|"GS"|"RS"|"US"|"SP"|"DEL"|Nd+|'o'['0'-'7']+|'x'(Nd | ['a'-'f'] | ['A'-'F'])+)) '\'') => ruleChar
 case (Rule, "%{") => rulePLBrace
 case (Rule, "%module") => rulePModule
 case (Rule, "%%") => rulePP
@@ -188,14 +175,8 @@ semanticActions = SemanticActions
   , initialQues = const $ return $ Just $ Parsing.QUES ()
   , initialLParen = const $ return $ Just $ Parsing.LPAREN ()
   , initialRParen = const $ return $ Just $ Parsing.RPAREN ()
-  , initialString = return . Just . Parsing.STRING . unescapeString . init . tail
-  , initialChar = return . Just . Parsing.CHAR . head . init . tail
-  , initialHT = const $ return $ Just $ Parsing.CHAR $ '\t'
-  , initialLF = const $ return $ Just $ Parsing.CHAR $ '\n'
-  , initialVT = const $ return $ Just $ Parsing.CHAR $ '\v'
-  , initialFF = const $ return $ Just $ Parsing.CHAR $ '\f'
-  , initialCR = const $ return $ Just $ Parsing.CHAR $ '\r'
-  , initialSingleQuote = const $ return $ Just $ Parsing.CHAR $ '\''
+  , initialString = return . Just . Parsing.STRING . read
+  , initialChar = return . Just . Parsing.CHAR . read
   , initialPLBrace = const $ do { yybegin Code; return $ Just $ Parsing.PLBRACE () }
   , initialPModule = const $ do { yybegin Code; return $ Just $ Parsing.PMODULE () }
   , initialPP = const $ do { yybegin Rule; return $ Just $ Parsing.PP () }
@@ -250,14 +231,8 @@ semanticActions = SemanticActions
   , ruleQues = const $ return $ Just $ Parsing.QUES ()
   , ruleLParen = const $ return $ Just $ Parsing.LPAREN ()
   , ruleRParen = const $ return $ Just $ Parsing.RPAREN ()
-  , ruleString = return . Just . Parsing.STRING  . unescapeString . init . tail
-  , ruleHT = const $ return $ Just $ Parsing.CHAR $ '\t'
-  , ruleLF = const $ return $ Just $ Parsing.CHAR $ '\n'
-  , ruleVT = const $ return $ Just $ Parsing.CHAR $ '\v'
-  , ruleFF = const $ return $ Just $ Parsing.CHAR $ '\f'
-  , ruleCR = const $ return $ Just $ Parsing.CHAR $ '\r'
-  , ruleSingleQuote = const $ return $ Just $ Parsing.CHAR $ '\''
-  , ruleChar = return . Just . Parsing.CHAR . head . init . tail
+  , ruleString = return . Just . Parsing.STRING . read
+  , ruleChar = return . Just . Parsing.CHAR . read
   , rulePLBrace = const $ do { yybegin Code; return $ Just $ Parsing.PLBRACE () }
   , rulePModule = const $ do { yybegin Code; return $ Just $ Parsing.PMODULE () }
   , rulePP = const $ do { yybegin Code; return $ Just $ Parsing.PP () }
@@ -273,19 +248,3 @@ semanticActions = SemanticActions
   , codePWhere = const $ do { yybegin Initial; return $ Just $ Parsing.PWHERE () }
   , codePRBrace = const $ do { yybegin Initial; return $ Just $ Parsing.PRBRACE () }
   , codeCode = return . Just . Parsing.CODE . head }
-  where
-    unescapeString [] = []
-    unescapeString ('\\' : 't' : s) =
-      '\t' : unescapeString s
-    unescapeString ('\\' : 'n' : s) =
-      '\n' : unescapeString s
-    unescapeString ('\\' : 'v' : s) =
-      '\v' : unescapeString s
-    unescapeString ('\\' : 'f' : s) =
-      '\f' : unescapeString s
-    unescapeString ('\\' : 'r' : s) =
-      '\r' : unescapeString s
-    unescapeString ('\\' : c : s) =
-      c : unescapeString s
-    unescapeString (c : s) =
-      c : unescapeString s

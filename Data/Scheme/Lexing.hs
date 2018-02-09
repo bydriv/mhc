@@ -61,272 +61,6 @@ runLexing = Monad.liftM fst . flip unLexing Initial
 yybegin :: Monad m => LexingState -> Lexing m ()
 yybegin s = Lexing $ const $ return ((), s)
 
-dfaInitialInitialState :: Int
-dfaInitialInitialState = 1
-
-dfaInitialFinalStates :: [Int]
-dfaInitialFinalStates = [2,3,4,5,6,7,8,10,11,12,19]
-
-dfaInitialTransition :: Int -> Char -> Int
-dfaInitialTransition q c =
-  let c' :: Int
-      c' =
-        case Char.ord c of
-          9 -> 2
-          10 -> 3
-          13 -> 4
-          32 -> 5
-          33 -> 6
-          35 -> 7
-          36 -> 8
-          37 -> 9
-          38 -> 10
-          39 -> 11
-          40 -> 12
-          41 -> 13
-          42 -> 14
-          43 -> 15
-          44 -> 16
-          45 -> 17
-          46 -> 18
-          47 -> 19
-          58 -> 21
-          59 -> 22
-          60 -> 23
-          61 -> 24
-          62 -> 25
-          63 -> 26
-          64 -> 27
-          94 -> 29
-          95 -> 30
-          96 -> 31
-          97 -> 32
-          101 -> 34
-          102 -> 35
-          108 -> 36
-          114 -> 37
-          115 -> 38
-          116 -> 39
-          117 -> 40
-          124 -> 41
-          126 -> 42
-          c'' ->
-            if any (\(c1, c2) -> c1 <= c'' && c'' <= c2) [(0,8),(11,12),(14,31),(34,34),(91,93),(123,123),(125,125),(127,1114111)] then 1
-            else if 48 <= c'' && c'' <= 57 then 20
-            else if 65 <= c'' && c'' <= 90 then 28
-            else if any (\(c1, c2) -> c1 <= c'' && c'' <= c2) [(98,100),(103,107),(109,113),(118,122)] then 33
-            else 0 in
-    case (q, c') of
-      (1, 0) -> 2
-      (1, 2) -> 3
-      (1, 3) -> 3
-      (1, 4) -> 4
-      (1, 5) -> 3
-      (1, 6) -> 5
-      (1, 7) -> 6
-      (1, 8) -> 5
-      (1, 9) -> 5
-      (1, 10) -> 5
-      (1, 11) -> 3
-      (1, 12) -> 3
-      (1, 13) -> 3
-      (1, 14) -> 5
-      (1, 16) -> 7
-      (1, 18) -> 3
-      (1, 19) -> 5
-      (1, 21) -> 5
-      (1, 22) -> 8
-      (1, 23) -> 5
-      (1, 24) -> 5
-      (1, 25) -> 5
-      (1, 26) -> 5
-      (1, 28) -> 5
-      (1, 29) -> 5
-      (1, 30) -> 5
-      (1, 31) -> 3
-      (1, 32) -> 5
-      (1, 33) -> 5
-      (1, 34) -> 5
-      (1, 35) -> 5
-      (1, 36) -> 5
-      (1, 37) -> 5
-      (1, 38) -> 5
-      (1, 39) -> 5
-      (1, 40) -> 5
-      (1, 41) -> 9
-      (1, 42) -> 5
-      (2, 0) -> 8
-      (2, 1) -> 8
-      (2, 2) -> 8
-      (2, 3) -> 3
-      (2, 5) -> 8
-      (2, 6) -> 8
-      (2, 7) -> 8
-      (2, 8) -> 8
-      (2, 9) -> 8
-      (2, 10) -> 8
-      (2, 11) -> 8
-      (2, 12) -> 8
-      (2, 13) -> 8
-      (2, 14) -> 8
-      (2, 15) -> 8
-      (2, 16) -> 8
-      (2, 17) -> 8
-      (2, 18) -> 8
-      (2, 19) -> 8
-      (2, 20) -> 8
-      (2, 21) -> 8
-      (2, 22) -> 8
-      (2, 23) -> 8
-      (2, 24) -> 8
-      (2, 25) -> 8
-      (2, 26) -> 8
-      (2, 27) -> 8
-      (2, 28) -> 8
-      (2, 29) -> 8
-      (2, 30) -> 8
-      (2, 31) -> 8
-      (2, 32) -> 8
-      (2, 33) -> 8
-      (2, 34) -> 8
-      (2, 35) -> 8
-      (2, 36) -> 8
-      (2, 37) -> 8
-      (2, 38) -> 8
-      (2, 39) -> 8
-      (2, 40) -> 8
-      (2, 41) -> 8
-      (2, 42) -> 8
-      (4, 0) -> 3
-      (4, 3) -> 3
-      (5, 0) -> 5
-      (5, 6) -> 5
-      (5, 8) -> 5
-      (5, 9) -> 5
-      (5, 10) -> 5
-      (5, 14) -> 5
-      (5, 15) -> 5
-      (5, 17) -> 5
-      (5, 18) -> 5
-      (5, 19) -> 5
-      (5, 20) -> 5
-      (5, 21) -> 5
-      (5, 23) -> 5
-      (5, 24) -> 5
-      (5, 25) -> 5
-      (5, 26) -> 5
-      (5, 27) -> 5
-      (5, 28) -> 5
-      (5, 29) -> 5
-      (5, 30) -> 5
-      (5, 32) -> 5
-      (5, 33) -> 5
-      (5, 34) -> 5
-      (5, 35) -> 5
-      (5, 36) -> 5
-      (5, 37) -> 5
-      (5, 38) -> 5
-      (5, 39) -> 5
-      (5, 40) -> 5
-      (5, 42) -> 5
-      (6, 0) -> 10
-      (6, 22) -> 3
-      (6, 35) -> 11
-      (6, 39) -> 12
-      (6, 41) -> 3
-      (7, 0) -> 3
-      (7, 27) -> 3
-      (8, 0) -> 8
-      (8, 1) -> 8
-      (8, 2) -> 8
-      (8, 5) -> 8
-      (8, 6) -> 8
-      (8, 7) -> 8
-      (8, 8) -> 8
-      (8, 9) -> 8
-      (8, 10) -> 8
-      (8, 11) -> 8
-      (8, 12) -> 8
-      (8, 13) -> 8
-      (8, 14) -> 8
-      (8, 15) -> 8
-      (8, 16) -> 8
-      (8, 17) -> 8
-      (8, 18) -> 8
-      (8, 19) -> 8
-      (8, 20) -> 8
-      (8, 21) -> 8
-      (8, 22) -> 8
-      (8, 23) -> 8
-      (8, 24) -> 8
-      (8, 25) -> 8
-      (8, 26) -> 8
-      (8, 27) -> 8
-      (8, 28) -> 8
-      (8, 29) -> 8
-      (8, 30) -> 8
-      (8, 31) -> 8
-      (8, 32) -> 8
-      (8, 33) -> 8
-      (8, 34) -> 8
-      (8, 35) -> 8
-      (8, 36) -> 8
-      (8, 37) -> 8
-      (8, 38) -> 8
-      (8, 39) -> 8
-      (8, 40) -> 8
-      (8, 41) -> 8
-      (8, 42) -> 8
-      (9, 0) -> 3
-      (9, 7) -> 3
-      (10, 0) -> 13
-      (10, 32) -> 14
-      (10, 37) -> 15
-      (11, 0) -> 14
-      (11, 32) -> 14
-      (12, 0) -> 15
-      (12, 37) -> 15
-      (13, 0) -> 16
-      (13, 36) -> 17
-      (13, 40) -> 18
-      (14, 0) -> 17
-      (14, 36) -> 17
-      (15, 0) -> 18
-      (15, 40) -> 18
-      (16, 0) -> 19
-      (16, 34) -> 3
-      (16, 38) -> 18
-      (17, 0) -> 18
-      (17, 38) -> 18
-      (18, 0) -> 3
-      (18, 34) -> 3
-      (19, 0) -> 3
-      (19, 34) -> 3
-      _ -> 0
-
-dfaNestedCommentInitialState :: Int
-dfaNestedCommentInitialState = 1
-
-dfaNestedCommentFinalStates :: [Int]
-dfaNestedCommentFinalStates = [2,3,4]
-
-dfaNestedCommentTransition :: Int -> Char -> Int
-dfaNestedCommentTransition q c =
-  let c' :: Int
-      c' =
-        case Char.ord c of
-          35 -> 1
-          124 -> 2
-          c'' ->
-            0 in
-    case (q, c') of
-      (1, 0) -> 2
-      (1, 1) -> 3
-      (1, 2) -> 4
-      (3, 2) -> 2
-      (4, 1) -> 2
-      _ -> 0
-
 dfa0InitialState :: Int
 dfa0InitialState = 1
 
@@ -786,6 +520,8 @@ match :: Int -> [Int] -> (Int -> Char -> Int) -> String -> Maybe Int
 match initialState finalStates transition = match' 0 Nothing initialState
   where
     match' :: Int -> Maybe Int -> Int -> String -> Maybe Int
+    match' _ r 0 _ =
+      r
     match' i r q s =
       let r' =
             if q `elem` finalStates then
@@ -804,105 +540,107 @@ lex actions = lex' where
   lex' s = do
     p <- Lexing $ \p -> return (p, p)
     if p == Initial then
-      case match dfaInitialInitialState dfaInitialFinalStates dfaInitialTransition s of
-        Nothing ->
+      case max (match dfa0InitialState dfa0FinalStates dfa0Transition s, -0) $ max (match dfa1InitialState dfa1FinalStates dfa1Transition s, -1) $ max (match dfa2InitialState dfa2FinalStates dfa2Transition s, -2) $ max (match dfa3InitialState dfa3FinalStates dfa3Transition s, -3) $ max (match dfa4InitialState dfa4FinalStates dfa4Transition s, -4) $ max (match dfa5InitialState dfa5FinalStates dfa5Transition s, -5) $ max (match dfa6InitialState dfa6FinalStates dfa6Transition s, -6) $ max (match dfa7InitialState dfa7FinalStates dfa7Transition s, -7) $ max (match dfa8InitialState dfa8FinalStates dfa8Transition s, -8) $ max (match dfa9InitialState dfa9FinalStates dfa9Transition s, -9) $ max (match dfa10InitialState dfa10FinalStates dfa10Transition s, -10) $ max (match dfa11InitialState dfa11FinalStates dfa11Transition s, -11) $ max (match dfa12InitialState dfa12FinalStates dfa12Transition s, -12) $ max (match dfa13InitialState dfa13FinalStates dfa13Transition s, -13) $ max (match dfa14InitialState dfa14FinalStates dfa14Transition s, -14) $ max (match dfa15InitialState dfa15FinalStates dfa15Transition s, -15) $ max (match dfa16InitialState dfa16FinalStates dfa16Transition s, -16) $ (Nothing, 1 :: Int) of
+        (Nothing, _) ->
           return ([], s)
-        Just 0 ->
+        (Just 0, _) ->
           return ([], s)
-        Just i ->
+        (Just i, j) ->
           let (yytext, s') = splitAt i s in
-            if match dfa0InitialState dfa0FinalStates dfa0Transition s == Just i then do
-              x <- saWhitespace actions yytext
-              (xs, s'') <- lex' s'
-              return (x : xs, s'')
-            else if match dfa1InitialState dfa1FinalStates dfa1Transition s == Just i then do
-              x <- saComment actions yytext
-              (xs, s'') <- lex' s'
-              return (x : xs, s'')
-            else if match dfa2InitialState dfa2FinalStates dfa2Transition s == Just i then do
-              x <- saOpenNestedComment actions yytext
-              (xs, s'') <- lex' s'
-              return (x : xs, s'')
-            else if match dfa3InitialState dfa3FinalStates dfa3Transition s == Just i then do
-              x <- saCloseNestedComment actions yytext
-              (xs, s'') <- lex' s'
-              return (x : xs, s'')
-            else if match dfa4InitialState dfa4FinalStates dfa4Transition s == Just i then do
-              x <- saExprComment actions yytext
-              (xs, s'') <- lex' s'
-              return (x : xs, s'')
-            else if match dfa5InitialState dfa5FinalStates dfa5Transition s == Just i then do
-              x <- saEqual actions yytext
-              (xs, s'') <- lex' s'
-              return (x : xs, s'')
-            else if match dfa6InitialState dfa6FinalStates dfa6Transition s == Just i then do
-              x <- saSharp actions yytext
-              (xs, s'') <- lex' s'
-              return (x : xs, s'')
-            else if match dfa7InitialState dfa7FinalStates dfa7Transition s == Just i then do
-              x <- saLParen actions yytext
-              (xs, s'') <- lex' s'
-              return (x : xs, s'')
-            else if match dfa8InitialState dfa8FinalStates dfa8Transition s == Just i then do
-              x <- saRParen actions yytext
-              (xs, s'') <- lex' s'
-              return (x : xs, s'')
-            else if match dfa9InitialState dfa9FinalStates dfa9Transition s == Just i then do
-              x <- saDot actions yytext
-              (xs, s'') <- lex' s'
-              return (x : xs, s'')
-            else if match dfa10InitialState dfa10FinalStates dfa10Transition s == Just i then do
-              x <- saQuote actions yytext
-              (xs, s'') <- lex' s'
-              return (x : xs, s'')
-            else if match dfa11InitialState dfa11FinalStates dfa11Transition s == Just i then do
-              x <- saBackquote actions yytext
-              (xs, s'') <- lex' s'
-              return (x : xs, s'')
-            else if match dfa12InitialState dfa12FinalStates dfa12Transition s == Just i then do
-              x <- saComma actions yytext
-              (xs, s'') <- lex' s'
-              return (x : xs, s'')
-            else if match dfa13InitialState dfa13FinalStates dfa13Transition s == Just i then do
-              x <- saCommaAt actions yytext
-              (xs, s'') <- lex' s'
-              return (x : xs, s'')
-            else if match dfa14InitialState dfa14FinalStates dfa14Transition s == Just i then do
-              x <- saTrue actions yytext
-              (xs, s'') <- lex' s'
-              return (x : xs, s'')
-            else if match dfa15InitialState dfa15FinalStates dfa15Transition s == Just i then do
-              x <- saFalse actions yytext
-              (xs, s'') <- lex' s'
-              return (x : xs, s'')
-            else if match dfa16InitialState dfa16FinalStates dfa16Transition s == Just i then do
-              x <- saIdentifier actions yytext
-              (xs, s'') <- lex' s'
-              return (x : xs, s'')
-            else
-              return ([], s)
+            case j of
+              -0 -> do
+                x <- saWhitespace actions yytext
+                (xs, s'') <- lex' s'
+                return (x : xs, s'')
+              -1 -> do
+                x <- saComment actions yytext
+                (xs, s'') <- lex' s'
+                return (x : xs, s'')
+              -2 -> do
+                x <- saOpenNestedComment actions yytext
+                (xs, s'') <- lex' s'
+                return (x : xs, s'')
+              -3 -> do
+                x <- saCloseNestedComment actions yytext
+                (xs, s'') <- lex' s'
+                return (x : xs, s'')
+              -4 -> do
+                x <- saExprComment actions yytext
+                (xs, s'') <- lex' s'
+                return (x : xs, s'')
+              -5 -> do
+                x <- saEqual actions yytext
+                (xs, s'') <- lex' s'
+                return (x : xs, s'')
+              -6 -> do
+                x <- saSharp actions yytext
+                (xs, s'') <- lex' s'
+                return (x : xs, s'')
+              -7 -> do
+                x <- saLParen actions yytext
+                (xs, s'') <- lex' s'
+                return (x : xs, s'')
+              -8 -> do
+                x <- saRParen actions yytext
+                (xs, s'') <- lex' s'
+                return (x : xs, s'')
+              -9 -> do
+                x <- saDot actions yytext
+                (xs, s'') <- lex' s'
+                return (x : xs, s'')
+              -10 -> do
+                x <- saQuote actions yytext
+                (xs, s'') <- lex' s'
+                return (x : xs, s'')
+              -11 -> do
+                x <- saBackquote actions yytext
+                (xs, s'') <- lex' s'
+                return (x : xs, s'')
+              -12 -> do
+                x <- saComma actions yytext
+                (xs, s'') <- lex' s'
+                return (x : xs, s'')
+              -13 -> do
+                x <- saCommaAt actions yytext
+                (xs, s'') <- lex' s'
+                return (x : xs, s'')
+              -14 -> do
+                x <- saTrue actions yytext
+                (xs, s'') <- lex' s'
+                return (x : xs, s'')
+              -15 -> do
+                x <- saFalse actions yytext
+                (xs, s'') <- lex' s'
+                return (x : xs, s'')
+              -16 -> do
+                x <- saIdentifier actions yytext
+                (xs, s'') <- lex' s'
+                return (x : xs, s'')
+              _ ->
+                return ([], s)
     else if p == NestedComment then
-      case match dfaNestedCommentInitialState dfaNestedCommentFinalStates dfaNestedCommentTransition s of
-        Nothing ->
+      case max (match dfa17InitialState dfa17FinalStates dfa17Transition s, -17) $ max (match dfa18InitialState dfa18FinalStates dfa18Transition s, -18) $ max (match dfa19InitialState dfa19FinalStates dfa19Transition s, -19) $ (Nothing, 1 :: Int) of
+        (Nothing, _) ->
           return ([], s)
-        Just 0 ->
+        (Just 0, _) ->
           return ([], s)
-        Just i ->
+        (Just i, j) ->
           let (yytext, s') = splitAt i s in
-            if match dfa17InitialState dfa17FinalStates dfa17Transition s == Just i then do
-              x <- saOpenNestedComment actions yytext
-              (xs, s'') <- lex' s'
-              return (x : xs, s'')
-            else if match dfa18InitialState dfa18FinalStates dfa18Transition s == Just i then do
-              x <- saCloseNestedComment actions yytext
-              (xs, s'') <- lex' s'
-              return (x : xs, s'')
-            else if match dfa19InitialState dfa19FinalStates dfa19Transition s == Just i then do
-              x <- saNestedComment actions yytext
-              (xs, s'') <- lex' s'
-              return (x : xs, s'')
-            else
-              return ([], s)
+            case j of
+              -17 -> do
+                x <- saOpenNestedComment actions yytext
+                (xs, s'') <- lex' s'
+                return (x : xs, s'')
+              -18 -> do
+                x <- saCloseNestedComment actions yytext
+                (xs, s'') <- lex' s'
+                return (x : xs, s'')
+              -19 -> do
+                x <- saNestedComment actions yytext
+                (xs, s'') <- lex' s'
+                return (x : xs, s'')
+              _ ->
+                return ([], s)
     else
       return ([], s)
 
