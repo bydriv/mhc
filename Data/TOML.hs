@@ -10,7 +10,7 @@ type TOML = Parsing.Toml
 
 parse :: String -> Maybe TOML
 parse s =
-  let (tokens0, s') = flip State.evalState (0, 0) $ Lexing.runLexing $ Lexing.lex Lexing.semanticActions s in
+  let (tokens0, s') = flip State.evalState (0, 0, 0) $ Lexing.runLexing $ Lexing.lex Lexing.semanticActions s in
     case s' of
       [] ->
         let tokens = Maybe.catMaybes tokens0 in

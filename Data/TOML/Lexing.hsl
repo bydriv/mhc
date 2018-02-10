@@ -28,17 +28,32 @@ case (Initial, '}') => saRBrace
 case (Initial, ['a'-'z'|'A'-'Z'|'0'-'9'|'-'|'_']+) => saUnquotedKey
 %%
 
-withPosition :: (Int -> Int -> String -> Lexing (State.State (Int, Int)) (Maybe Parsing.Token)) -> String -> Lexing (State.State (Int, Int)) (Maybe Parsing.Token)
+inc :: Lexing (State.State (Int, Int, Int)) ()
+inc =
+  MonadTrans.lift $ State.modify $ \(i, pos, nest) ->
+    (i + 1, pos, nest)
+
+dec :: Lexing (State.State (Int, Int, Int)) ()
+dec =
+  MonadTrans.lift $ State.modify $ \(i, pos, nest) ->
+    (max 0 (i - 1), pos, nest)
+
+withPosition :: (Int -> Int -> String -> Lexing (State.State (Int, Int, Int)) (Maybe Parsing.Token)) -> String -> Lexing (State.State (Int, Int, Int)) (Maybe Parsing.Token)
 withPosition f yytext = do
   let n = length yytext
-  (pos, nest) <- MonadTrans.lift State.get
-  MonadTrans.lift $ State.put (pos + n, nest)
+  (i, pos, nest) <- MonadTrans.lift State.get
+  MonadTrans.lift $ State.put (i, pos + n, nest)
   f pos n yytext
 
-semanticActions :: SemanticActions (State.State (Int, Int)) (Maybe Parsing.Token)
+semanticActions :: SemanticActions (State.State (Int, Int, Int)) (Maybe Parsing.Token)
 semanticActions = SemanticActions
   { saWs = withPosition $ \_ _ _ -> return Nothing
-  , saNewline = withPosition $ \pos n _ -> return $ Just $ Parsing.NEWLINE (pos, n)
+  , saNewline = withPosition $ \pos n _ -> do
+      (i, _, _) <- MonadTrans.lift State.get
+      if i == 0 then
+        return $ Just $ Parsing.NEWLINE (pos, n)
+      else
+        return Nothing
   , saBasicString = withPosition $ \pos n yytext ->
       return $ Just $ Parsing.BASIC_STRING ((pos, n), unescape $ init $ tail $ yytext)
   , saMLBasicString = withPosition $ \pos n yytext ->
@@ -61,10 +76,10 @@ semanticActions = SemanticActions
        return $ Just $ Parsing.FLOAT ((pos, n), val)
   , saInteger = withPosition $ \pos n yytext ->
       return $ Just $ Parsing.INTEGER ((pos, n), read $ toHsInt yytext)
-  , saLBracket = withPosition $ \pos n _ -> return $ Just $ Parsing.LBRACKET (pos, n)
-  , saLBrace = withPosition $ \pos n _ -> return $ Just $ Parsing.LBRACE (pos, n)
-  , saRBracket = withPosition $ \pos n _ -> return $ Just $ Parsing.RBRACKET (pos, n)
-  , saRBrace = withPosition $ \pos n _ -> return $ Just $ Parsing.RBRACE (pos, n)
+  , saLBracket = withPosition $ \pos n _ -> do { inc; return $ Just $ Parsing.LBRACKET (pos, n) }
+  , saLBrace = withPosition $ \pos n _ -> do { inc; return $ Just $ Parsing.LBRACE (pos, n) }
+  , saRBracket = withPosition $ \pos n _ -> do { dec; return $ Just $ Parsing.RBRACKET (pos, n) }
+  , saRBrace = withPosition $ \pos n _ -> do { dec; return $ Just $ Parsing.RBRACE (pos, n) }
   , saUnquotedKey = withPosition $ \pos n yytext -> return $ Just $ Parsing.UNQUOTED_KEY ((pos, n), yytext)
   , saLiteralString = withPosition $ \pos n yytext ->
       return $ Just $ Parsing.LITERAL_STRING ((pos, n), take (length yytext - 6) $ drop 3 $ yytext)
