@@ -13,7 +13,9 @@
 # You should have received a copy of the GNU General Public License
 # along with MHC.  If not, see <http://www.gnu.org/licenses/>.
 
-[libraries]
+[libraries.haskell2010]
 
-"Control.Monad" = "Control/Monad.hs"
-"Data.List" = "Data/List.hs"
+files = [
+  "Control/Monad.hs"
+, "Data/List.hs"
+]
