@@ -34,6 +34,7 @@ data Val =
   | TOMLBoolean Bool
   | TOMLArray [Val]
   | TOMLInlineTable (RBMap.RBMap SimpleKey Val)
+  | TOMLDateTime String
   | TOMLFloat Double
   | TOMLInteger Int.Int64
   deriving (Eq, Ord, Read, Show)
@@ -490,7 +491,7 @@ semanticActions = SemanticActions
   , val_implies_BOOLEAN = return . TOMLBoolean . snd
   , val_implies_array = return . TOMLArray
   , val_implies_inlineTable = return . TOMLInlineTable
-  , val_implies_DATE_TIME = \_ -> undefined -- TODO.
+  , val_implies_DATE_TIME = return . TOMLDateTime . snd
   , val_implies_FLOAT = return . TOMLFloat . snd
   , val_implies_INTEGER = return . TOMLInteger . snd
   , string'_implies_ML_BASIC_STRING = return . snd
