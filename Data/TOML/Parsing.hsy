@@ -177,9 +177,9 @@ semanticActions = SemanticActions
             let m'' = insert dottedKey1 val m' in
             let a' =
                   if length a == i then
-                    TOMLInlineTable m'' : a
+                    a ++ [TOMLInlineTable m'']
                   else
-                    TOMLInlineTable m'' : tail a in
+                    init a ++ [TOMLInlineTable m''] in
               f (Right (k, i)) exps (insert dottedKey (TOMLArray a') m)
 
           lookup [] m = m
