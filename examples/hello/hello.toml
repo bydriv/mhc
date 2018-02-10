@@ -1,0 +1,4 @@
+[executables.hello]
+
+use = ["haskell2010"]
+main = "Hello.hs"
