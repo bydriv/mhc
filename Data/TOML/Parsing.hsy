@@ -1,0 +1,299 @@
+%module Data.TOML.Parsing %where
+
+%start toml
+
+%{
+import Prelude hiding
+  (lookup)
+import qualified Data.Int   as Int
+import qualified Data.Maybe as Maybe
+import qualified Data.RBMap as RBMap
+
+type Pos = (Int, Int)
+type BASIC_STRING = (Pos, String)
+type BOOLEAN = (Pos, Bool)
+type COMMA = Pos
+type DATE_TIME = (Pos, String)
+type DOT = Pos
+type EQUAL = Pos
+type FLOAT = (Pos, Double)
+type INTEGER = (Pos, Int.Int64)
+type LBRACKET = Pos
+type LBRACE = Pos
+type LITERAL_STRING = (Pos, String)
+type ML_BASIC_STRING = (Pos, String)
+type ML_LITERAL_STRING = (Pos, String)
+type NEWLINE = Pos
+type RBRACKET = Pos
+type RBRACE = Pos
+type UNQUOTED_KEY = (Pos, String)
+
+type TOML = RBMap.RBMap SimpleKey Val
+
+data Val =
+    TOMLString String
+  | TOMLBoolean Bool
+  | TOMLArray [Val]
+  | TOMLInlineTable (RBMap.RBMap SimpleKey Val)
+  | TOMLFloat Double
+  | TOMLInteger Int.Int64
+  deriving (Eq, Ord, Read, Show)
+
+type Toml = TOML
+type Expressions = [Expression]
+type Expression = Maybe (Either Keyval Table)
+type Keyval = (Key, Val)
+type Key = Either SimpleKey DottedKey
+type SimpleKey = String
+type QuotedKey = String
+type DottedKey = [SimpleKey]
+type String' = String
+type Array = [Val]
+type ArrayValues = [Val]
+type Table = Either StdTable ArrayTable
+type StdTable = Key
+type ArrayTable = Key
+type InlineTable = RBMap.RBMap SimpleKey Val
+type InlineTableKeyVals = [Keyval]
+%}
+
+%%
+
+def rule toml :=
+  expressions
+
+def rule expressions :=
+  expression
+| expression NEWLINE expressions
+
+def rule expression :=
+| keyval
+| table
+
+def rule keyval :=
+  key EQUAL val
+
+def rule key :=
+  simpleKey
+| dottedKey
+
+def rule simpleKey :=
+  quotedKey
+| UNQUOTED_KEY
+
+def rule quotedKey :=
+  BASIC_STRING
+| LITERAL_STRING
+
+def rule dottedKey :=
+  simpleKey DOT simpleKey
+| simpleKey DOT dottedKey
+
+def rule val :=
+  string'
+| BOOLEAN
+| array
+| inlineTable
+| DATE_TIME
+| FLOAT
+| INTEGER
+
+def rule string' :=
+  ML_BASIC_STRING
+| BASIC_STRING
+| ML_LITERAL_STRING
+| LITERAL_STRING
+
+def rule array :=
+  LBRACKET RBRACKET
+| LBRACKET arrayValues RBRACKET
+
+def rule arrayValues :=
+  val
+| val COMMA arrayValues
+
+def rule table :=
+  stdTable
+| arrayTable
+
+def rule stdTable :=
+  LBRACKET key RBRACKET
+
+def rule inlineTable :=
+  LBRACE RBRACE
+| LBRACE inlineTableKeyVals RBRACE
+
+def rule inlineTableKeyVals :=
+  keyval
+| keyval COMMA inlineTableKeyVals
+
+def rule arrayTable :=
+  LBRACKET LBRACKET key RBRACKET RBRACKET
+%%
+
+semanticActions :: Monad m => SemanticActions m
+semanticActions = SemanticActions
+  { toml_implies_expressions = \expressions ->
+      let f _ [] m = m
+          f (Right (k1, i)) (Right (Right k2) : exps) m
+            | k1 == k2 = f (Right (k1, i + 1)) exps m
+          f _ (Right (Left key) : exps) m = f (Left key) exps m
+          f _ (Right (Right key) : exps) m = f (Right (key, 0)) exps m
+          f (Left k) (Left (key, val) : exps) m =
+            let dottedKey =
+                  case k of
+                    Left k' -> [k']
+                    Right dkey -> dkey in
+            let dottedKey1 =
+                  case key of
+                    Left k' -> [k']
+                    Right dkey -> dkey in
+            let m' = lookup dottedKey m in
+            let m'' = insert dottedKey1 val m' in
+              case dottedKey of
+                [] ->
+                  f (Left k) exps m''
+                _ ->
+                  f (Left k) exps (insert dottedKey (TOMLInlineTable m'') m)
+          f (Right (k, i)) (Left (key, val) : exps) m =
+            let dottedKey =
+                  case k of
+                    Left k' -> [k']
+                    Right dkey -> dkey in
+            let dottedKey1 =
+                  case key of
+                    Left k' -> [k']
+                    Right dkey -> dkey in
+            let a = lookupArray dottedKey m in
+            let m' =
+                  if length a == i then
+                    RBMap.empty
+                  else
+                    case head a of
+                      TOMLInlineTable m ->
+                        m
+                      _ ->
+                        RBMap.empty in
+            let m'' = insert dottedKey1 val m' in
+            let a' =
+                  if length a == i then
+                    TOMLInlineTable m'' : a
+                  else
+                    TOMLInlineTable m'' : tail a in
+              f (Right (k, i)) exps (insert dottedKey (TOMLArray a') m)
+
+          lookup [] m = m
+          lookup (k : ks) m =
+            case RBMap.lookup k m of
+              Nothing ->
+                RBMap.empty
+              Just (TOMLInlineTable m') ->
+                lookup ks m'
+              Just _ ->
+                RBMap.empty
+
+          lookupArray [] m = undefined
+          lookupArray [k] m =
+            case RBMap.lookup k m of
+              Nothing ->
+                []
+              Just (TOMLArray a) ->
+                a
+              Just _ ->
+                []
+          lookupArray (k : ks) m =
+            case RBMap.lookup k m of
+              Nothing ->
+                []
+              Just (TOMLInlineTable m') ->
+                lookupArray ks m'
+              Just _ ->
+                []
+
+          insert [] _ m = m
+          insert [k] v m = RBMap.insert k v m
+          insert (k : ks) v m =
+            let m'' =
+                  case RBMap.lookup k m of
+                    Nothing ->
+                      RBMap.empty
+                    Just (TOMLInlineTable m') ->
+                      m'
+                    Just _ ->
+                      RBMap.empty in
+              RBMap.insert k (TOMLInlineTable (insert ks v m'')) m in
+        return $ f (Left (Right [])) (Maybe.catMaybes expressions) RBMap.empty
+  , expressions_implies_expression = \exp -> return [exp]
+  , expressions_implies_expression_NEWLINE_expressions = \exp _ exps -> return $ exp : exps
+  , expression_implies = return Nothing
+  , expression_implies_keyval = return . Just . Left
+  , expression_implies_table = return . Just . Right
+  , keyval_implies_key_EQUAL_val = \key _ val ->
+      return (key, val)
+  , key_implies_simpleKey = return . Left
+  , key_implies_dottedKey = return . Right
+  , simpleKey_implies_quotedKey = return
+  , simpleKey_implies_UNQUOTED_KEY = return . snd
+  , quotedKey_implies_BASIC_STRING = return . snd
+  , quotedKey_implies_LITERAL_STRING = return . snd
+  , dottedKey_implies_simpleKey_DOT_simpleKey = \k1 _ k2 -> return [k1, k2]
+  , dottedKey_implies_simpleKey_DOT_dottedKey = \k _ ks -> return $ k : ks
+  , val_implies_string' = return . TOMLString
+  , val_implies_BOOLEAN = return . TOMLBoolean . snd
+  , val_implies_array = return . TOMLArray
+  , val_implies_inlineTable = return . TOMLInlineTable
+  , val_implies_DATE_TIME = \_ -> undefined -- TODO.
+  , val_implies_FLOAT = return . TOMLFloat . snd
+  , val_implies_INTEGER = return . TOMLInteger . snd
+  , string'_implies_ML_BASIC_STRING = return . snd
+  , string'_implies_BASIC_STRING = return . snd
+  , string'_implies_ML_LITERAL_STRING = return . snd
+  , string'_implies_LITERAL_STRING = return . snd
+  , array_implies_LBRACKET_RBRACKET = \_ _ -> return []
+  , array_implies_LBRACKET_arrayValues_RBRACKET = \_ vals _ -> return vals
+  , arrayValues_implies_val = \val -> return [val]
+  , arrayValues_implies_val_COMMA_arrayValues = \val _ vals -> return $ val : vals
+  , table_implies_stdTable = return . Left
+  , table_implies_arrayTable = return . Right
+  , stdTable_implies_LBRACKET_key_RBRACKET = \_ key _ -> return key
+  , inlineTable_implies_LBRACE_RBRACE = \_ _ -> return RBMap.empty
+  , inlineTable_implies_LBRACE_inlineTableKeyVals_RBRACE = \_ keyvals _ ->
+      let f [] m = m
+          f ((key, val) : kvs) m =
+            case key of
+              Left simpleKey ->
+                f kvs (RBMap.insert simpleKey val m)
+              Right dottedKey ->
+                let parent = init dottedKey in
+                let self = last dottedKey in
+                let m' = lookup parent m in
+                let m'' = RBMap.insert self val m' in
+                  f kvs (insert parent (TOMLInlineTable m'') m)
+
+          lookup [] m = m
+          lookup (k : ks) m =
+            case RBMap.lookup k m of
+              Nothing ->
+                RBMap.empty
+              Just (TOMLInlineTable m') ->
+                lookup ks m'
+              Just _ ->
+                RBMap.empty
+
+          insert [] _ m = m
+          insert [k] v m = RBMap.insert k v m
+          insert (k : ks) v m =
+            let m'' =
+                  case RBMap.lookup k m of
+                    Nothing ->
+                      RBMap.empty
+                    Just (TOMLInlineTable m') ->
+                      m'
+                    Just _ ->
+                      RBMap.empty in
+              RBMap.insert k (TOMLInlineTable (insert ks v m'')) m in
+        return $ f keyvals RBMap.empty
+  , inlineTableKeyVals_implies_keyval = \keyval -> return [keyval]
+  , inlineTableKeyVals_implies_keyval_COMMA_inlineTableKeyVals = \keyval _ keyvals -> return $ keyval : keyvals
+  , arrayTable_implies_LBRACKET_LBRACKET_key_RBRACKET_RBRACKET = \_ _ key _ _ -> return key
+  }

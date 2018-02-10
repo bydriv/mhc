@@ -1,0 +1,101 @@
+%module Data.TOML.Lexing %where
+
+%{
+import qualified Control.Monad.State as State
+import qualified Control.Monad.Trans as MonadTrans
+import qualified Data.Char           as Char
+import qualified Data.TOML.Parsing   as Parsing
+%}
+
+%%
+case (Initial, ' ' | '\t') => saWs
+case (Initial, '#' ['\x9'|'\x20'-'\x10FFFF']*) => saWs
+case (Initial, '"' (['\x20'-'\x21'|'\x23'-'\x5B'|'\x5D'-'\x7E'|'\x80'-'\x10FFFF'] | '\\' (['"'|'\\'|'/'|'b'|'f'|'n'|'r'|'t'] | 'u' ['0'-'9'|'A'-'F'|'a'-'f'] ['0'-'9'|'A'-'F'|'a'-'f'] ['0'-'9'|'A'-'F'|'a'-'f'] ['0'-'9'|'A'-'F'|'a'-'f'] | 'U' ['0'-'9'|'A'-'F'|'a'-'f'] ['0'-'9'|'A'-'F'|'a'-'f'] ['0'-'9'|'A'-'F'|'a'-'f'] ['0'-'9'|'A'-'F'|'a'-'f'] ['0'-'9'|'A'-'F'|'a'-'f'] ['0'-'9'|'A'-'F'|'a'-'f'] ['0'-'9'|'A'-'F'|'a'-'f'] ['0'-'9'|'A'-'F'|'a'-'f']))* '"') => saBasicString
+case (Initial, '"' '"' '"' (['\x20'-'\x5B'|'\x5D'-'\x7E'|'\x80'-'\x10FFFF'] | ('\n' | "\r\n") | '\\' ('\n' | "\r\n") | '\\' (['"'|'\\'|'/'|'b'|'f'|'n'|'r'|'t'] | 'u' ['0'-'9'|'A'-'F'|'a'-'f'] ['0'-'9'|'A'-'F'|'a'-'f'] ['0'-'9'|'A'-'F'|'a'-'f'] ['0'-'9'|'A'-'F'|'a'-'f'] | 'U' ['0'-'9'|'A'-'F'|'a'-'f'] ['0'-'9'|'A'-'F'|'a'-'f'] ['0'-'9'|'A'-'F'|'a'-'f'] ['0'-'9'|'A'-'F'|'a'-'f'] ['0'-'9'|'A'-'F'|'a'-'f'] ['0'-'9'|'A'-'F'|'a'-'f'] ['0'-'9'|'A'-'F'|'a'-'f'] ['0'-'9'|'A'-'F'|'a'-'f']))* '"' '"' '"') => saMLBasicString
+case (Initial, "'''" (['\x9'|'\x20'-'\x10FFFF'] | '\n' | "\r\n")* "'''") => saMLLiteralString
+case (Initial, "true" | "false") => saBool
+case (Initial, ',') => saComma
+case (Initial, '.') => saDot
+case (Initial, '=') => saEqual
+case (Initial, (('+'|'-')? ("inf"|"nan")) | ((('+'|'-')? (['0'-'9']|['1'-'9'](['0'-'9']|'_' ['0'-'9'])*)) ('e' (('+'|'-')? (['0'-'9']|['1'-'9'](['0'-'9']|'_' ['0'-'9'])*)) | '.' (('+'|'-')? (['0'-'9']|['0'-'9'](['0'-'9']|'_' ['0'-'9'])*)) ('e' (('+'|'-')? (['0'-'9']|['1'-'9'](['0'-'9']|'_' ['0'-'9'])*)))?))) => saFloat
+case (Initial, (('+'|'-')? (['0'-'9']|['1'-'9'](['0'-'9']|'_' ['0'-'9'])*)) | "0o" (['0'-'7']|['0'-'7'](['0'-'7']|'_' ['0'-'7'])*) | "0b" (['0'-'1']|['0'-'1'](['0'-'1']|'_' ['0'-'1'])*) | "0x" (['0'-'9'|'A'-'F'|'a'-'f']|['0'-'9'|'A'-'F'|'a'-'f'](['0'-'9'|'A'-'F'|'a'-'f']|'_' ['0'-'9'|'A'-'F'|'a'-'f'])*)) => saInteger
+case (Initial, '[') => saLBracket
+case (Initial, '{') => saLBrace
+case (Initial, "'" ['\x9'|'\x20'-'\x26'|'\x28'-'\x10FFFF']* "'") => saLiteralString
+case (Initial, '\n' | "\r\n") => saNewline
+case (Initial, ']') => saRBracket
+case (Initial, '}') => saRBrace
+case (Initial, ['a'-'z'|'A'-'Z'|'0'-'9'|'-'|'_']+) => saUnquotedKey
+%%
+
+withPosition :: (Int -> Int -> String -> Lexing (State.State (Int, Int)) (Maybe Parsing.Token)) -> String -> Lexing (State.State (Int, Int)) (Maybe Parsing.Token)
+withPosition f yytext = do
+  let n = length yytext
+  (pos, nest) <- MonadTrans.lift State.get
+  MonadTrans.lift $ State.put (pos + n, nest)
+  f pos n yytext
+
+semanticActions :: SemanticActions (State.State (Int, Int)) (Maybe Parsing.Token)
+semanticActions = SemanticActions
+  { saWs = withPosition $ \_ _ _ -> return Nothing
+  , saNewline = withPosition $ \pos n _ -> return $ Just $ Parsing.NEWLINE (pos, n)
+  , saBasicString = withPosition $ \pos n yytext ->
+      return $ Just $ Parsing.BASIC_STRING ((pos, n), unescape $ init $ tail $ yytext)
+  , saMLBasicString = withPosition $ \pos n yytext ->
+      return $ Just $ Parsing.ML_BASIC_STRING ((pos, n), unescape $ take (length yytext - 6) $ drop 3 $ yytext)
+  , saBool = withPosition $ \pos n yytext ->
+      return $ Just $ Parsing.BOOLEAN ((pos, n), yytext == "true")
+  , saComma = withPosition $ \pos n _ -> return $ Just $ Parsing.COMMA (pos, n)
+  , saDot = withPosition $ \pos n _ -> return $ Just $ Parsing.DOT (pos, n)
+  , saEqual = withPosition $ \pos n _ -> return $ Just $ Parsing.EQUAL (pos, n)
+  , saFloat = withPosition $ \pos n yytext ->
+      let val =
+            case yytext of
+              "inf" -> (1.0 / 0.0)
+              "+inf" -> (1.0 / 0.0)
+              "-inf" -> -(1.0 / 0.0)
+              "nan" -> -(0.0 / 0.0)
+              "+nan" -> -(0.0 / 0.0)
+              "-nan" -> (0.0 / 0.0)
+              _ -> read $ toHsInt yytext in
+       return $ Just $ Parsing.FLOAT ((pos, n), val)
+  , saInteger = withPosition $ \pos n yytext ->
+      return $ Just $ Parsing.INTEGER ((pos, n), read $ toHsInt yytext)
+  , saLBracket = withPosition $ \pos n _ -> return $ Just $ Parsing.LBRACKET (pos, n)
+  , saLBrace = withPosition $ \pos n _ -> return $ Just $ Parsing.LBRACE (pos, n)
+  , saRBracket = withPosition $ \pos n _ -> return $ Just $ Parsing.RBRACKET (pos, n)
+  , saRBrace = withPosition $ \pos n _ -> return $ Just $ Parsing.RBRACE (pos, n)
+  , saUnquotedKey = withPosition $ \pos n yytext -> return $ Just $ Parsing.UNQUOTED_KEY ((pos, n), yytext)
+  , saLiteralString = withPosition $ \pos n yytext ->
+      return $ Just $ Parsing.LITERAL_STRING ((pos, n), take (length yytext - 6) $ drop 3 $ yytext)
+  , saMLLiteralString = withPosition $ \pos n yytext ->
+      return $ Just $ Parsing.ML_LITERAL_STRING ((pos, n), init $ tail $ yytext)}
+  where
+    unescape "" = ""
+    unescape ('\\' : '"' : s) =
+      '"' : unescape s
+    unescape ('\\' : '\\' : s) =
+      '\\' : unescape s
+    unescape ('\\' : '/' : s) =
+      '/' : unescape s
+    unescape ('\\' : 'b' : s) =
+      '\b' : unescape s
+    unescape ('\\' : 'f' : s) =
+      '\f' : unescape s
+    unescape ('\\' : 'n' : s) =
+      '\n' : unescape s
+    unescape ('\\' : 'r' : s) =
+      '\r' : unescape s
+    unescape ('\\' : 't' : s) =
+      '\t' : unescape s
+    unescape ('\\' : 'u' : x1 : x2 : x3 : x4 : s) =
+      Char.chr (read ['0', 'x', x1, x2, x3, x4]) : unescape s
+    unescape ('\\' : 'U' : x1 : x2 : x3 : x4 : x5 : x6 : x7 : x8 : s) =
+      Char.chr (read ['0', 'x', x1, x2, x3, x4, x5, x6, x7, x8]) : unescape s
+    unescape (c : s) =
+      c : unescape s
+
+    toHsInt "" = ""
+    toHsInt ('_' : s) = toHsInt s
+    toHsInt ('+' : s) = toHsInt s
+    toHsInt (c : s) = c : toHsInt s
