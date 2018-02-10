@@ -111,6 +111,7 @@ def rule array :=
 
 def rule arrayValues :=
   val
+| val COMMA
 | val COMMA arrayValues
 
 def rule table :=
@@ -253,6 +254,7 @@ semanticActions = SemanticActions
   , array_implies_LBRACKET_RBRACKET = \_ _ -> return []
   , array_implies_LBRACKET_arrayValues_RBRACKET = \_ vals _ -> return vals
   , arrayValues_implies_val = \val -> return [val]
+  , arrayValues_implies_val_COMMA = \val _ -> return [val]
   , arrayValues_implies_val_COMMA_arrayValues = \val _ vals -> return $ val : vals
   , table_implies_stdTable = return . Left
   , table_implies_arrayTable = return . Right

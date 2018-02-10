@@ -18,7 +18,7 @@ case (Initial, ',') => saComma
 case (Initial, ['0'-'9']['0'-'9']['0'-'9']['0'-'9'] '-' ['0'-'9']['0'-'9'] '-' ['0'-'9']['0'-'9'] ('T'|'t'|' ') ['0'-'9']['0'-'9'] ':' ['0'-'9']['0'-'9'] ':' ['0'-'9']['0'-'9'] ('.' ['0'-'9']+)? ('Z' | ('+'|'-') ['0'-'9']['0'-'9'] ':' ['0'-'9']['0'-'9']) | ['0'-'9']['0'-'9']['0'-'9']['0'-'9'] '-' ['0'-'9']['0'-'9'] '-' ['0'-'9']['0'-'9'] ('T'|'t'|' ') ['0'-'9']['0'-'9'] ':' ['0'-'9']['0'-'9'] ':' ['0'-'9']['0'-'9'] ('.' ['0'-'9']+)? | ['0'-'9']['0'-'9']['0'-'9']['0'-'9'] '-' ['0'-'9']['0'-'9'] '-' ['0'-'9']['0'-'9'] | ['0'-'9']['0'-'9'] ':' ['0'-'9']['0'-'9'] ':' ['0'-'9']['0'-'9'] ('.' ['0'-'9']+)?) => saDateTime
 case (Initial, '.') => saDot
 case (Initial, '=') => saEqual
-case (Initial, (('+'|'-')? ("inf"|"nan")) | ((('+'|'-')? (['0'-'9']|['1'-'9'](['0'-'9']|'_' ['0'-'9'])*)) ('e' (('+'|'-')? (['0'-'9']|['1'-'9'](['0'-'9']|'_' ['0'-'9'])*)) | '.' (('+'|'-')? (['0'-'9']|['0'-'9'](['0'-'9']|'_' ['0'-'9'])*)) ('e' (('+'|'-')? (['0'-'9']|['1'-'9'](['0'-'9']|'_' ['0'-'9'])*)))?))) => saFloat
+case (Initial, (('+'|'-')? ("inf"|"nan")) | ((('+'|'-')? (['0'-'9']|['1'-'9'](['0'-'9']|'_' ['0'-'9'])*)) (('e'|'E') (('+'|'-')? (['0'-'9']|['1'-'9'](['0'-'9']|'_' ['0'-'9'])*)) | '.' (('+'|'-')? (['0'-'9']|['0'-'9'](['0'-'9']|'_' ['0'-'9'])*)) (('e'|'E') (('+'|'-')? (['0'-'9']|['1'-'9'](['0'-'9']|'_' ['0'-'9'])*)))?))) => saFloat
 case (Initial, (('+'|'-')? (['0'-'9']|['1'-'9'](['0'-'9']|'_' ['0'-'9'])*)) | "0o" (['0'-'7']|['0'-'7'](['0'-'7']|'_' ['0'-'7'])*) | "0b" (['0'-'1']|['0'-'1'](['0'-'1']|'_' ['0'-'1'])*) | "0x" (['0'-'9'|'A'-'F'|'a'-'f']|['0'-'9'|'A'-'F'|'a'-'f'](['0'-'9'|'A'-'F'|'a'-'f']|'_' ['0'-'9'|'A'-'F'|'a'-'f'])*)) => saInteger
 case (Initial, '[') => saLBracket
 case (Initial, '{') => saLBrace
@@ -56,9 +56,9 @@ semanticActions = SemanticActions
       else
         return Nothing
   , saBasicString = withPosition $ \pos n yytext ->
-      return $ Just $ Parsing.BASIC_STRING ((pos, n), unescape $ init $ tail $ yytext)
+      return $ Just $ Parsing.BASIC_STRING ((pos, n), unescape $ init $ tail yytext)
   , saMLBasicString = withPosition $ \pos n yytext ->
-      return $ Just $ Parsing.ML_BASIC_STRING ((pos, n), unescape $ take (length yytext - 6) $ drop 3 $ yytext)
+      return $ Just $ Parsing.ML_BASIC_STRING ((pos, n), unescape $ take (length yytext - 6) $ drop 3 yytext)
   , saBool = withPosition $ \pos n yytext ->
       return $ Just $ Parsing.BOOLEAN ((pos, n), yytext == "true")
   , saComma = withPosition $ \pos n _ -> return $ Just $ Parsing.COMMA (pos, n)
@@ -84,9 +84,9 @@ semanticActions = SemanticActions
   , saRBrace = withPosition $ \pos n _ -> do { dec; return $ Just $ Parsing.RBRACE (pos, n) }
   , saUnquotedKey = withPosition $ \pos n yytext -> return $ Just $ Parsing.UNQUOTED_KEY ((pos, n), yytext)
   , saLiteralString = withPosition $ \pos n yytext ->
-      return $ Just $ Parsing.LITERAL_STRING ((pos, n), take (length yytext - 6) $ drop 3 $ yytext)
+      return $ Just $ Parsing.LITERAL_STRING ((pos, n), init $ tail yytext)
   , saMLLiteralString = withPosition $ \pos n yytext ->
-      return $ Just $ Parsing.ML_LITERAL_STRING ((pos, n), init $ tail $ yytext)}
+      return $ Just $ Parsing.ML_LITERAL_STRING ((pos, n), take (length yytext - 6) $ drop 3 yytext)}
   where
     unescape "" = ""
     unescape ('\\' : '"' : s) =

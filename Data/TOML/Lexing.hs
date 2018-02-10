@@ -582,12 +582,13 @@ dfa10Transition q c =
           45 -> 2
           46 -> 3
           48 -> 4
-          95 -> 6
-          97 -> 7
-          101 -> 8
-          102 -> 9
-          105 -> 10
-          110 -> 11
+          69 -> 6
+          95 -> 7
+          97 -> 8
+          101 -> 9
+          102 -> 10
+          105 -> 11
+          110 -> 12
           c'' ->
             if 49 <= c'' && c'' <= 57 then 5
             else 0 in
@@ -596,21 +597,23 @@ dfa10Transition q c =
       (1, 2) -> 2
       (1, 4) -> 3
       (1, 5) -> 4
-      (1, 10) -> 5
-      (1, 11) -> 6
+      (1, 11) -> 5
+      (1, 12) -> 6
       (2, 4) -> 3
       (2, 5) -> 4
-      (2, 10) -> 5
-      (2, 11) -> 6
+      (2, 11) -> 5
+      (2, 12) -> 6
       (3, 3) -> 7
-      (3, 8) -> 8
+      (3, 6) -> 8
+      (3, 9) -> 8
       (4, 3) -> 7
       (4, 4) -> 4
       (4, 5) -> 4
-      (4, 6) -> 9
-      (4, 8) -> 8
-      (5, 11) -> 10
-      (6, 7) -> 11
+      (4, 6) -> 8
+      (4, 7) -> 9
+      (4, 9) -> 8
+      (5, 12) -> 10
+      (6, 8) -> 11
       (7, 1) -> 12
       (7, 2) -> 12
       (7, 4) -> 13
@@ -621,19 +624,20 @@ dfa10Transition q c =
       (8, 5) -> 16
       (9, 4) -> 4
       (9, 5) -> 4
-      (10, 9) -> 15
-      (11, 11) -> 15
+      (10, 10) -> 15
+      (11, 12) -> 15
       (12, 4) -> 13
       (12, 5) -> 13
       (13, 4) -> 13
       (13, 5) -> 13
-      (13, 6) -> 12
-      (13, 8) -> 8
+      (13, 6) -> 8
+      (13, 7) -> 12
+      (13, 9) -> 8
       (14, 4) -> 15
       (14, 5) -> 16
       (16, 4) -> 16
       (16, 5) -> 16
-      (16, 6) -> 17
+      (16, 7) -> 17
       (17, 4) -> 16
       (17, 5) -> 16
       _ -> 0
@@ -1036,9 +1040,9 @@ semanticActions = SemanticActions
       else
         return Nothing
   , saBasicString = withPosition $ \pos n yytext ->
-      return $ Just $ Parsing.BASIC_STRING ((pos, n), unescape $ init $ tail $ yytext)
+      return $ Just $ Parsing.BASIC_STRING ((pos, n), unescape $ init $ tail yytext)
   , saMLBasicString = withPosition $ \pos n yytext ->
-      return $ Just $ Parsing.ML_BASIC_STRING ((pos, n), unescape $ take (length yytext - 6) $ drop 3 $ yytext)
+      return $ Just $ Parsing.ML_BASIC_STRING ((pos, n), unescape $ take (length yytext - 6) $ drop 3 yytext)
   , saBool = withPosition $ \pos n yytext ->
       return $ Just $ Parsing.BOOLEAN ((pos, n), yytext == "true")
   , saComma = withPosition $ \pos n _ -> return $ Just $ Parsing.COMMA (pos, n)
@@ -1064,9 +1068,9 @@ semanticActions = SemanticActions
   , saRBrace = withPosition $ \pos n _ -> do { dec; return $ Just $ Parsing.RBRACE (pos, n) }
   , saUnquotedKey = withPosition $ \pos n yytext -> return $ Just $ Parsing.UNQUOTED_KEY ((pos, n), yytext)
   , saLiteralString = withPosition $ \pos n yytext ->
-      return $ Just $ Parsing.LITERAL_STRING ((pos, n), take (length yytext - 6) $ drop 3 $ yytext)
+      return $ Just $ Parsing.LITERAL_STRING ((pos, n), init $ tail yytext)
   , saMLLiteralString = withPosition $ \pos n yytext ->
-      return $ Just $ Parsing.ML_LITERAL_STRING ((pos, n), init $ tail $ yytext)}
+      return $ Just $ Parsing.ML_LITERAL_STRING ((pos, n), take (length yytext - 6) $ drop 3 yytext)}
   where
     unescape "" = ""
     unescape ('\\' : '"' : s) =
