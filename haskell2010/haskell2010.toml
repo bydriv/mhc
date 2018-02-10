@@ -1,0 +1,3 @@
+[libraries]
+
+Data.List = "Data/List.hs"

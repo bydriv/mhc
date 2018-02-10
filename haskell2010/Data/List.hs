@@ -13,7 +13,12 @@
 -- You should have received a copy of the GNU General Public License
 -- along with MHC.  If not, see <http://www.gnu.org/licenses/>.
 
-module Data.List where
+module Data.List
+  ( (++)
+  , head
+  , last
+  , tail
+  , init ) where
 
 (++) :: [a] -> [a] -> [a]
 [] ++ l = l
@@ -32,11 +37,3 @@ tail (_ : xs) = xs
 init :: [a] -> [a]
 init [x] = []
 init (x : xs) = x : init xs
-
-null :: [a] -> Bool
-null [] = True
-null (_ : _) = False
-
-length :: [a] -> Int
-length [] = 0
-length (_ : xs) = length xs + 1
