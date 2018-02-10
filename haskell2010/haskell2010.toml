@@ -15,5 +15,5 @@
 
 [libraries]
 
-Control.Monad = "Control/Monad.hs"
-Data.List = "Data/List.hs"
+"Control.Monad" = "Control/Monad.hs"
+"Data.List" = "Data/List.hs"
