@@ -33,7 +33,7 @@ data Val =
     TOMLString String
   | TOMLBoolean Bool
   | TOMLArray [Val]
-  | TOMLInlineTable (RBMap.RBMap SimpleKey Val)
+  | TOMLTable (RBMap.RBMap SimpleKey Val)
   | TOMLDateTime String
   | TOMLFloat Double
   | TOMLInteger Int.Int64
@@ -407,7 +407,7 @@ semanticActions = SemanticActions
                 [] ->
                   f (Left k) exps m''
                 _ ->
-                  f (Left k) exps (insert dottedKey (TOMLInlineTable m'') m)
+                  f (Left k) exps (insert dottedKey (TOMLTable m'') m)
           f (Right (k, i)) (Left (key, val) : exps) m =
             let dottedKey =
                   case k of
@@ -423,16 +423,16 @@ semanticActions = SemanticActions
                     RBMap.empty
                   else
                     case head a of
-                      TOMLInlineTable m ->
+                      TOMLTable m ->
                         m
                       _ ->
                         RBMap.empty in
             let m'' = insert dottedKey1 val m' in
             let a' =
                   if length a == i then
-                    a ++ [TOMLInlineTable m'']
+                    a ++ [TOMLTable m'']
                   else
-                    init a ++ [TOMLInlineTable m''] in
+                    init a ++ [TOMLTable m''] in
               f (Right (k, i)) exps (insert dottedKey (TOMLArray a') m)
 
           lookup [] m = m
@@ -440,7 +440,7 @@ semanticActions = SemanticActions
             case RBMap.lookup k m of
               Nothing ->
                 RBMap.empty
-              Just (TOMLInlineTable m') ->
+              Just (TOMLTable m') ->
                 lookup ks m'
               Just _ ->
                 RBMap.empty
@@ -458,7 +458,7 @@ semanticActions = SemanticActions
             case RBMap.lookup k m of
               Nothing ->
                 []
-              Just (TOMLInlineTable m') ->
+              Just (TOMLTable m') ->
                 lookupArray ks m'
               Just _ ->
                 []
@@ -470,11 +470,11 @@ semanticActions = SemanticActions
                   case RBMap.lookup k m of
                     Nothing ->
                       RBMap.empty
-                    Just (TOMLInlineTable m') ->
+                    Just (TOMLTable m') ->
                       m'
                     Just _ ->
                       RBMap.empty in
-              RBMap.insert k (TOMLInlineTable (insert ks v m'')) m in
+              RBMap.insert k (TOMLTable (insert ks v m'')) m in
         return $ f (Left (Right [])) (Maybe.catMaybes expressions) RBMap.empty
   , expressions_implies_expression = \exp -> return [exp]
   , expressions_implies_expression_NEWLINE_expressions = \exp _ exps -> return $ exp : exps
@@ -494,7 +494,7 @@ semanticActions = SemanticActions
   , val_implies_string' = return . TOMLString
   , val_implies_BOOLEAN = return . TOMLBoolean . snd
   , val_implies_array = return . TOMLArray
-  , val_implies_inlineTable = return . TOMLInlineTable
+  , val_implies_inlineTable = return . TOMLTable
   , val_implies_DATE_TIME = return . TOMLDateTime . snd
   , val_implies_FLOAT = return . TOMLFloat . snd
   , val_implies_INTEGER = return . TOMLInteger . snd
@@ -522,14 +522,14 @@ semanticActions = SemanticActions
                 let self = last dottedKey in
                 let m' = lookup parent m in
                 let m'' = RBMap.insert self val m' in
-                  f kvs (insert parent (TOMLInlineTable m'') m)
+                  f kvs (insert parent (TOMLTable m'') m)
 
           lookup [] m = m
           lookup (k : ks) m =
             case RBMap.lookup k m of
               Nothing ->
                 RBMap.empty
-              Just (TOMLInlineTable m') ->
+              Just (TOMLTable m') ->
                 lookup ks m'
               Just _ ->
                 RBMap.empty
@@ -541,11 +541,11 @@ semanticActions = SemanticActions
                   case RBMap.lookup k m of
                     Nothing ->
                       RBMap.empty
-                    Just (TOMLInlineTable m') ->
+                    Just (TOMLTable m') ->
                       m'
                     Just _ ->
                       RBMap.empty in
-              RBMap.insert k (TOMLInlineTable (insert ks v m'')) m in
+              RBMap.insert k (TOMLTable (insert ks v m'')) m in
         return $ f keyvals RBMap.empty
   , inlineTableKeyVals_implies_keyval = \keyval -> return [keyval]
   , inlineTableKeyVals_implies_keyval_COMMA_inlineTableKeyVals = \keyval _ keyvals -> return $ keyval : keyvals
