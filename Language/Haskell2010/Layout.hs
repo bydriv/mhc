@@ -1,8 +1,6 @@
 module Language.Haskell2010.Layout where
 
 import qualified Control.Monad.State          as State
-import qualified Data.Char                    as Char
-import qualified Language.Haskell2010.Lexing  as Lexing
 import qualified Language.Haskell2010.Parsing as Parsing
 
 data LayoutContext =
@@ -15,8 +13,7 @@ data LayoutContext =
   deriving (Eq, Ord, Show, Read)
 
 data Token =
-    Zero
-  | Brace LayoutContext Int
+    Brace LayoutContext Int
   | Chevron Int
   | Token Parsing.Token
   deriving (Eq, Ord, Show, Read)
@@ -36,12 +33,12 @@ preprocess (Right token : tokens) =
   case token of
     Parsing.MODULE _ -> do
       let (_, n) = Parsing.posOf token
-      State.modify (\(i, first) -> (i + n, False))
+      State.modify (\(i, _) -> (i + n, False))
       tokens' <- preprocess' tokens
       return $ Token token : tokens'
     Parsing.LBRACE _ -> do
       let (_, n) = Parsing.posOf token
-      State.modify (\(i, first) -> (i + n, False))
+      State.modify (\(i, _) -> (i + n, False))
       tokens' <- preprocess' tokens
       return $ Token token : tokens'
     _ ->
@@ -69,7 +66,7 @@ preprocess' (Right token : tokens) = do
   m <- State.gets fst
 
   let (_, n) = Parsing.posOf token
-  State.modify (\(i, first) -> (i + n, False))
+  State.modify (\(i, _) -> (i + n, False))
 
   case token of
     Parsing.LET _ ->
@@ -108,7 +105,7 @@ preprocess' (Right token : tokens) = do
         notIn _ = True
 
 preprocessKw :: LayoutContext -> Parsing.Token -> [Either (Parsing.Pos, String) Parsing.Token] -> State.State (Int, Bool) [Token]
-preprocessKw cxt kw [] = return [Token kw, Zero]
+preprocessKw cxt kw [] = return [Token kw, Brace cxt 0]
 preprocessKw cxt kw (Left (_, "\n") : tokens) = do { State.put (0, True); preprocessKw cxt kw tokens }
 preprocessKw cxt kw (Left (_, "\r") : tokens) = do { State.put (0, True); preprocessKw cxt kw tokens }
 preprocessKw cxt kw (Left (_, "\n\r") : tokens) = do { State.put (0, True); preprocessKw cxt kw tokens }
@@ -129,7 +126,7 @@ layout :: [Token] -> Int -> [(LayoutContext, Int, Int)] -> Parsing.Pos -> [Parsi
 layout (Chevron n : ts) i ((mcxt, m, j) : ms) pos
   | m == n = Parsing.SEMICOLON pos : layout ts i ((mcxt, m, j) : ms) pos
   | n < m = Parsing.RBRACE pos : layout (Chevron n : ts) i ms pos
-layout (Chevron n : ts) i ms pos =
+layout (Chevron _ : ts) i ms pos =
   layout ts i ms pos
 layout (Brace ncxt n : ts) i ((mcxt, m, j) : ms) pos
   | n > m = Parsing.LBRACE pos : layout ts i ((ncxt, n, i) : (mcxt, m, j) : ms) pos
@@ -151,7 +148,7 @@ layout (Token token@(Parsing.RBRACE _) : ts) i ms _ =
         undefined
   where
     countDropClose [] = 0
-    countDropClose ((Unknown, _, _) : stack) = 0
+    countDropClose ((Unknown, _, _) : _) = 0
     countDropClose ((_, _, j) : stack)
       | i > j = 0
       | otherwise = countDropClose stack + 1
@@ -197,9 +194,9 @@ layout (Token token : ts) i ((mcxt, m, j) : ms) pos
     isClose _ = False
 
     countDropClose [] = 0
-    countDropClose ((Unknown, _, _) : stack) = 0
-    countDropClose ((_, _, j) : stack)
-      | i > j = 0
+    countDropClose ((Unknown, _, _) : _) = 0
+    countDropClose ((_, _, j') : stack)
+      | i > j' = 0
       | otherwise = countDropClose stack + 1
 layout (Token token : ts) i ms _
   | isOpen token = token : (layout ts (i+1) ms (Parsing.posOf token))
