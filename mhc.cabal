@@ -7,7 +7,7 @@ library
   hs-source-dirs: .
   default-language: Haskell2010
   build-depends: base
-  ghc-options: -Wall -O3
+  ghc-options: -Wall -Werror -O3
   default-extensions: Safe, Strict, StrictData
   exposed-modules:
       Control.Monad.CodeGenerating
@@ -31,7 +31,7 @@ executable mhc
   main-is: tools/mhc.hs
   default-language: Haskell2010
   build-depends: base, mhc
-  ghc-options: -Wall -O3
+  ghc-options: -Wall -Werror -O3
   default-extensions: Safe, Strict, StrictData
   other-modules:
       Control.Monad.CodeGenerating
@@ -52,7 +52,7 @@ executable hslex
   main-is: tools/hslex.hs
   default-language: Haskell2010
   build-depends: base, mhc
-  ghc-options: -Wall -O3
+  ghc-options: -Wall -Werror -O3
   default-extensions: Safe, Strict, StrictData
   other-modules:
       Control.Monad.CodeGenerating
@@ -73,7 +73,7 @@ executable hsyacc
   main-is: tools/hsyacc.hs
   default-language: Haskell2010
   build-depends: base, mhc
-  ghc-options: -Wall -O3
+  ghc-options: -Wall -Werror -O3
   default-extensions: Safe, Strict, StrictData
   other-modules:
       Control.Monad.CodeGenerating
@@ -94,7 +94,7 @@ executable hstokenize
   main-is: tools/hstokenize.hs
   default-language: Haskell2010
   build-depends: base, mhc
-  ghc-options: -Wall -O3
+  ghc-options: -Wall -Werror -O3
   default-extensions: Safe, Strict, StrictData
   other-modules:
       Control.Monad.CodeGenerating
