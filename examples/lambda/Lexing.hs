@@ -60,7 +60,7 @@ dfa0Transition q c =
       c' =
         case Char.ord c of
           955 -> 1
-          c'' ->
+          _ ->
             0 in
     case (q, c') of
       (1, 1) -> 2
@@ -78,7 +78,7 @@ dfa1Transition q c =
       c' =
         case Char.ord c of
           46 -> 1
-          c'' ->
+          _ ->
             0 in
     case (q, c') of
       (1, 1) -> 2
@@ -96,7 +96,7 @@ dfa2Transition q c =
       c' =
         case Char.ord c of
           40 -> 1
-          c'' ->
+          _ ->
             0 in
     case (q, c') of
       (1, 1) -> 2
@@ -114,7 +114,7 @@ dfa3Transition q c =
       c' =
         case Char.ord c of
           41 -> 1
-          c'' ->
+          _ ->
             0 in
     case (q, c') of
       (1, 1) -> 2

@@ -114,7 +114,7 @@ dfa1Transition q c =
           10 -> 1
           12 -> 2
           13 -> 3
-          c'' ->
+          _ ->
             0 in
     case (q, c') of
       (1, 1) -> 2
@@ -136,7 +136,7 @@ dfa2Transition q c =
         case Char.ord c of
           58 -> 1
           61 -> 2
-          c'' ->
+          _ ->
             0 in
     case (q, c') of
       (1, 1) -> 2
@@ -157,7 +157,7 @@ dfa3Transition q c =
           100 -> 1
           101 -> 2
           102 -> 3
-          c'' ->
+          _ ->
             0 in
     case (q, c') of
       (1, 1) -> 2
@@ -178,7 +178,7 @@ dfa4Transition q c =
         case Char.ord c of
           37 -> 1
           123 -> 2
-          c'' ->
+          _ ->
             0 in
     case (q, c') of
       (1, 1) -> 2
@@ -203,7 +203,7 @@ dfa5Transition q c =
           109 -> 5
           111 -> 6
           117 -> 7
-          c'' ->
+          _ ->
             0 in
     case (q, c') of
       (1, 1) -> 2
@@ -227,7 +227,7 @@ dfa6Transition q c =
       c' =
         case Char.ord c of
           37 -> 1
-          c'' ->
+          _ ->
             0 in
     case (q, c') of
       (1, 1) -> 2
@@ -246,7 +246,7 @@ dfa7Transition q c =
       c' =
         case Char.ord c of
           124 -> 1
-          c'' ->
+          _ ->
             0 in
     case (q, c') of
       (1, 1) -> 2
@@ -268,7 +268,7 @@ dfa8Transition q c =
           104 -> 3
           114 -> 4
           119 -> 5
-          c'' ->
+          _ ->
             0 in
     case (q, c') of
       (1, 1) -> 2
@@ -295,7 +295,7 @@ dfa9Transition q c =
           114 -> 3
           115 -> 4
           116 -> 5
-          c'' ->
+          _ ->
             0 in
     case (q, c') of
       (1, 1) -> 2
@@ -324,7 +324,7 @@ dfa10Transition q c =
           114 -> 5
           116 -> 6
           118 -> 7
-          c'' ->
+          _ ->
             0 in
     case (q, c') of
       (1, 1) -> 2
@@ -350,7 +350,7 @@ dfa11Transition q c =
         case Char.ord c of
           37 -> 1
           125 -> 2
-          c'' ->
+          _ ->
             0 in
     case (q, c') of
       (1, 1) -> 2
@@ -372,7 +372,7 @@ dfa12Transition q c =
           108 -> 2
           114 -> 3
           117 -> 4
-          c'' ->
+          _ ->
             0 in
     case (q, c') of
       (1, 3) -> 2
@@ -452,7 +452,7 @@ dfa15Transition q c =
   let c' :: Int
       c' =
         case Char.ord c of
-          c'' ->
+          _ ->
             0 in
     case (q, c') of
       (1, 0) -> 2
@@ -490,7 +490,7 @@ dfa17Transition q c =
           10 -> 1
           12 -> 2
           13 -> 3
-          c'' ->
+          _ ->
             0 in
     case (q, c') of
       (1, 1) -> 2
@@ -512,7 +512,7 @@ dfa18Transition q c =
         case Char.ord c of
           58 -> 1
           61 -> 2
-          c'' ->
+          _ ->
             0 in
     case (q, c') of
       (1, 1) -> 2
@@ -533,7 +533,7 @@ dfa19Transition q c =
           100 -> 1
           101 -> 2
           102 -> 3
-          c'' ->
+          _ ->
             0 in
     case (q, c') of
       (1, 1) -> 2
@@ -554,7 +554,7 @@ dfa20Transition q c =
         case Char.ord c of
           37 -> 1
           123 -> 2
-          c'' ->
+          _ ->
             0 in
     case (q, c') of
       (1, 1) -> 2
@@ -579,7 +579,7 @@ dfa21Transition q c =
           109 -> 5
           111 -> 6
           117 -> 7
-          c'' ->
+          _ ->
             0 in
     case (q, c') of
       (1, 1) -> 2
@@ -603,7 +603,7 @@ dfa22Transition q c =
       c' =
         case Char.ord c of
           37 -> 1
-          c'' ->
+          _ ->
             0 in
     case (q, c') of
       (1, 1) -> 2
@@ -622,7 +622,7 @@ dfa23Transition q c =
       c' =
         case Char.ord c of
           124 -> 1
-          c'' ->
+          _ ->
             0 in
     case (q, c') of
       (1, 1) -> 2
@@ -644,7 +644,7 @@ dfa24Transition q c =
           104 -> 3
           114 -> 4
           119 -> 5
-          c'' ->
+          _ ->
             0 in
     case (q, c') of
       (1, 1) -> 2
@@ -671,7 +671,7 @@ dfa25Transition q c =
           114 -> 3
           115 -> 4
           116 -> 5
-          c'' ->
+          _ ->
             0 in
     case (q, c') of
       (1, 1) -> 2
@@ -700,7 +700,7 @@ dfa26Transition q c =
           114 -> 5
           116 -> 6
           118 -> 7
-          c'' ->
+          _ ->
             0 in
     case (q, c') of
       (1, 1) -> 2
@@ -726,7 +726,7 @@ dfa27Transition q c =
         case Char.ord c of
           37 -> 1
           125 -> 2
-          c'' ->
+          _ ->
             0 in
     case (q, c') of
       (1, 1) -> 2
@@ -748,7 +748,7 @@ dfa28Transition q c =
           108 -> 2
           114 -> 3
           117 -> 4
-          c'' ->
+          _ ->
             0 in
     case (q, c') of
       (1, 3) -> 2
@@ -828,7 +828,7 @@ dfa31Transition q c =
   let c' :: Int
       c' =
         case Char.ord c of
-          c'' ->
+          _ ->
             0 in
     case (q, c') of
       (1, 0) -> 2
@@ -847,7 +847,7 @@ dfa32Transition q c =
         case Char.ord c of
           37 -> 1
           123 -> 2
-          c'' ->
+          _ ->
             0 in
     case (q, c') of
       (1, 1) -> 2
@@ -872,7 +872,7 @@ dfa33Transition q c =
           109 -> 5
           111 -> 6
           117 -> 7
-          c'' ->
+          _ ->
             0 in
     case (q, c') of
       (1, 1) -> 2
@@ -896,7 +896,7 @@ dfa34Transition q c =
       c' =
         case Char.ord c of
           37 -> 1
-          c'' ->
+          _ ->
             0 in
     case (q, c') of
       (1, 1) -> 2
@@ -919,7 +919,7 @@ dfa35Transition q c =
           104 -> 3
           114 -> 4
           119 -> 5
-          c'' ->
+          _ ->
             0 in
     case (q, c') of
       (1, 1) -> 2
@@ -946,7 +946,7 @@ dfa36Transition q c =
           114 -> 3
           115 -> 4
           116 -> 5
-          c'' ->
+          _ ->
             0 in
     case (q, c') of
       (1, 1) -> 2
@@ -975,7 +975,7 @@ dfa37Transition q c =
           114 -> 5
           116 -> 6
           118 -> 7
-          c'' ->
+          _ ->
             0 in
     case (q, c') of
       (1, 1) -> 2
@@ -1001,7 +1001,7 @@ dfa38Transition q c =
         case Char.ord c of
           37 -> 1
           125 -> 2
-          c'' ->
+          _ ->
             0 in
     case (q, c') of
       (1, 1) -> 2
@@ -1019,7 +1019,7 @@ dfa39Transition q c =
   let c' :: Int
       c' =
         case Char.ord c of
-          c'' ->
+          _ ->
             0 in
     case (q, c') of
       (1, 0) -> 2

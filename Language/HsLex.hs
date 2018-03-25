@@ -541,7 +541,10 @@ generateDFATransition prefix dfaTransition' =
             CodeGenerating.write "\n"
         _ ->
           return ()
-    CodeGenerating.write "          c'' ->\n"
+    if null (filter ((/= 0) . snd) notSingletons) then
+      CodeGenerating.write "          _ ->\n"
+    else
+      CodeGenerating.write "          c'' ->\n"
     CodeGenerating.write "            "
     Monad.forM_ (filter ((/= 0) . snd) notSingletons) $ \(ranges, i) ->
       case ranges of
