@@ -178,7 +178,7 @@ isNullable nullable (N n) = RBSet.member n nullable
 
 firstSet :: (Ord t, Ord n) => [Symbol t n] -> Sets t n -> RBSet.RBSet t
 firstSet [] _ = RBSet.empty
-firstSet (T t : ss) (_, first, _) = maybe RBSet.empty id $ RBMap.lookup (T t) first
+firstSet (T t : _) (_, first, _) = maybe RBSet.empty id $ RBMap.lookup (T t) first
 firstSet (N n : ss) sets @ (nullable, first, _) =
   if RBSet.member n nullable then
     RBSet.union (maybe RBSet.empty id $ RBMap.lookup (N n) first) (firstSet ss sets)
@@ -222,14 +222,14 @@ closure
       (RBSet.RBSet (Item t n))
       m
       (RBSet.RBSet (Item t n))
-closure sets @ (_, first, _) grm = memo $ \items ->
+closure sets grm = memo $ \items ->
     return $ closure' items RBSet.empty
   where
     closure' items1 items2 =
       let items3 =
             RBSet.fromList
               (concatMap
-                (\(left, middle, right, lookahead) ->
+                (\(_, _, right, lookahead) ->
                   case right of
                     [] ->
                       []
@@ -296,7 +296,7 @@ makeTable start grm0 =
   let actionTable2list =
         map
           (\(p, lookahead, left, right) ->
-            let q = maybe undefined fst $ List.find (\(i, (left', right')) -> left' == left && right' == right) $ zip [0..] grm in
+            let q = maybe undefined fst $ List.find (\(_, (left', right')) -> left' == left && right' == right) $ zip [0..] grm in
               ((p, lookahead), Reduce (q - 1)))
           (RBSet.toList reduces) in
   let actionTable2 = RBMap.fromList $ actionTable2list in
@@ -316,11 +316,11 @@ makeTable start grm0 =
             foldl
               (\(states0, edges0, mem0) (items, i) ->
                 RBSet.foldl
-                  (\(left, middle, right, lookahead) (states1, edges1, mem1) ->
+                  (\(_, _, right, _) (states1, edges1, mem1) ->
                     case right of
                       [] ->
                         (states1, edges1, mem1)
-                      symbol : ss ->
+                      symbol : _ ->
                         case symbol of
                           T Dollar ->
                             (states1, edges1, mem1)
@@ -663,7 +663,7 @@ generateParser trivial modid start0 header footer grm0 = do
     CodeGenerating.write "\n"
 
     CodeGenerating.write "production :: Int -> Int\n"
-    Monad.forM_ (zip grm [(0 :: Int)..]) $ \((left, right), i) -> do
+    Monad.forM_ (zip grm [(0 :: Int)..]) $ \((left, _), i) -> do
       CodeGenerating.write "production "
       CodeGenerating.write $ show i
       CodeGenerating.write " = "
