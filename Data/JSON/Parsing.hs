@@ -57,6 +57,7 @@ data Token =
 data Action = Shift Int | Reduce Int Int | Accept
 type ActionState = Int
 data ActionSymbol = Token Token | EOF
+  deriving (Eq, Ord, Read, Show)
 type GotoState = Int
 type GotoSymbol = Int
 
@@ -114,226 +115,22 @@ data SemanticActions m = SemanticActions
 
 dfaActionTransition :: ActionState -> ActionSymbol -> Maybe Action
 dfaActionTransition q s =
-  case (q, s) of
-    (0, Token (FALSE _)) -> Just (Shift 12)
-    (0, Token (NULL _)) -> Just (Shift 13)
-    (0, Token (TRUE _)) -> Just (Shift 14)
-    (0, Token (LBRACE _)) -> Just (Shift 15)
-    (0, Token (STRING _)) -> Just (Shift 21)
-    (0, Token (LBRACKET _)) -> Just (Shift 2)
-    (0, Token (NUMBER _)) -> Just (Shift 20)
-    (1, EOF) -> Just (Accept)
-    (2, Token (FALSE _)) -> Just (Shift 12)
-    (2, Token (NULL _)) -> Just (Shift 13)
-    (2, Token (TRUE _)) -> Just (Shift 14)
-    (2, Token (LBRACE _)) -> Just (Shift 15)
-    (2, Token (STRING _)) -> Just (Shift 21)
-    (2, Token (LBRACKET _)) -> Just (Shift 2)
-    (2, Token (RBRACKET _)) -> Just (Reduce 0 17)
-    (2, Token (NUMBER _)) -> Just (Shift 20)
-    (3, Token (FALSE _)) -> Just (Shift 12)
-    (3, Token (NULL _)) -> Just (Shift 13)
-    (3, Token (TRUE _)) -> Just (Shift 14)
-    (3, Token (LBRACE _)) -> Just (Shift 15)
-    (3, Token (STRING _)) -> Just (Shift 21)
-    (3, Token (LBRACKET _)) -> Just (Shift 2)
-    (3, Token (RBRACKET _)) -> Just (Reduce 0 17)
-    (3, Token (NUMBER _)) -> Just (Shift 20)
-    (4, Token (FALSE _)) -> Just (Shift 12)
-    (4, Token (NULL _)) -> Just (Shift 13)
-    (4, Token (TRUE _)) -> Just (Shift 14)
-    (4, Token (LBRACE _)) -> Just (Shift 15)
-    (4, Token (STRING _)) -> Just (Shift 21)
-    (4, Token (LBRACKET _)) -> Just (Shift 2)
-    (4, Token (NUMBER _)) -> Just (Shift 20)
-    (5, EOF) -> Just (Reduce 1 0)
-    (5, Token (FALSE _)) -> Just (Reduce 1 0)
-    (5, Token (NULL _)) -> Just (Reduce 1 0)
-    (5, Token (TRUE _)) -> Just (Reduce 1 0)
-    (5, Token (LBRACE _)) -> Just (Reduce 1 0)
-    (5, Token (RBRACE _)) -> Just (Reduce 1 0)
-    (5, Token (COMMA _)) -> Just (Reduce 1 0)
-    (5, Token (STRING _)) -> Just (Reduce 1 0)
-    (5, Token (COLON _)) -> Just (Reduce 1 0)
-    (5, Token (LBRACKET _)) -> Just (Reduce 1 0)
-    (5, Token (RBRACKET _)) -> Just (Reduce 1 0)
-    (5, Token (NUMBER _)) -> Just (Reduce 1 0)
-    (6, EOF) -> Just (Reduce 1 1)
-    (6, Token (FALSE _)) -> Just (Reduce 1 1)
-    (6, Token (NULL _)) -> Just (Reduce 1 1)
-    (6, Token (TRUE _)) -> Just (Reduce 1 1)
-    (6, Token (LBRACE _)) -> Just (Reduce 1 1)
-    (6, Token (RBRACE _)) -> Just (Reduce 1 1)
-    (6, Token (COMMA _)) -> Just (Reduce 1 1)
-    (6, Token (STRING _)) -> Just (Reduce 1 1)
-    (6, Token (COLON _)) -> Just (Reduce 1 1)
-    (6, Token (LBRACKET _)) -> Just (Reduce 1 1)
-    (6, Token (RBRACKET _)) -> Just (Reduce 1 1)
-    (6, Token (NUMBER _)) -> Just (Reduce 1 1)
-    (7, EOF) -> Just (Reduce 1 2)
-    (7, Token (FALSE _)) -> Just (Reduce 1 2)
-    (7, Token (NULL _)) -> Just (Reduce 1 2)
-    (7, Token (TRUE _)) -> Just (Reduce 1 2)
-    (7, Token (LBRACE _)) -> Just (Reduce 1 2)
-    (7, Token (RBRACE _)) -> Just (Reduce 1 2)
-    (7, Token (COMMA _)) -> Just (Reduce 1 2)
-    (7, Token (STRING _)) -> Just (Reduce 1 2)
-    (7, Token (COLON _)) -> Just (Reduce 1 2)
-    (7, Token (LBRACKET _)) -> Just (Reduce 1 2)
-    (7, Token (RBRACKET _)) -> Just (Reduce 1 2)
-    (7, Token (NUMBER _)) -> Just (Reduce 1 2)
-    (8, EOF) -> Just (Reduce 1 3)
-    (8, Token (FALSE _)) -> Just (Reduce 1 3)
-    (8, Token (NULL _)) -> Just (Reduce 1 3)
-    (8, Token (TRUE _)) -> Just (Reduce 1 3)
-    (8, Token (LBRACE _)) -> Just (Reduce 1 3)
-    (8, Token (RBRACE _)) -> Just (Reduce 1 3)
-    (8, Token (COMMA _)) -> Just (Reduce 1 3)
-    (8, Token (STRING _)) -> Just (Reduce 1 3)
-    (8, Token (COLON _)) -> Just (Reduce 1 3)
-    (8, Token (LBRACKET _)) -> Just (Reduce 1 3)
-    (8, Token (RBRACKET _)) -> Just (Reduce 1 3)
-    (8, Token (NUMBER _)) -> Just (Reduce 1 3)
-    (9, EOF) -> Just (Reduce 1 4)
-    (9, Token (FALSE _)) -> Just (Reduce 1 4)
-    (9, Token (NULL _)) -> Just (Reduce 1 4)
-    (9, Token (TRUE _)) -> Just (Reduce 1 4)
-    (9, Token (LBRACE _)) -> Just (Reduce 1 4)
-    (9, Token (RBRACE _)) -> Just (Reduce 1 4)
-    (9, Token (COMMA _)) -> Just (Reduce 1 4)
-    (9, Token (STRING _)) -> Just (Reduce 1 4)
-    (9, Token (COLON _)) -> Just (Reduce 1 4)
-    (9, Token (LBRACKET _)) -> Just (Reduce 1 4)
-    (9, Token (RBRACKET _)) -> Just (Reduce 1 4)
-    (9, Token (NUMBER _)) -> Just (Reduce 1 4)
-    (10, EOF) -> Just (Reduce 1 5)
-    (10, Token (FALSE _)) -> Just (Reduce 1 5)
-    (10, Token (NULL _)) -> Just (Reduce 1 5)
-    (10, Token (TRUE _)) -> Just (Reduce 1 5)
-    (10, Token (LBRACE _)) -> Just (Reduce 1 5)
-    (10, Token (RBRACE _)) -> Just (Reduce 1 5)
-    (10, Token (COMMA _)) -> Just (Reduce 1 5)
-    (10, Token (STRING _)) -> Just (Reduce 1 5)
-    (10, Token (COLON _)) -> Just (Reduce 1 5)
-    (10, Token (LBRACKET _)) -> Just (Reduce 1 5)
-    (10, Token (RBRACKET _)) -> Just (Reduce 1 5)
-    (10, Token (NUMBER _)) -> Just (Reduce 1 5)
-    (11, EOF) -> Just (Reduce 1 6)
-    (11, Token (FALSE _)) -> Just (Reduce 1 6)
-    (11, Token (NULL _)) -> Just (Reduce 1 6)
-    (11, Token (TRUE _)) -> Just (Reduce 1 6)
-    (11, Token (LBRACE _)) -> Just (Reduce 1 6)
-    (11, Token (RBRACE _)) -> Just (Reduce 1 6)
-    (11, Token (COMMA _)) -> Just (Reduce 1 6)
-    (11, Token (STRING _)) -> Just (Reduce 1 6)
-    (11, Token (COLON _)) -> Just (Reduce 1 6)
-    (11, Token (LBRACKET _)) -> Just (Reduce 1 6)
-    (11, Token (RBRACKET _)) -> Just (Reduce 1 6)
-    (11, Token (NUMBER _)) -> Just (Reduce 1 6)
-    (12, EOF) -> Just (Reduce 1 7)
-    (12, Token (FALSE _)) -> Just (Reduce 1 7)
-    (12, Token (NULL _)) -> Just (Reduce 1 7)
-    (12, Token (TRUE _)) -> Just (Reduce 1 7)
-    (12, Token (LBRACE _)) -> Just (Reduce 1 7)
-    (12, Token (RBRACE _)) -> Just (Reduce 1 7)
-    (12, Token (COMMA _)) -> Just (Reduce 1 7)
-    (12, Token (STRING _)) -> Just (Reduce 1 7)
-    (12, Token (COLON _)) -> Just (Reduce 1 7)
-    (12, Token (LBRACKET _)) -> Just (Reduce 1 7)
-    (12, Token (RBRACKET _)) -> Just (Reduce 1 7)
-    (12, Token (NUMBER _)) -> Just (Reduce 1 7)
-    (13, EOF) -> Just (Reduce 1 8)
-    (13, Token (FALSE _)) -> Just (Reduce 1 8)
-    (13, Token (NULL _)) -> Just (Reduce 1 8)
-    (13, Token (TRUE _)) -> Just (Reduce 1 8)
-    (13, Token (LBRACE _)) -> Just (Reduce 1 8)
-    (13, Token (RBRACE _)) -> Just (Reduce 1 8)
-    (13, Token (COMMA _)) -> Just (Reduce 1 8)
-    (13, Token (STRING _)) -> Just (Reduce 1 8)
-    (13, Token (COLON _)) -> Just (Reduce 1 8)
-    (13, Token (LBRACKET _)) -> Just (Reduce 1 8)
-    (13, Token (RBRACKET _)) -> Just (Reduce 1 8)
-    (13, Token (NUMBER _)) -> Just (Reduce 1 8)
-    (14, EOF) -> Just (Reduce 1 9)
-    (14, Token (FALSE _)) -> Just (Reduce 1 9)
-    (14, Token (NULL _)) -> Just (Reduce 1 9)
-    (14, Token (TRUE _)) -> Just (Reduce 1 9)
-    (14, Token (LBRACE _)) -> Just (Reduce 1 9)
-    (14, Token (RBRACE _)) -> Just (Reduce 1 9)
-    (14, Token (COMMA _)) -> Just (Reduce 1 9)
-    (14, Token (STRING _)) -> Just (Reduce 1 9)
-    (14, Token (COLON _)) -> Just (Reduce 1 9)
-    (14, Token (LBRACKET _)) -> Just (Reduce 1 9)
-    (14, Token (RBRACKET _)) -> Just (Reduce 1 9)
-    (14, Token (NUMBER _)) -> Just (Reduce 1 9)
-    (15, Token (RBRACE _)) -> Just (Reduce 0 11)
-    (15, Token (STRING _)) -> Just (Shift 25)
-    (16, EOF) -> Just (Reduce 3 10)
-    (16, Token (FALSE _)) -> Just (Reduce 3 10)
-    (16, Token (NULL _)) -> Just (Reduce 3 10)
-    (16, Token (TRUE _)) -> Just (Reduce 3 10)
-    (16, Token (LBRACE _)) -> Just (Reduce 3 10)
-    (16, Token (RBRACE _)) -> Just (Reduce 3 10)
-    (16, Token (COMMA _)) -> Just (Reduce 3 10)
-    (16, Token (STRING _)) -> Just (Reduce 3 10)
-    (16, Token (COLON _)) -> Just (Reduce 3 10)
-    (16, Token (LBRACKET _)) -> Just (Reduce 3 10)
-    (16, Token (RBRACKET _)) -> Just (Reduce 3 10)
-    (16, Token (NUMBER _)) -> Just (Reduce 3 10)
-    (17, Token (RBRACE _)) -> Just (Shift 16)
-    (18, EOF) -> Just (Reduce 3 16)
-    (18, Token (FALSE _)) -> Just (Reduce 3 16)
-    (18, Token (NULL _)) -> Just (Reduce 3 16)
-    (18, Token (TRUE _)) -> Just (Reduce 3 16)
-    (18, Token (LBRACE _)) -> Just (Reduce 3 16)
-    (18, Token (RBRACE _)) -> Just (Reduce 3 16)
-    (18, Token (COMMA _)) -> Just (Reduce 3 16)
-    (18, Token (STRING _)) -> Just (Reduce 3 16)
-    (18, Token (COLON _)) -> Just (Reduce 3 16)
-    (18, Token (LBRACKET _)) -> Just (Reduce 3 16)
-    (18, Token (RBRACKET _)) -> Just (Reduce 3 16)
-    (18, Token (NUMBER _)) -> Just (Reduce 3 16)
-    (19, Token (RBRACKET _)) -> Just (Shift 18)
-    (20, EOF) -> Just (Reduce 1 21)
-    (20, Token (FALSE _)) -> Just (Reduce 1 21)
-    (20, Token (NULL _)) -> Just (Reduce 1 21)
-    (20, Token (TRUE _)) -> Just (Reduce 1 21)
-    (20, Token (LBRACE _)) -> Just (Reduce 1 21)
-    (20, Token (RBRACE _)) -> Just (Reduce 1 21)
-    (20, Token (COMMA _)) -> Just (Reduce 1 21)
-    (20, Token (STRING _)) -> Just (Reduce 1 21)
-    (20, Token (COLON _)) -> Just (Reduce 1 21)
-    (20, Token (LBRACKET _)) -> Just (Reduce 1 21)
-    (20, Token (RBRACKET _)) -> Just (Reduce 1 21)
-    (20, Token (NUMBER _)) -> Just (Reduce 1 21)
-    (21, EOF) -> Just (Reduce 1 22)
-    (21, Token (FALSE _)) -> Just (Reduce 1 22)
-    (21, Token (NULL _)) -> Just (Reduce 1 22)
-    (21, Token (TRUE _)) -> Just (Reduce 1 22)
-    (21, Token (LBRACE _)) -> Just (Reduce 1 22)
-    (21, Token (RBRACE _)) -> Just (Reduce 1 22)
-    (21, Token (COMMA _)) -> Just (Reduce 1 22)
-    (21, Token (STRING _)) -> Just (Reduce 1 22)
-    (21, Token (COLON _)) -> Just (Reduce 1 22)
-    (21, Token (LBRACKET _)) -> Just (Reduce 1 22)
-    (21, Token (RBRACKET _)) -> Just (Reduce 1 22)
-    (21, Token (NUMBER _)) -> Just (Reduce 1 22)
-    (22, Token (RBRACE _)) -> Just (Reduce 0 11)
-    (22, Token (STRING _)) -> Just (Shift 25)
-    (23, Token (RBRACE _)) -> Just (Reduce 0 13)
-    (23, Token (COMMA _)) -> Just (Shift 22)
-    (24, Token (RBRACE _)) -> Just (Reduce 2 12)
-    (25, Token (COLON _)) -> Just (Shift 4)
-    (26, Token (RBRACE _)) -> Just (Reduce 3 15)
-    (26, Token (COMMA _)) -> Just (Reduce 3 15)
-    (26, Token (STRING _)) -> Just (Reduce 3 15)
-    (26, Token (COLON _)) -> Just (Reduce 3 15)
-    (27, Token (RBRACE _)) -> Just (Reduce 2 14)
-    (28, Token (COMMA _)) -> Just (Shift 3)
-    (28, Token (RBRACKET _)) -> Just (Reduce 0 19)
-    (29, Token (RBRACKET _)) -> Just (Reduce 2 18)
-    (30, Token (RBRACKET _)) -> Just (Reduce 2 20)
-    (_, _) -> Nothing
+  let s' :: Int
+      s' =
+        case s of
+          EOF -> -1
+          Token (COLON _) -> 7
+          Token (COMMA _) -> 5
+          Token (FALSE _) -> 0
+          Token (LBRACE _) -> 3
+          Token (LBRACKET _) -> 8
+          Token (NULL _) -> 1
+          Token (NUMBER _) -> 10
+          Token (RBRACE _) -> 4
+          Token (RBRACKET _) -> 9
+          Token (STRING _) -> 6
+          Token (TRUE _) -> 2
+  in case compare(q,s')(8,6)of{LT->case compare(q,s')(4,3)of{LT->case compare(q,s')(3,3)of{LT->case compare(q,s')(2,3)of{LT->case compare(q,s')(1,-1)of{LT->case compare(q,s')(0,3)of{LT->case compare(q,s')(0,1)of{LT->case compare(q,s')(0,0)of{LT->Nothing;EQ->Just(Shift 12);GT->Nothing};EQ->Just(Shift 13);GT->case compare(q,s')(0,2)of{LT->Nothing;EQ->Just(Shift 14);GT->Nothing}};EQ->Just(Shift 15);GT->case compare(q,s')(0,8)of{LT->case compare(q,s')(0,6)of{LT->Nothing;EQ->Just(Shift 21);GT->Nothing};EQ->Just(Shift 2);GT->case compare(q,s')(0,10)of{LT->Nothing;EQ->Just(Shift 20);GT->Nothing}}};EQ->Just(Accept);GT->case compare(q,s')(2,1)of{LT->case compare(q,s')(2,0)of{LT->Nothing;EQ->Just(Shift 12);GT->Nothing};EQ->Just(Shift 13);GT->case compare(q,s')(2,2)of{LT->Nothing;EQ->Just(Shift 14);GT->Nothing}}};EQ->Just(Shift 15);GT->case compare(q,s')(2,10)of{LT->case compare(q,s')(2,8)of{LT->case compare(q,s')(2,6)of{LT->Nothing;EQ->Just(Shift 21);GT->Nothing};EQ->Just(Shift 2);GT->case compare(q,s')(2,9)of{LT->Nothing;EQ->Just(Reduce 0 17);GT->Nothing}};EQ->Just(Shift 20);GT->case compare(q,s')(3,1)of{LT->case compare(q,s')(3,0)of{LT->Nothing;EQ->Just(Shift 12);GT->Nothing};EQ->Just(Shift 13);GT->case compare(q,s')(3,2)of{LT->Nothing;EQ->Just(Shift 14);GT->Nothing}}}};EQ->Just(Shift 15);GT->case compare(q,s')(3,10)of{LT->case compare(q,s')(3,8)of{LT->case compare(q,s')(3,6)of{LT->Nothing;EQ->Just(Shift 21);GT->Nothing};EQ->Just(Shift 2);GT->case compare(q,s')(3,9)of{LT->Nothing;EQ->Just(Reduce 0 17);GT->Nothing}};EQ->Just(Shift 20);GT->case compare(q,s')(4,1)of{LT->case compare(q,s')(4,0)of{LT->Nothing;EQ->Just(Shift 12);GT->Nothing};EQ->Just(Shift 13);GT->case compare(q,s')(4,2)of{LT->Nothing;EQ->Just(Shift 14);GT->Nothing}}}};EQ->Just(Shift 15);GT->case compare(q,s')(5,8)of{LT->case compare(q,s')(5,-1)of{LT->case compare(q,s')(4,8)of{LT->case compare(q,s')(4,6)of{LT->Nothing;EQ->Just(Shift 21);GT->Nothing};EQ->Just(Shift 2);GT->case compare(q,s')(4,10)of{LT->Nothing;EQ->Just(Shift 20);GT->Nothing}};EQ->Just(Reduce 1 0);GT->case compare(q,s')(5,2)of{LT->case compare(q,s')(5,1)of{LT->case compare(q,s')(5,0)of{LT->Nothing;EQ->Just(Reduce 1 0);GT->Nothing};EQ->Just(Reduce 1 0);GT->Nothing};EQ->Just(Reduce 1 0);GT->case compare(q,s')(5,5)of{LT->case compare(q,s')(5,4)of{LT->case compare(q,s')(5,3)of{LT->Nothing;EQ->Just(Reduce 1 0);GT->Nothing};EQ->Just(Reduce 1 0);GT->Nothing};EQ->Just(Reduce 1 0);GT->case compare(q,s')(5,7)of{LT->case compare(q,s')(5,6)of{LT->Nothing;EQ->Just(Reduce 1 0);GT->Nothing};EQ->Just(Reduce 1 0);GT->Nothing}}}};EQ->Just(Reduce 1 0);GT->case compare(q,s')(6,7)of{LT->case compare(q,s')(6,2)of{LT->case compare(q,s')(6,-1)of{LT->case compare(q,s')(5,10)of{LT->case compare(q,s')(5,9)of{LT->Nothing;EQ->Just(Reduce 1 0);GT->Nothing};EQ->Just(Reduce 1 0);GT->Nothing};EQ->Just(Reduce 1 1);GT->case compare(q,s')(6,1)of{LT->case compare(q,s')(6,0)of{LT->Nothing;EQ->Just(Reduce 1 1);GT->Nothing};EQ->Just(Reduce 1 1);GT->Nothing}};EQ->Just(Reduce 1 1);GT->case compare(q,s')(6,5)of{LT->case compare(q,s')(6,4)of{LT->case compare(q,s')(6,3)of{LT->Nothing;EQ->Just(Reduce 1 1);GT->Nothing};EQ->Just(Reduce 1 1);GT->Nothing};EQ->Just(Reduce 1 1);GT->case compare(q,s')(6,6)of{LT->Nothing;EQ->Just(Reduce 1 1);GT->Nothing}}};EQ->Just(Reduce 1 1);GT->case compare(q,s')(7,7)of{LT->case compare(q,s')(7,1)of{LT->case compare(q,s')(6,10)of{LT->case compare(q,s')(6,9)of{LT->case compare(q,s')(6,8)of{LT->Nothing;EQ->Just(Reduce 1 1);GT->Nothing};EQ->Just(Reduce 1 1);GT->Nothing};EQ->Just(Reduce 1 1);GT->case compare(q,s')(7,0)of{LT->case compare(q,s')(7,-1)of{LT->Nothing;EQ->Just(Reduce 1 2);GT->Nothing};EQ->Just(Reduce 1 2);GT->Nothing}};EQ->Just(Reduce 1 2);GT->case compare(q,s')(7,4)of{LT->case compare(q,s')(7,3)of{LT->case compare(q,s')(7,2)of{LT->Nothing;EQ->Just(Reduce 1 2);GT->Nothing};EQ->Just(Reduce 1 2);GT->Nothing};EQ->Just(Reduce 1 2);GT->case compare(q,s')(7,6)of{LT->case compare(q,s')(7,5)of{LT->Nothing;EQ->Just(Reduce 1 2);GT->Nothing};EQ->Just(Reduce 1 2);GT->Nothing}}};EQ->Just(Reduce 1 2);GT->case compare(q,s')(8,1)of{LT->case compare(q,s')(7,10)of{LT->case compare(q,s')(7,9)of{LT->case compare(q,s')(7,8)of{LT->Nothing;EQ->Just(Reduce 1 2);GT->Nothing};EQ->Just(Reduce 1 2);GT->Nothing};EQ->Just(Reduce 1 2);GT->case compare(q,s')(8,0)of{LT->case compare(q,s')(8,-1)of{LT->Nothing;EQ->Just(Reduce 1 3);GT->Nothing};EQ->Just(Reduce 1 3);GT->Nothing}};EQ->Just(Reduce 1 3);GT->case compare(q,s')(8,4)of{LT->case compare(q,s')(8,3)of{LT->case compare(q,s')(8,2)of{LT->Nothing;EQ->Just(Reduce 1 3);GT->Nothing};EQ->Just(Reduce 1 3);GT->Nothing};EQ->Just(Reduce 1 3);GT->case compare(q,s')(8,5)of{LT->Nothing;EQ->Just(Reduce 1 3);GT->Nothing}}}}}}};EQ->Just(Reduce 1 3);GT->case compare(q,s')(18,1)of{LT->case compare(q,s')(12,4)of{LT->case compare(q,s')(10,5)of{LT->case compare(q,s')(9,6)of{LT->case compare(q,s')(9,0)of{LT->case compare(q,s')(8,9)of{LT->case compare(q,s')(8,8)of{LT->case compare(q,s')(8,7)of{LT->Nothing;EQ->Just(Reduce 1 3);GT->Nothing};EQ->Just(Reduce 1 3);GT->Nothing};EQ->Just(Reduce 1 3);GT->case compare(q,s')(9,-1)of{LT->case compare(q,s')(8,10)of{LT->Nothing;EQ->Just(Reduce 1 3);GT->Nothing};EQ->Just(Reduce 1 4);GT->Nothing}};EQ->Just(Reduce 1 4);GT->case compare(q,s')(9,3)of{LT->case compare(q,s')(9,2)of{LT->case compare(q,s')(9,1)of{LT->Nothing;EQ->Just(Reduce 1 4);GT->Nothing};EQ->Just(Reduce 1 4);GT->Nothing};EQ->Just(Reduce 1 4);GT->case compare(q,s')(9,5)of{LT->case compare(q,s')(9,4)of{LT->Nothing;EQ->Just(Reduce 1 4);GT->Nothing};EQ->Just(Reduce 1 4);GT->Nothing}}};EQ->Just(Reduce 1 4);GT->case compare(q,s')(10,0)of{LT->case compare(q,s')(9,9)of{LT->case compare(q,s')(9,8)of{LT->case compare(q,s')(9,7)of{LT->Nothing;EQ->Just(Reduce 1 4);GT->Nothing};EQ->Just(Reduce 1 4);GT->Nothing};EQ->Just(Reduce 1 4);GT->case compare(q,s')(10,-1)of{LT->case compare(q,s')(9,10)of{LT->Nothing;EQ->Just(Reduce 1 4);GT->Nothing};EQ->Just(Reduce 1 5);GT->Nothing}};EQ->Just(Reduce 1 5);GT->case compare(q,s')(10,3)of{LT->case compare(q,s')(10,2)of{LT->case compare(q,s')(10,1)of{LT->Nothing;EQ->Just(Reduce 1 5);GT->Nothing};EQ->Just(Reduce 1 5);GT->Nothing};EQ->Just(Reduce 1 5);GT->case compare(q,s')(10,4)of{LT->Nothing;EQ->Just(Reduce 1 5);GT->Nothing}}}};EQ->Just(Reduce 1 5);GT->case compare(q,s')(11,5)of{LT->case compare(q,s')(11,-1)of{LT->case compare(q,s')(10,8)of{LT->case compare(q,s')(10,7)of{LT->case compare(q,s')(10,6)of{LT->Nothing;EQ->Just(Reduce 1 5);GT->Nothing};EQ->Just(Reduce 1 5);GT->Nothing};EQ->Just(Reduce 1 5);GT->case compare(q,s')(10,10)of{LT->case compare(q,s')(10,9)of{LT->Nothing;EQ->Just(Reduce 1 5);GT->Nothing};EQ->Just(Reduce 1 5);GT->Nothing}};EQ->Just(Reduce 1 6);GT->case compare(q,s')(11,2)of{LT->case compare(q,s')(11,1)of{LT->case compare(q,s')(11,0)of{LT->Nothing;EQ->Just(Reduce 1 6);GT->Nothing};EQ->Just(Reduce 1 6);GT->Nothing};EQ->Just(Reduce 1 6);GT->case compare(q,s')(11,4)of{LT->case compare(q,s')(11,3)of{LT->Nothing;EQ->Just(Reduce 1 6);GT->Nothing};EQ->Just(Reduce 1 6);GT->Nothing}}};EQ->Just(Reduce 1 6);GT->case compare(q,s')(12,-1)of{LT->case compare(q,s')(11,8)of{LT->case compare(q,s')(11,7)of{LT->case compare(q,s')(11,6)of{LT->Nothing;EQ->Just(Reduce 1 6);GT->Nothing};EQ->Just(Reduce 1 6);GT->Nothing};EQ->Just(Reduce 1 6);GT->case compare(q,s')(11,10)of{LT->case compare(q,s')(11,9)of{LT->Nothing;EQ->Just(Reduce 1 6);GT->Nothing};EQ->Just(Reduce 1 6);GT->Nothing}};EQ->Just(Reduce 1 7);GT->case compare(q,s')(12,2)of{LT->case compare(q,s')(12,1)of{LT->case compare(q,s')(12,0)of{LT->Nothing;EQ->Just(Reduce 1 7);GT->Nothing};EQ->Just(Reduce 1 7);GT->Nothing};EQ->Just(Reduce 1 7);GT->case compare(q,s')(12,3)of{LT->Nothing;EQ->Just(Reduce 1 7);GT->Nothing}}}}};EQ->Just(Reduce 1 7);GT->case compare(q,s')(14,3)of{LT->case compare(q,s')(13,4)of{LT->case compare(q,s')(12,10)of{LT->case compare(q,s')(12,7)of{LT->case compare(q,s')(12,6)of{LT->case compare(q,s')(12,5)of{LT->Nothing;EQ->Just(Reduce 1 7);GT->Nothing};EQ->Just(Reduce 1 7);GT->Nothing};EQ->Just(Reduce 1 7);GT->case compare(q,s')(12,9)of{LT->case compare(q,s')(12,8)of{LT->Nothing;EQ->Just(Reduce 1 7);GT->Nothing};EQ->Just(Reduce 1 7);GT->Nothing}};EQ->Just(Reduce 1 7);GT->case compare(q,s')(13,1)of{LT->case compare(q,s')(13,0)of{LT->case compare(q,s')(13,-1)of{LT->Nothing;EQ->Just(Reduce 1 8);GT->Nothing};EQ->Just(Reduce 1 8);GT->Nothing};EQ->Just(Reduce 1 8);GT->case compare(q,s')(13,3)of{LT->case compare(q,s')(13,2)of{LT->Nothing;EQ->Just(Reduce 1 8);GT->Nothing};EQ->Just(Reduce 1 8);GT->Nothing}}};EQ->Just(Reduce 1 8);GT->case compare(q,s')(13,10)of{LT->case compare(q,s')(13,7)of{LT->case compare(q,s')(13,6)of{LT->case compare(q,s')(13,5)of{LT->Nothing;EQ->Just(Reduce 1 8);GT->Nothing};EQ->Just(Reduce 1 8);GT->Nothing};EQ->Just(Reduce 1 8);GT->case compare(q,s')(13,9)of{LT->case compare(q,s')(13,8)of{LT->Nothing;EQ->Just(Reduce 1 8);GT->Nothing};EQ->Just(Reduce 1 8);GT->Nothing}};EQ->Just(Reduce 1 8);GT->case compare(q,s')(14,1)of{LT->case compare(q,s')(14,0)of{LT->case compare(q,s')(14,-1)of{LT->Nothing;EQ->Just(Reduce 1 9);GT->Nothing};EQ->Just(Reduce 1 9);GT->Nothing};EQ->Just(Reduce 1 9);GT->case compare(q,s')(14,2)of{LT->Nothing;EQ->Just(Reduce 1 9);GT->Nothing}}}};EQ->Just(Reduce 1 9);GT->case compare(q,s')(16,2)of{LT->case compare(q,s')(14,9)of{LT->case compare(q,s')(14,6)of{LT->case compare(q,s')(14,5)of{LT->case compare(q,s')(14,4)of{LT->Nothing;EQ->Just(Reduce 1 9);GT->Nothing};EQ->Just(Reduce 1 9);GT->Nothing};EQ->Just(Reduce 1 9);GT->case compare(q,s')(14,8)of{LT->case compare(q,s')(14,7)of{LT->Nothing;EQ->Just(Reduce 1 9);GT->Nothing};EQ->Just(Reduce 1 9);GT->Nothing}};EQ->Just(Reduce 1 9);GT->case compare(q,s')(16,-1)of{LT->case compare(q,s')(15,4)of{LT->case compare(q,s')(14,10)of{LT->Nothing;EQ->Just(Reduce 1 9);GT->Nothing};EQ->Just(Reduce 0 11);GT->case compare(q,s')(15,6)of{LT->Nothing;EQ->Just(Shift 25);GT->Nothing}};EQ->Just(Reduce 3 10);GT->case compare(q,s')(16,1)of{LT->case compare(q,s')(16,0)of{LT->Nothing;EQ->Just(Reduce 3 10);GT->Nothing};EQ->Just(Reduce 3 10);GT->Nothing}}};EQ->Just(Reduce 3 10);GT->case compare(q,s')(16,8)of{LT->case compare(q,s')(16,5)of{LT->case compare(q,s')(16,4)of{LT->case compare(q,s')(16,3)of{LT->Nothing;EQ->Just(Reduce 3 10);GT->Nothing};EQ->Just(Reduce 3 10);GT->Nothing};EQ->Just(Reduce 3 10);GT->case compare(q,s')(16,7)of{LT->case compare(q,s')(16,6)of{LT->Nothing;EQ->Just(Reduce 3 10);GT->Nothing};EQ->Just(Reduce 3 10);GT->Nothing}};EQ->Just(Reduce 3 10);GT->case compare(q,s')(18,-1)of{LT->case compare(q,s')(16,10)of{LT->case compare(q,s')(16,9)of{LT->Nothing;EQ->Just(Reduce 3 10);GT->Nothing};EQ->Just(Reduce 3 10);GT->case compare(q,s')(17,4)of{LT->Nothing;EQ->Just(Shift 16);GT->Nothing}};EQ->Just(Reduce 3 16);GT->case compare(q,s')(18,0)of{LT->Nothing;EQ->Just(Reduce 3 16);GT->Nothing}}}}}};EQ->Just(Reduce 3 16);GT->case compare(q,s')(22,4)of{LT->case compare(q,s')(20,1)of{LT->case compare(q,s')(18,10)of{LT->case compare(q,s')(18,7)of{LT->case compare(q,s')(18,4)of{LT->case compare(q,s')(18,3)of{LT->case compare(q,s')(18,2)of{LT->Nothing;EQ->Just(Reduce 3 16);GT->Nothing};EQ->Just(Reduce 3 16);GT->Nothing};EQ->Just(Reduce 3 16);GT->case compare(q,s')(18,6)of{LT->case compare(q,s')(18,5)of{LT->Nothing;EQ->Just(Reduce 3 16);GT->Nothing};EQ->Just(Reduce 3 16);GT->Nothing}};EQ->Just(Reduce 3 16);GT->case compare(q,s')(18,9)of{LT->case compare(q,s')(18,8)of{LT->Nothing;EQ->Just(Reduce 3 16);GT->Nothing};EQ->Just(Reduce 3 16);GT->Nothing}};EQ->Just(Reduce 3 16);GT->case compare(q,s')(20,-1)of{LT->case compare(q,s')(19,9)of{LT->Nothing;EQ->Just(Shift 18);GT->Nothing};EQ->Just(Reduce 1 21);GT->case compare(q,s')(20,0)of{LT->Nothing;EQ->Just(Reduce 1 21);GT->Nothing}}};EQ->Just(Reduce 1 21);GT->case compare(q,s')(21,0)of{LT->case compare(q,s')(20,7)of{LT->case compare(q,s')(20,4)of{LT->case compare(q,s')(20,3)of{LT->case compare(q,s')(20,2)of{LT->Nothing;EQ->Just(Reduce 1 21);GT->Nothing};EQ->Just(Reduce 1 21);GT->Nothing};EQ->Just(Reduce 1 21);GT->case compare(q,s')(20,6)of{LT->case compare(q,s')(20,5)of{LT->Nothing;EQ->Just(Reduce 1 21);GT->Nothing};EQ->Just(Reduce 1 21);GT->Nothing}};EQ->Just(Reduce 1 21);GT->case compare(q,s')(20,10)of{LT->case compare(q,s')(20,9)of{LT->case compare(q,s')(20,8)of{LT->Nothing;EQ->Just(Reduce 1 21);GT->Nothing};EQ->Just(Reduce 1 21);GT->Nothing};EQ->Just(Reduce 1 21);GT->case compare(q,s')(21,-1)of{LT->Nothing;EQ->Just(Reduce 1 22);GT->Nothing}}};EQ->Just(Reduce 1 22);GT->case compare(q,s')(21,6)of{LT->case compare(q,s')(21,3)of{LT->case compare(q,s')(21,2)of{LT->case compare(q,s')(21,1)of{LT->Nothing;EQ->Just(Reduce 1 22);GT->Nothing};EQ->Just(Reduce 1 22);GT->Nothing};EQ->Just(Reduce 1 22);GT->case compare(q,s')(21,5)of{LT->case compare(q,s')(21,4)of{LT->Nothing;EQ->Just(Reduce 1 22);GT->Nothing};EQ->Just(Reduce 1 22);GT->Nothing}};EQ->Just(Reduce 1 22);GT->case compare(q,s')(21,9)of{LT->case compare(q,s')(21,8)of{LT->case compare(q,s')(21,7)of{LT->Nothing;EQ->Just(Reduce 1 22);GT->Nothing};EQ->Just(Reduce 1 22);GT->Nothing};EQ->Just(Reduce 1 22);GT->case compare(q,s')(21,10)of{LT->Nothing;EQ->Just(Reduce 1 22);GT->Nothing}}}}};EQ->Just(Reduce 0 11);GT->case compare(q,s')(28,5)of{LT->case compare(q,s')(26,4)of{LT->case compare(q,s')(23,5)of{LT->case compare(q,s')(23,4)of{LT->case compare(q,s')(22,6)of{LT->Nothing;EQ->Just(Shift 25);GT->Nothing};EQ->Just(Reduce 0 13);GT->Nothing};EQ->Just(Shift 22);GT->case compare(q,s')(24,4)of{LT->Nothing;EQ->Just(Reduce 2 12);GT->case compare(q,s')(25,7)of{LT->Nothing;EQ->Just(Shift 4);GT->Nothing}}};EQ->Just(Reduce 3 15);GT->case compare(q,s')(26,7)of{LT->case compare(q,s')(26,6)of{LT->case compare(q,s')(26,5)of{LT->Nothing;EQ->Just(Reduce 3 15);GT->Nothing};EQ->Just(Reduce 3 15);GT->Nothing};EQ->Just(Reduce 3 15);GT->case compare(q,s')(27,4)of{LT->Nothing;EQ->Just(Reduce 2 14);GT->Nothing}}};EQ->Just(Shift 3);GT->case compare(q,s')(29,9)of{LT->case compare(q,s')(28,9)of{LT->Nothing;EQ->Just(Reduce 0 19);GT->Nothing};EQ->Just(Reduce 2 18);GT->case compare(q,s')(30,9)of{LT->Nothing;EQ->Just(Reduce 2 20);GT->Nothing}}}}}}
 
 production :: Int -> Int
 production 0 = 0
@@ -359,53 +156,14 @@ production 19 = 12
 production 20 = 12
 production 21 = 6
 production 22 = 7
+production _ = undefined
 
 dfaGotoTransition :: GotoState -> GotoSymbol -> Maybe GotoState
 dfaGotoTransition q s =
-  case (q, production s) of
-    (0, 0) -> Just 1
-    (0, 1) -> Just 5
-    (0, 2) -> Just 6
-    (0, 3) -> Just 7
-    (0, 4) -> Just 8
-    (0, 5) -> Just 9
-    (0, 6) -> Just 10
-    (0, 7) -> Just 11
-    (2, 0) -> Just 28
-    (2, 1) -> Just 5
-    (2, 2) -> Just 6
-    (2, 3) -> Just 7
-    (2, 4) -> Just 8
-    (2, 5) -> Just 9
-    (2, 6) -> Just 10
-    (2, 7) -> Just 11
-    (2, 11) -> Just 19
-    (3, 0) -> Just 28
-    (3, 1) -> Just 5
-    (3, 2) -> Just 6
-    (3, 3) -> Just 7
-    (3, 4) -> Just 8
-    (3, 5) -> Just 9
-    (3, 6) -> Just 10
-    (3, 7) -> Just 11
-    (3, 11) -> Just 30
-    (4, 0) -> Just 26
-    (4, 1) -> Just 5
-    (4, 2) -> Just 6
-    (4, 3) -> Just 7
-    (4, 4) -> Just 8
-    (4, 5) -> Just 9
-    (4, 6) -> Just 10
-    (4, 7) -> Just 11
-    (15, 8) -> Just 17
-    (15, 9) -> Just 23
-    (22, 8) -> Just 27
-    (22, 9) -> Just 23
-    (23, 10) -> Just 24
-    (28, 12) -> Just 29
-    (_, _) -> Nothing
+  let s' = production s in
+    case compare(q,s')(3,3)of{LT->case compare(q,s')(2,2)of{LT->case compare(q,s')(0,5)of{LT->case compare(q,s')(0,2)of{LT->case compare(q,s')(0,1)of{LT->case compare(q,s')(0,0)of{LT->Nothing;EQ->Just 1;GT->Nothing};EQ->Just 5;GT->Nothing};EQ->Just 6;GT->case compare(q,s')(0,4)of{LT->case compare(q,s')(0,3)of{LT->Nothing;EQ->Just 7;GT->Nothing};EQ->Just 8;GT->Nothing}};EQ->Just 9;GT->case compare(q,s')(2,0)of{LT->case compare(q,s')(0,7)of{LT->case compare(q,s')(0,6)of{LT->Nothing;EQ->Just 10;GT->Nothing};EQ->Just 11;GT->Nothing};EQ->Just 28;GT->case compare(q,s')(2,1)of{LT->Nothing;EQ->Just 5;GT->Nothing}}};EQ->Just 6;GT->case compare(q,s')(2,7)of{LT->case compare(q,s')(2,5)of{LT->case compare(q,s')(2,4)of{LT->case compare(q,s')(2,3)of{LT->Nothing;EQ->Just 7;GT->Nothing};EQ->Just 8;GT->Nothing};EQ->Just 9;GT->case compare(q,s')(2,6)of{LT->Nothing;EQ->Just 10;GT->Nothing}};EQ->Just 11;GT->case compare(q,s')(3,1)of{LT->case compare(q,s')(3,0)of{LT->case compare(q,s')(2,11)of{LT->Nothing;EQ->Just 19;GT->Nothing};EQ->Just 28;GT->Nothing};EQ->Just 5;GT->case compare(q,s')(3,2)of{LT->Nothing;EQ->Just 6;GT->Nothing}}}};EQ->Just 7;GT->case compare(q,s')(4,4)of{LT->case compare(q,s')(3,11)of{LT->case compare(q,s')(3,6)of{LT->case compare(q,s')(3,5)of{LT->case compare(q,s')(3,4)of{LT->Nothing;EQ->Just 8;GT->Nothing};EQ->Just 9;GT->Nothing};EQ->Just 10;GT->case compare(q,s')(3,7)of{LT->Nothing;EQ->Just 11;GT->Nothing}};EQ->Just 30;GT->case compare(q,s')(4,2)of{LT->case compare(q,s')(4,1)of{LT->case compare(q,s')(4,0)of{LT->Nothing;EQ->Just 26;GT->Nothing};EQ->Just 5;GT->Nothing};EQ->Just 6;GT->case compare(q,s')(4,3)of{LT->Nothing;EQ->Just 7;GT->Nothing}}};EQ->Just 8;GT->case compare(q,s')(15,9)of{LT->case compare(q,s')(4,7)of{LT->case compare(q,s')(4,6)of{LT->case compare(q,s')(4,5)of{LT->Nothing;EQ->Just 9;GT->Nothing};EQ->Just 10;GT->Nothing};EQ->Just 11;GT->case compare(q,s')(15,8)of{LT->Nothing;EQ->Just 17;GT->Nothing}};EQ->Just 23;GT->case compare(q,s')(23,10)of{LT->case compare(q,s')(22,9)of{LT->case compare(q,s')(22,8)of{LT->Nothing;EQ->Just 27;GT->Nothing};EQ->Just 23;GT->Nothing};EQ->Just 24;GT->case compare(q,s')(28,12)of{LT->Nothing;EQ->Just 29;GT->Nothing}}}}}
 
-parse :: Monad m => SemanticActions m -> [Token] -> m (Maybe (Value, [Token]))
+parse :: Monad m => SemanticActions m -> [Token] -> m (Either (Maybe Token) (Value, [Token]))
 parse actions = parse' [] where
   parse' stack tokens =
     let p =
@@ -418,7 +176,9 @@ parse actions = parse' [] where
             (token : _) -> Token token in do
       case dfaActionTransition p symbol of
         Nothing ->
-          return Nothing
+          case tokens of
+            [] -> return $ Left $ Nothing
+            (token : _) -> return $ Left $ Just token
         Just (Shift n) ->
           let value =
                 case symbol of
@@ -454,7 +214,9 @@ parse actions = parse' [] where
                 [] -> dfaGotoTransition 0 m
                 ((q', _) : _) -> dfaGotoTransition q' m of
               Nothing ->
-                return Nothing
+                case tokens of
+                  [] -> return $ Left $ Nothing
+                  (token : _) -> return $ Left $ Just token
               Just q -> do
                 value <-
                   case m of
@@ -504,9 +266,10 @@ parse actions = parse' [] where
                       Monad.liftM StackValue_number $ number_implies_NUMBER actions (case snd (pop !! 0) of { StackValue_NUMBER value -> value; _ -> undefined })
                     22 ->
                       Monad.liftM StackValue_string' $ string'_implies_STRING actions (case snd (pop !! 0) of { StackValue_STRING value -> value; _ -> undefined })
+                    _ -> undefined
                 parse' ((q, value) : stack') tokens
         Just Accept ->
-          case stack of { [(_, StackValue_value value)] -> return $ Just (value, tokens); _ -> return Nothing }
+          case stack of { [(_, StackValue_value value)] -> return $ Right (value, tokens); _ -> case tokens of { [] -> return $ Left $ Nothing; (token : _) -> return $ Left $ Just token }}
 
 
 

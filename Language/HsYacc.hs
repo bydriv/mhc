@@ -604,7 +604,8 @@ generateParser trivial modid start0 header footer grm0 = do
 
     CodeGenerating.write "dfaActionTransition :: ActionState -> ActionSymbol -> Maybe Action\n"
     CodeGenerating.write "dfaActionTransition q s =\n"
-    CodeGenerating.write "  let s' =\n"
+    CodeGenerating.write "  let s' :: Int\n"
+    CodeGenerating.write "      s' =\n"
     CodeGenerating.write "        case s of\n"
     CodeGenerating.write "          EOF -> -1\n"
 
@@ -668,6 +669,7 @@ generateParser trivial modid start0 header footer grm0 = do
       CodeGenerating.write " = "
       CodeGenerating.write $ show left
       CodeGenerating.write "\n"
+    CodeGenerating.write "production _ = undefined\n"
     CodeGenerating.write "\n"
 
     CodeGenerating.write "dfaGotoTransition :: GotoState -> GotoSymbol -> Maybe GotoState\n"
@@ -795,6 +797,7 @@ generateParser trivial modid start0 header footer grm0 = do
             CodeGenerating.write " value -> value; _ -> undefined })"
       CodeGenerating.write "\n"
 
+    CodeGenerating.write "                    _ -> undefined\n"
     CodeGenerating.write "                parse' ((q, value) : stack') tokens\n"
     CodeGenerating.write "        Just Accept ->\n"
     CodeGenerating.write "          case stack of { [(_, StackValue_"

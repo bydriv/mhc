@@ -62,7 +62,8 @@ data SemanticActions m = SemanticActions
 
 dfaActionTransition :: ActionState -> ActionSymbol -> Maybe Action
 dfaActionTransition q s =
-  let s' =
+  let s' :: Int
+      s' =
         case s of
           EOF -> -1
           Token (DOT _) -> 4
@@ -82,6 +83,7 @@ production 5 = 4
 production 6 = 4
 production 7 = 3
 production 8 = 3
+production _ = undefined
 
 dfaGotoTransition :: GotoState -> GotoSymbol -> Maybe GotoState
 dfaGotoTransition q s =
@@ -151,6 +153,7 @@ parse actions = parse' [] where
                       Monad.liftM StackValue_abs $ abs_implies_app actions (case snd (pop !! 0) of { StackValue_app value -> value; _ -> undefined })
                     8 ->
                       Monad.liftM StackValue_abs $ abs_implies_LAMBDA_ids_DOT_app actions (case snd (pop !! 3) of { StackValue_LAMBDA value -> value; _ -> undefined }) (case snd (pop !! 2) of { StackValue_ids value -> value; _ -> undefined }) (case snd (pop !! 1) of { StackValue_DOT value -> value; _ -> undefined }) (case snd (pop !! 0) of { StackValue_app value -> value; _ -> undefined })
+                    _ -> undefined
                 parse' ((q, value) : stack') tokens
         Just Accept ->
           case stack of { [(_, StackValue_abs value)] -> return $ Right (value, tokens); _ -> case tokens of { [] -> return $ Left $ Nothing; (token : _) -> return $ Left $ Just token }}

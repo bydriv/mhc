@@ -163,7 +163,8 @@ data SemanticActions m = SemanticActions
 
 dfaActionTransition :: ActionState -> ActionSymbol -> Maybe Action
 dfaActionTransition q s =
-  let s' =
+  let s' :: Int
+      s' =
         case s of
           EOF -> -1
           Token (BASIC_STRING _) -> 3
@@ -225,6 +226,7 @@ production 35 = 12
 production 36 = 16
 production 37 = 16
 production 38 = 15
+production _ = undefined
 
 dfaGotoTransition :: GotoState -> GotoSymbol -> Maybe GotoState
 dfaGotoTransition q s =
@@ -378,6 +380,7 @@ parse actions = parse' [] where
                       Monad.liftM StackValue_inlineTableKeyVals $ inlineTableKeyVals_implies_keyval_COMMA_inlineTableKeyVals actions (case snd (pop !! 2) of { StackValue_keyval value -> value; _ -> undefined }) (case snd (pop !! 1) of { StackValue_COMMA value -> value; _ -> undefined }) (case snd (pop !! 0) of { StackValue_inlineTableKeyVals value -> value; _ -> undefined })
                     38 ->
                       Monad.liftM StackValue_arrayTable $ arrayTable_implies_LBRACKET_LBRACKET_key_RBRACKET_RBRACKET actions (case snd (pop !! 4) of { StackValue_LBRACKET value -> value; _ -> undefined }) (case snd (pop !! 3) of { StackValue_LBRACKET value -> value; _ -> undefined }) (case snd (pop !! 2) of { StackValue_key value -> value; _ -> undefined }) (case snd (pop !! 1) of { StackValue_RBRACKET value -> value; _ -> undefined }) (case snd (pop !! 0) of { StackValue_RBRACKET value -> value; _ -> undefined })
+                    _ -> undefined
                 parse' ((q, value) : stack') tokens
         Just Accept ->
           case stack of { [(_, StackValue_toml value)] -> return $ Right (value, tokens); _ -> case tokens of { [] -> return $ Left $ Nothing; (token : _) -> return $ Left $ Just token }}
