@@ -9,7 +9,6 @@ import qualified Data.Char           as Char
 
 
 import qualified Control.Monad.State          as State
-import qualified Control.Monad.Trans          as MonadTrans
 import qualified Language.Haskell2010.Parsing as Parsing
 
 newtype Lexing m a = Lexing { unLexing :: LexingState -> m (a, LexingState) }
@@ -2984,18 +2983,18 @@ semanticActions = SemanticActions
 
   , saOpenNested = withPosition $ \pos n yytext -> do
       yybegin Nested
-      (pos, nest) <- MonadTrans.lift State.get
-      MonadTrans.lift $ State.put (pos, nest + 1)
+      (pos', nest) <- MonadTrans.lift State.get
+      MonadTrans.lift $ State.put (pos', nest + 1)
       return $ Left ((pos, n), yytext)
 
   , saCloseNested = withPosition $ \pos n yytext -> do
-      (pos, nest) <- MonadTrans.lift State.get
+      (pos', nest) <- MonadTrans.lift State.get
 
       if nest <= 1 then do
         yybegin Initial
-        MonadTrans.lift $ State.put (pos, 0)
+        MonadTrans.lift $ State.put (pos', 0)
       else
-        MonadTrans.lift $ State.put (pos, nest - 1)
+        MonadTrans.lift $ State.put (pos', nest - 1)
 
       return $ Left ((pos, n), yytext)
 

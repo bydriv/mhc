@@ -15,7 +15,6 @@
 
 module Main where
 
-import qualified Control.Monad.Identity       as Identity
 import qualified Control.Monad.State          as State
 import qualified Data.Maybe                   as Maybe
 import qualified Language.Haskell2010.Layout  as Layout
