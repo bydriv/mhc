@@ -71,4 +71,11 @@ main = do
         Right (result, _) ->
           print result
     (c : _) ->
-      putStrLn $ "line " ++ show (lineOf (pos, 1) s) ++ ": unrecognized character: `" ++ [c] ++ "'."
+      let bol = beginningOfLine (pos, 1) s in
+      let eol = endOfLine (pos, 1) s in
+      let s'' = substr (bol, eol - bol) s in
+      let lineno = lineOf (pos, 1) s in
+      let colno = colOf (pos, 1) s in do
+        IO.hPutStrLn IO.stderr $ "\027[1m" ++ show lineno ++ ":" ++ show colno ++ ":\027[0m \027[1;31merror:\027[0m \027[1m unrecognized character `" ++ [c] ++ "'\027[0m"
+        IO.hPutStrLn IO.stderr $ highlight (pos - bol, 1) s''
+        Exit.exitFailure
