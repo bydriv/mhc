@@ -20,11 +20,31 @@ import qualified Control.Monad.State          as State
 import qualified Language.Haskell2010.Layout  as Layout
 import qualified Language.Haskell2010.Lexing  as Lexing
 import qualified Language.Haskell2010.Parsing as Parsing
+import qualified System.Exit                  as Exit
+import qualified System.IO                    as IO
 
 type AST = Parsing.Module'
 
+beginningOfLine :: Parsing.Pos -> String -> Int
+beginningOfLine (pos, _) = (pos -) . length . takeWhile (/='\n') . reverse . take pos
+
+endOfLine :: Parsing.Pos -> String -> Int
+endOfLine (pos, len) = (+ (pos + len)) . length . takeWhile (/='\n') . drop (pos + len)
+
 lineOf :: Parsing.Pos -> String -> Int
 lineOf (pos, len) = length . lines . take (pos + len)
+
+colOf :: Parsing.Pos -> String -> Int
+colOf (pos, len) = succ . flip (-) len . length . last . lines . take (pos + len)
+
+substr :: Parsing.Pos -> String -> String
+substr (pos, len) = take len . drop pos
+
+highlight :: Parsing.Pos -> String -> String
+highlight (pos, len) s =
+  let (s1, s') = splitAt pos s in
+  let (s2, s3) = splitAt len s' in
+    s1 ++ "\027[4m" ++ s2 ++ "\027[0m" ++ s3
 
 main :: IO ()
 main = do
@@ -40,8 +60,14 @@ main = do
           putStrLn $ "line " ++ show (succ (length (lines s))) ++ ": syntax error."
         Left (Just token) ->
           let pos' = Parsing.posOf token in
-          let lnum = lineOf pos' s in
-            putStrLn $ "line " ++ show lnum ++ ": syntax error."
+          let bol = beginningOfLine pos' s in
+          let eol = endOfLine pos' s in
+          let s'' = substr (bol, eol - bol) s in
+          let lineno = lineOf pos' s in
+          let colno = colOf pos' s in do
+            IO.hPutStrLn IO.stderr $ "\027[1m" ++ show lineno ++ ":" ++ show colno ++ ":\027[0m \027[1;31merror:\027[0m \027[1munexpected token\027[0m"
+            IO.hPutStrLn IO.stderr $ highlight (fst pos' - bol, snd pos') s''
+            Exit.exitFailure
         Right (result, _) ->
           print result
     (c : _) ->
